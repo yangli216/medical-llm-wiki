@@ -27,7 +27,7 @@ class TestCdssEngine(unittest.TestCase):
     def test_load_all_protocols(self):
         repo = self.engine.repo
         protocols = repo.list_all()
-        self.assertGreaterEqual(len(protocols), 12)
+        self.assertEqual(len(protocols), 18)
 
         htn = repo.get("PROT-HTN-001")
         self.assertIsNotNone(htn)
@@ -37,6 +37,14 @@ class TestCdssEngine(unittest.TestCase):
         self.assertIn("physicalExam", htn.note_template)
         self.assertGreater(len(htn.items), 5)
         self.assertGreater(len(htn.rules), 0)
+
+        # Assert new protocols exist
+        self.assertIsNotNone(repo.get("PROT-PED-013"))
+        self.assertIsNotNone(repo.get("PROT-PED-014"))
+        self.assertIsNotNone(repo.get("PROT-HERPES-015"))
+        self.assertIsNotNone(repo.get("PROT-AR-016"))
+        self.assertIsNotNone(repo.get("PROT-ANX-017"))
+        self.assertIsNotNone(repo.get("PROT-TCM-018"))
 
     def test_search_protocols(self):
         # 1. Search by condition
@@ -53,6 +61,21 @@ class TestCdssEngine(unittest.TestCase):
         matches_symp = self.engine.search_protocols("头晕眩晕", limit=2)
         self.assertGreater(len(matches_symp), 0)
         self.assertEqual(matches_symp[0]["protocolId"], "PROT-DIZZY-007")
+
+        # 4. Search by pediatric condition
+        matches_ped = self.engine.search_protocols("小儿急性支气管炎", limit=1)
+        self.assertGreater(len(matches_ped), 0)
+        self.assertEqual(matches_ped[0]["protocolId"], "PROT-PED-013")
+
+        # 5. Search by allergic rhinitis
+        matches_ar = self.engine.search_protocols("变应性鼻炎", limit=1)
+        self.assertGreater(len(matches_ar), 0)
+        self.assertEqual(matches_ar[0]["protocolId"], "PROT-AR-016")
+
+        # 6. Search by herpes zoster
+        matches_herpes = self.engine.search_protocols("带状疱疹", limit=1)
+        self.assertGreater(len(matches_herpes), 0)
+        self.assertEqual(matches_herpes[0]["protocolId"], "PROT-HERPES-015")
 
     def test_rhn_plan_intent_contract(self):
         compiled = self.engine.compile_rhn_plan("2型糖尿病")
@@ -132,6 +155,36 @@ class TestCdssEngine(unittest.TestCase):
         res_nsaids = self.engine.audit_prescription(["布洛芬缓释胶囊 0.3g", "双氯芬酸钠缓释片 75mg"])
         self.assertFalse(res_nsaids["is_safe"])
         self.assertTrue(any(a["ruleId"] == "RULE-SAFETY-DUAL-NSAIDS" for a in res_nsaids["alerts"]))
+
+        # 7. Pediatric fever with Aspirin (Red Alert)
+        res_ped_asp = self.engine.audit_prescription(["阿司匹林肠溶片 100mg"], {"age": 6})
+        self.assertFalse(res_ped_asp["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-PEDIATRIC-ASPIRIN" for a in res_ped_asp["alerts"]))
+
+        # 8. Pediatric with Quinolones (Red Alert)
+        res_ped_quin = self.engine.audit_prescription(["左氧氟沙星片 0.5g"], {"age": 14})
+        self.assertFalse(res_ped_quin["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-PEDIATRIC-QUINOLONE" for a in res_ped_quin["alerts"]))
+
+        # 9. Pediatric diarrhea with Loperamide (Red Alert)
+        res_ped_lop = self.engine.audit_prescription(["盐酸洛哌丁胺胶囊 2mg"], {"age": 3})
+        self.assertFalse(res_ped_lop["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-PEDIATRIC-LOPERAMIDE" for a in res_ped_lop["alerts"]))
+
+        # 10. TCM Xiaoke Pill + Sulfonylurea (Red Alert)
+        res_tcm_xk = self.engine.audit_prescription(["消渴丸", "格列齐特缓释片 30mg"])
+        self.assertFalse(res_tcm_xk["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-TCM-XIAOKE-SULFONYLUREA" for a in res_tcm_xk["alerts"]))
+
+        # 11. TCM Acetaminophen + Western Paracetamol (Red Alert)
+        res_tcm_apap = self.engine.audit_prescription(["感冒灵颗粒", "酚麻美敏片(泰诺)"])
+        self.assertFalse(res_tcm_apap["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-TCM-ACETAMINOPHEN-DUAL" for a in res_tcm_apap["alerts"]))
+
+        # 12. Valacyclovir with eGFR < 50 (Yellow Alert)
+        res_herpes_val = self.engine.audit_prescription(["盐酸伐昔洛韦片 0.5g"], {"egfr": 35})
+        self.assertTrue(res_herpes_val["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-HERPES-VALACYCLOVIR-RENAL" for a in res_herpes_val["alerts"]))
 
     def test_http_api_endpoints(self):
         server_thread = threading.Thread(target=run_server, kwargs={"port": 8789}, daemon=True)

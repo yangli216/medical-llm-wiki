@@ -249,6 +249,92 @@ class CdssEngine:
             except (ValueError, TypeError):
                 pass
 
+        # Rule 9: Pediatric fever - Aspirin contraindication (Reye Syndrome)
+        has_aspirin = any(x in meds_text for x in ["阿司匹林", "赖氨匹林", "巴米尔"])
+        if has_aspirin and age is not None:
+            try:
+                if int(age) < 18:
+                    alerts.append({
+                        "ruleId": "RULE-PEDIATRIC-ASPIRIN",
+                        "severity": "RED",
+                        "title": "儿童发热严禁使用阿司匹林（Reye综合征风险）",
+                        "message": f"患者年龄 {age} 岁 (<18)，儿童青少年病毒感染发热使用阿司匹林/赖氨匹林可诱发致死性 Reye 综合征（急性脑病合并肝衰竭），绝对禁用！推荐退热换用对乙酰氨基酚或布洛芬。",
+                        "guideline": "《儿童急性呼吸道感染与急性支气管炎规范化诊疗专家共识（2023）》",
+                    })
+            except (ValueError, TypeError):
+                pass
+
+        # Rule 10: Pediatric contraindication - Quinolones
+        has_quinolone = any(x in meds_text for x in ["左氧氟沙星", "莫西沙星", "诺氟沙星", "环丙沙星", "氧氟沙星"])
+        if has_quinolone and age is not None:
+            try:
+                if int(age) < 18:
+                    alerts.append({
+                        "ruleId": "RULE-PEDIATRIC-QUINOLONE",
+                        "severity": "RED",
+                        "title": "18岁以下儿童禁用喹诺酮类抗生素（软骨发育毒性）",
+                        "message": f"患者年龄 {age} 岁 (<18)，喹诺酮类抗菌药物可导致幼年动物负重关节软骨损伤与骨骺退变，儿童门诊严禁开具！推荐遵指征选用头孢菌素或阿莫西林克拉维酸钾。",
+                        "guideline": "《中国儿童急性感染性腹泻病临床实践指南（2022）》",
+                    })
+            except (ValueError, TypeError):
+                pass
+
+        # Rule 11: Pediatric diarrhea - Loperamide contraindication
+        has_loperamide = any(x in meds_text for x in ["洛哌丁胺", "易蒙停", "地芬诺酯"])
+        if has_loperamide and age is not None:
+            try:
+                if int(age) < 12:
+                    alerts.append({
+                        "ruleId": "RULE-PEDIATRIC-LOPERAMIDE",
+                        "severity": "RED",
+                        "title": "儿童急性腹泻严禁使用洛哌丁胺等肠蠕动抑制剂",
+                        "message": f"患者年龄 {age} 岁 (<12)，洛哌丁胺等强效止泻药在儿童中极易引发麻痹性肠梗阻、中毒性巨结肠及中枢神经抑制，严禁使用！儿童补液首选口服补液盐散(III)。",
+                        "guideline": "《中国儿童急性感染性腹泻病临床实践指南（2022）》",
+                    })
+            except (ValueError, TypeError):
+                pass
+
+        # Rule 12: TCM Xiaoke Pill + Sulfonylureas (Fatal Hypoglycemia)
+        has_xiaoke = "消渴丸" in meds_text
+        has_sulfonylurea = any(x in meds_text for x in ["格列本脲", "优降糖", "格列齐特", "格列美脲", "格列吡嗪"])
+        if has_xiaoke and has_sulfonylurea:
+            alerts.append({
+                "ruleId": "RULE-TCM-XIAOKE-SULFONYLUREA",
+                "severity": "RED",
+                "title": "消渴丸严禁与磺脲类降糖西药重复联用",
+                "message": "消渴丸每 10 丸含格列本脲 2.5mg，与西药磺脲类降糖药叠加会导致严重、不可逆的致死性低血糖昏迷与脑水肿，绝对禁止联合处方！",
+                "guideline": "《中成药临床应用指导原则与中西药联合安全规范》",
+            })
+
+        # Rule 13: TCM with Acetaminophen + Western Paracetamol duplication
+        has_tcm_apap = any(x in meds_text for x in ["感冒灵", "维c银翘片"])
+        has_western_apap = any(x in meds_text for x in ["对乙酰氨基酚", "扑热息痛", "酚麻美敏", "散利痛", "泰诺", "白加黑", "快克"])
+        if has_tcm_apap and has_western_apap:
+            alerts.append({
+                "ruleId": "RULE-TCM-ACETAMINOPHEN-DUAL",
+                "severity": "RED",
+                "title": "含对乙酰氨基酚中成药与西药感冒药重叠（暴发性肝坏死风险）",
+                "message": "感冒灵颗粒（每袋含0.2g对乙酰氨基酚）或维C银翘片严禁与含扑热息痛西药叠加开具，否则对乙酰氨基酚日剂量超标可导致急性药物性肝衰竭与肝坏死！",
+                "guideline": "《中成药临床应用指导原则与中西药联合安全规范》",
+            })
+
+        # Rule 14: Antiviral Valacyclovir in renal impairment
+        has_antiviral = any(x in meds_text for x in ["伐昔洛韦", "阿昔洛韦"])
+        if has_antiviral and egfr is not None:
+            try:
+                egfr_val = float(egfr)
+                if egfr_val < 50:
+                    alerts.append({
+                        "ruleId": "RULE-HERPES-VALACYCLOVIR-RENAL",
+                        "severity": "YELLOW",
+                        "title": "肾功能减退患者抗疱疹病毒药物剂量调整预警",
+                        "message": f"患者 eGFR = {egfr_val} ml/min/1.73m² (< 50)，伐昔洛韦/阿昔洛韦主要经肾脏排泄，高剂量易析出肾小管针状结晶加重急性肾损伤。必须根据肾功能减量（eGFR 30~49 改为 1000mg q12h；eGFR 10~29 改为 1000mg q24h；<10 改为 500mg q24h）。",
+                        "guideline": "《中国带状疱疹诊疗专家共识（2023版）》",
+                    })
+            except (ValueError, TypeError):
+                pass
+
+
         return {
             "is_safe": len([a for a in alerts if a["severity"] == "RED"]) == 0,
             "total_alerts": len(alerts),
