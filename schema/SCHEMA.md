@@ -30,6 +30,7 @@ schema/ & tools/      -> 规范定义与自动化工具链层 (Schema & Tooling)
 | `wiki/entities/drugs/` | `drug` | 药物与疗法实体。包含药物类别、作用机制、临床适应证、用法用量、禁忌证与不良反应。 |
 | `wiki/entities/organizations/`| `organization` | 权威发布机构实体。包含机构职责、主要下设专科分会及发布的代表性指南。 |
 | `wiki/concepts/` | `concept` | 诊断标准、临床路径、筛查策略、评分量表（如 CURB-65、GOLD 分级、CNLC 分期）。 |
+| `wiki/protocols/` | `protocol` | 门诊临床诊疗决策协议。面向门诊医生站 AI 推荐与 CDSS 拦截的标准化方案，包含规范病历模板、推荐医嘱项（处方/检验/检查）与用药禁忌拦截规则。 |
 | `wiki/synthesis/` | `synthesis` | 跨病种/跨指南综合专题。共病综合管理、多药联合安全、药物相互作用、MDT 综合决策。 |
 
 ---

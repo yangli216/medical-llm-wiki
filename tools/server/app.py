@@ -16,6 +16,7 @@ from typing import Any, Dict, Optional
 from tools.compiler.compiler import WikiGraph
 from tools.search.searcher import WikiSearcher
 from tools.collector.collector import SourceCollector
+from tools.cdss.engine import CdssEngine
 
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -618,6 +619,7 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
     graph: WikiGraph = WikiGraph(root_dir)
     searcher: WikiSearcher = WikiSearcher(root_dir)
     collector: SourceCollector = SourceCollector(root_dir)
+    cdss: CdssEngine = CdssEngine(root_dir)
 
     def do_GET(self) -> None:
         parsed_url = urllib.parse.urlparse(self.path)
@@ -657,6 +659,68 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
         elif path == "/api/sources":
             sources = self.collector.list_sources()
             self._send_json(sources)
+        elif path == "/api/cdss/protocols":
+            protocols = self.cdss.repo.list_all()
+            data = [{
+                "protocolId": p.protocol_id,
+                "title": p.title,
+                "icd10": p.icd10,
+                "category": p.category,
+                "summary": p.summary,
+            } for p in protocols]
+            self._send_json(data)
+        elif path.startswith("/api/cdss/protocols/"):
+            pid = path[len("/api/cdss/protocols/"):]
+            prot = self.cdss.repo.get(pid)
+            if prot:
+                self._send_json({
+                    "protocolId": prot.protocol_id,
+                    "title": prot.title,
+                    "icd10": prot.icd10,
+                    "category": prot.category,
+                    "summary": prot.summary,
+                    "planIntent": prot.to_rhn_plan_intent(),
+                    "candidate": prot.to_rhn_plan_candidate(1),
+                    "treatmentRecommendations": prot.to_rhn_treatment_recommendations(),
+                    "rules": prot.rules,
+                })
+            else:
+                self._send_json({"error": "Protocol not found", "id": pid}, status=404)
+        elif path == "/api/cdss/recommend":
+            q = query_params.get("q", [""])[0]
+            matches = self.cdss.search_protocols(q, limit=5)
+            self._send_json(matches)
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def do_POST(self) -> None:
+        parsed_url = urllib.parse.urlparse(self.path)
+        path = parsed_url.path
+
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length) if content_length > 0 else b"{}"
+        try:
+            payload = json.loads(body.decode("utf-8")) if body else {}
+        except json.JSONDecodeError:
+            self._send_json({"error": "Invalid JSON body"}, status=400)
+            return
+
+        if path == "/api/cdss/compile-rhn-plan":
+            query = payload.get("input") or payload.get("naturalInput") or payload.get("protocolId") or ""
+            res = self.cdss.compile_rhn_plan(query)
+            status_code = 200 if res.get("success") else 404
+            self._send_json(res, status=status_code)
+        elif path == "/api/cdss/recommend":
+            query = payload.get("query") or payload.get("input") or ""
+            limit = int(payload.get("limit", 5))
+            matches = self.cdss.search_protocols(query, limit=limit)
+            self._send_json(matches)
+        elif path == "/api/cdss/audit":
+            meds = payload.get("medications", [])
+            patient = payload.get("patient", {})
+            audit_res = self.cdss.audit_prescription(meds, patient)
+            self._send_json(audit_res)
         else:
             self.send_response(404)
             self.end_headers()

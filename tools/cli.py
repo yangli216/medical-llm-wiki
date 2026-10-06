@@ -88,6 +88,67 @@ def cmd_serve(args):
     run_server(port=args.port)
 
 
+def cmd_cdss(args):
+    import json
+    from tools.cdss.engine import CdssEngine
+    engine = CdssEngine(ROOT_DIR)
+
+    if args.recommend:
+        results = engine.search_protocols(args.recommend, limit=args.limit)
+        print(f"\n📋 针对临床输入 '{args.recommend}' 召回的权威门诊协议方案 (共 {len(results)} 条):")
+        print("=" * 65)
+        for r in results:
+            print(f"[{r['rank']}] {r['title']} [ICD-10: {r['icd10']}] (类别: {r['category']})")
+            print(f"    方案摘要: {r['summary'][:120]}...")
+            print("-" * 65)
+    elif args.compile:
+        compiled = engine.compile_rhn_plan(args.compile)
+        if compiled.get("success"):
+            print(f"\n✅ 成功编译为 RHN PlanIntent 结构化方案：{compiled['planIntent']['name']}")
+            print("=" * 65)
+            print("【方案摘要 (Description)】:", compiled["planIntent"]["description"])
+            print("【临床处置陈述 (Narrative)】:\n" + compiled["planIntent"]["narrative"][:200] + "...")
+            print("【病历模板 (noteTemplateContent)】:")
+            for k, v in compiled["planIntent"]["noteTemplateContent"].items():
+                print(f"  • {k}: {v[:50]}...")
+            print(f"【推荐医嘱条目数 (Items)】: {len(compiled['planIntent']['items'])} 项")
+            print(f"【可采纳医嘱草稿数 (Treatment Recommendations)】: {len(compiled['treatmentRecommendations'])} 项")
+        else:
+            print(f"❌ 编译失败: {compiled.get('error')}")
+    elif args.audit:
+        profile = {}
+        if args.egfr:
+            profile["egfr"] = float(args.egfr)
+        if args.age:
+            profile["age"] = int(args.age)
+        if args.pregnant:
+            profile["is_pregnant"] = True
+
+        res = engine.audit_prescription(args.meds, profile)
+        print(f"\n🛡️  CDSS 处方前置安全核查报告 (审查药品: {', '.join(args.meds)}):")
+        print("=" * 65)
+        if res["is_safe"] and res["total_alerts"] == 0:
+            print("✅ 处方安全核查通过：未检出绝对禁忌证或高危处方瀑布。")
+        else:
+            status_text = "❌ 存在高危严重禁忌，必须强行阻断！" if not res["is_safe"] else "⚠️  存在用药警戒，建议核对。"
+            print(status_text)
+            print(f"告警统计: 红色阻断 {res['red_count']} 条，黄色预警 {res['yellow_count']} 条\n")
+            for idx, a in enumerate(res["alerts"], 1):
+                icon = "🛑" if a["severity"] == "RED" else "⚠️"
+                print(f"{icon} [{idx}] 【{a['title']}】 ({a['severity']})")
+                print(f"    说明: {a['message']}")
+                print(f"    依据: {a.get('guideline', '')}")
+                print("-" * 65)
+    else:
+        # Default list all protocols
+        protocols = engine.repo.list_all()
+        print(f"\n📚 知识库内置门诊临床决策推荐协议库 (共收录 {len(protocols)} 部国家级规范方案):")
+        print("=" * 65)
+        for idx, p in enumerate(protocols, 1):
+            print(f"[{idx}] {p.protocol_id} | {p.title} [ICD-10: {p.icd10}] ({p.category})")
+        print("-" * 65)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Medical LLM Wiki: 中国医学权威指南与标准本地知识库管理工具",
@@ -117,6 +178,17 @@ def main():
     p_serve = subparsers.add_parser("serve", help="启动本地知识图谱与指南交互式 Web 阅读服务")
     p_serve.add_argument("-p", "--port", type=int, default=8080, help="服务端口 (默认 8080)")
 
+    # cdss
+    p_cdss = subparsers.add_parser("cdss", help="门诊医生站 AI 方案推荐、编译与 CDSS 安全审查")
+    p_cdss.add_argument("--recommend", help="根据主诉或诊断推荐门诊治疗方案协议")
+    p_cdss.add_argument("--compile", help="编译为 RHN 门诊医生站 PlanIntent 格式 JSON")
+    p_cdss.add_argument("--audit", action="store_true", help="对拟开处方进行前置安全审查")
+    p_cdss.add_argument("--meds", nargs="+", default=[], help="拟开药品清单")
+    p_cdss.add_argument("--egfr", type=float, help="患者 eGFR 估算肾小球滤过率")
+    p_cdss.add_argument("--age", type=int, help="患者年龄")
+    p_cdss.add_argument("--pregnant", action="store_true", help="是否妊娠期")
+    p_cdss.add_argument("-n", "--limit", type=int, default=5, help="最多推荐方案数")
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
@@ -129,6 +201,7 @@ def main():
         "search": cmd_search,
         "ask": cmd_ask,
         "serve": cmd_serve,
+        "cdss": cmd_cdss,
     }
 
     dispatch[args.command](args)

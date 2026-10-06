@@ -50,13 +50,13 @@ class WikiPage:
             else:
                 self.title = self.file_path.stem
 
-        # Extract wiki links [[Target]] or [[Target|Alias]]
-        link_pattern = re.compile(r"\[\[([^\]\|]+)(?:\|[^\]]+)?\]\]")
+        # Extract wiki links [[Target]] or [[Target|Alias]], supporting escaped pipes \| in markdown tables
+        link_pattern = re.compile(r"\[\[([^\]\\\|]+)(?:\\?\|[^\]]+)?\]\]")
         raw_links = link_pattern.findall(self.raw_text)
         # Deduplicate preserving order
         seen = set()
         for lnk in raw_links:
-            clean_lnk = lnk.strip()
+            clean_lnk = lnk.strip().rstrip("\\").strip()
             if clean_lnk and clean_lnk not in seen:
                 seen.add(clean_lnk)
                 self.links.append(clean_lnk)

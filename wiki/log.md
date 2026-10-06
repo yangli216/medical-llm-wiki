@@ -105,3 +105,38 @@ status: verified
   - `基层全科门诊常见未分化主诉排雷与转诊决策`
   - `社区老年人多重用药处方重整与处方瀑布阻断`
   - `以家庭为单位慢病连续性管理与生活方式处方`
+
+## [2026-10-06] rhn-cdss-empowerment-v1.3 | 第四阶段：深度赋能 RHN 门诊医生站 AI 推荐与 CDSS 拦截体系
+- **动作类型**: 知识库工程化迭代与智慧门诊赋能
+- **赋能目标工程**: RHN 门诊医生站 AI 治疗方案推荐系统（/Users/yangli/Documents/rhn）
+- **核心完成项**:
+  1. **架构模式扩充**:
+     - 在 `schema/SCHEMA.md` 中正式确立 `protocol`（临床决策协议）模式定义。
+  2. **门诊临床决策协议库（12 套标准方案）**:
+     - 依据国家权威指南建立 12 个高发门诊病种的标准化协议（包含主诉/现病史/体格检查/宣教/随访六段范文病历模板、规范医嘱药品/检验/检查项、以及 CDSS 前置拦截规则）：
+       - `PROT-HTN-001 原发性高血压门诊规范诊疗方案` (ICD: I10)
+       - `PROT-T2DM-002 2型糖尿病门诊规范初诊与控糖方案` (ICD: E11.9)
+       - `PROT-HUA-003 高尿酸血症与痛风门诊分期诊疗方案` (ICD: M10.9)
+       - `PROT-COPD-004 慢性阻塞性肺疾病稳定期门诊分级诊疗方案` (ICD: J44.9)
+       - `PROT-URI-005 急性上呼吸道感染门诊对症与抗生素合理使用方案` (ICD: J06.9)
+       - `PROT-CCOUGH-006 门诊慢性咳嗽病因导向阶梯诊疗方案` (ICD: R05)
+       - `PROT-DIZZY-007 门诊头晕与眩晕精准分型鉴别诊疗方案` (ICD: R42)
+       - `PROT-CAD-008 冠状动脉粥样硬化性心脏病稳定型心绞痛门诊方案` (ICD: I25.1)
+       - `PROT-HP-009 幽门螺杆菌感染与慢性胃炎四联根除门诊方案` (ICD: K29.5)
+       - `PROT-DIARRHEA-010 成人急性腹泻门诊规范评估与治疗方案` (ICD: K52.9)
+       - `PROT-LBP-011 门诊非特异性下腰痛阶梯康复与药物方案` (ICD: M54.5)
+       - `PROT-POLY-012 社区老年共病多重用药处方重整与去处方干预方案` (ICD: Z76.8)
+  3. **RHN 数据契约 100% 对齐**:
+     - 完美兼容 RHN `ClinicalAiModelGateway.PlanIntent`（包含 `name`, `description`, `narrative`, `items`, `noteTemplateContent`）
+     - 完美兼容 RHN `ClinicalAiTreatmentRecommendation`（包含 `orderDraft`: `routeCode`, `frequencyCode`, `doseValue`, `doseUnit`, `durationValue`）
+     - 完美兼容 RHN `PlanCandidate` 检索候选格式
+  4. **CDSS 决策与规则拦截引擎 (tools/cdss/)**:
+     - `tools/cdss/protocol_loader.py`: 协议解析与格式编译加载器
+     - `tools/cdss/engine.py`: CDSS 智能推荐、RHN 方案编译器与处方前置安全核查器
+     - 拦截规则覆盖：双重 RAS 阻断、妊娠期禁忌、eGFR 阈值警戒、硝酸酯类合用 PDE-5 抑制剂、CCB 水肿处方瀑布、重复口服 NSAIDs、蒙脱石散吸附间隔、老年人长效安定阻断等
+  5. **REST API 与命令行赋能**:
+     - 在 Web 服务中提供 `/api/cdss/protocols`、`/api/cdss/compile-rhn-plan`、`/api/cdss/recommend`、`/api/cdss/audit`
+     - 在 `tools/cli.py` 扩充 `cdss` 命令行工具
+  6. **质量体检与全库指标**:
+     - 全库总词条增至 111 篇，双向链接达 1010 条，Linter 健康体检 100% 通过（0 断链、0 孤岛）。
+     - 单元测试与集成测试（11 个测试项）全绿通过。
