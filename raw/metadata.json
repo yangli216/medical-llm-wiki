@@ -1,0 +1,126 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-10-06",
+  "sources": [
+    {
+      "id": "SRC-CMA-CARD-2024-01",
+      "title": "中国高血压防治指南（2024年修订版）",
+      "authority": "中华医学会心血管病学分会 / 中国高血压联盟 / 国家心血管病中心",
+      "publication": "中华高血压杂志 / 中华心血管病杂志",
+      "year": 2024,
+      "category": "心血管系统",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-CARD-2024-01.md",
+      "key_scope": "原发性高血压分级、分期、分型，诊室及诊室外诊断标准，降压目标，五大类常规药物及ARNI联合用药",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CDS-ENDO-2024-01",
+      "title": "中国2型糖尿病防治指南（2024版）",
+      "authority": "中华医学会糖尿病学分会 (CDS)",
+      "publication": "中华糖尿病杂志",
+      "year": 2024,
+      "category": "内分泌代谢系统",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CDS-ENDO-2024-01.md",
+      "key_scope": "2型糖尿病静脉血浆糖与HbA1c诊断切点，个体化控制目标，二甲双胍一线基石，SGLT2i与GLP-1RA心肾保护用药",
+      "status": "active"
+    },
+    {
+      "id": "SRC-NHC-ONC-2024-01",
+      "title": "原发性肝癌诊疗指南（2024年版）",
+      "authority": "中华人民共和国国家卫生健康委员会医政司",
+      "publication": "国家卫生健康委员会官方发文 / 中华消化外科杂志",
+      "year": 2024,
+      "category": "肿瘤系统",
+      "level": "国家卫生健康委官方诊疗指南",
+      "file_path": "raw/docs/SRC-NHC-ONC-2024-01.md",
+      "key_scope": "肝癌典型多期CT/MR增强特征，scHCC亚厘米肝癌，CNLC中国分期系统，外科切除/介入TACE/消融/靶向免疫联合一线方案与转化治疗",
+      "status": "active"
+    },
+    {
+      "id": "SRC-NHC-ONC-2022-02",
+      "title": "原发性肺癌诊疗指南（2022/2024综合版）",
+      "authority": "中华人民共和国国家卫生健康委员会 / 中华医学会肿瘤学分会",
+      "publication": "国家卫生健康委员会官方发文 / 中华肿瘤杂志",
+      "year": 2024,
+      "category": "肿瘤系统",
+      "level": "国家卫生健康委官方诊疗指南",
+      "file_path": "raw/docs/SRC-NHC-ONC-2022-02.md",
+      "key_scope": "低剂量螺旋CT高危人群筛查，TNM临床分期，EGFR/ALK等驱动基因检测，分代靶向药物一线应用，免疫检查点抑制剂",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-NEUR-2023-01",
+      "title": "中国急性缺血性脑卒中诊治指南（2023）",
+      "authority": "中华医学会神经病学分会 / 中华医学会神经病学分会脑血管病学组",
+      "publication": "中华神经科杂志",
+      "year": 2023,
+      "category": "神经系统",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-NEUR-2023-01.md",
+      "key_scope": "急性脑梗死院前急救绿通，4.5小时静脉溶栓（阿替普酶/替奈普酶），6-24小时多模影像评估下机械取栓，抗栓时序策略",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-RESP-2021-01",
+      "title": "慢性阻塞性肺疾病诊治指南（2021年修订版及最新规范）",
+      "authority": "中华医学会呼吸病学分会慢阻肺学组",
+      "publication": "中华结核和呼吸杂志",
+      "year": 2021,
+      "category": "呼吸系统",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-RESP-2021-01.md",
+      "key_scope": "FEV1/FVC<0.70肺功能确诊，GOLD 1-4级气流受限分级，ABCD/ABE综合评估，双支扩剂与三联吸入制剂应用，急性加重期管理",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-CARD-2024-02",
+      "title": "中国心力衰竭诊断和治疗指南（2024）",
+      "authority": "中华医学会心血管病学分会 / 中国医师协会心力衰竭专业委会",
+      "publication": "中华心血管病杂志",
+      "year": 2024,
+      "category": "心血管系统",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-CARD-2024-02.md",
+      "key_scope": "心衰表型分类（HFrEF/HFmrEF/HFpEF/HFimpEF），HFrEF新四联药物治疗基石（ARNI/ACEI/ARB + β受体阻滞剂 + MRA + SGLT2i）",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-RESP-2016-02",
+      "title": "中国成人社区获得性肺炎诊断和治疗指南",
+      "authority": "中华医学会呼吸病学分会",
+      "publication": "中华结核和呼吸杂志",
+      "year": 2016,
+      "category": "呼吸与感染系统",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-RESP-2016-02.md",
+      "key_scope": "CAP临床诊断标准，CURB-65严重度评估与诊治场所决策，常见致病原经验性抗感染选择，抗菌药物合理降阶梯",
+      "status": "active"
+    },
+    {
+      "id": "SRC-NHC-ONC-2025-01",
+      "title": "中国结直肠癌诊疗规范（2025版）",
+      "authority": "中华人民共和国国家卫生健康委员会医政司",
+      "publication": "国家卫生健康委员会官方发文 / 中华外科杂志",
+      "year": 2025,
+      "category": "肿瘤系统",
+      "level": "国家卫生健康委官方诊疗规范",
+      "file_path": "raw/docs/SRC-NHC-ONC-2025-01.md",
+      "key_scope": "危险度评估与粪便隐血FIT筛查策略，结肠镜金标准，高分辨直肠MRI结构式报告，dMMR/MSI-H免疫治疗与全直肠系膜切除MDT",
+      "status": "active"
+    },
+    {
+      "id": "SRC-NHC-PHAR-2015-01",
+      "title": "抗菌药物临床应用指导原则（国家卫健委最新规范）",
+      "authority": "中华人民共和国国家卫生健康委员会 / 国家中医药管理局 / 中央军委后勤保障部卫生局",
+      "publication": "国卫办医发官方文件",
+      "year": 2024,
+      "category": "临床药学与感染防护",
+      "level": "国家法定临床用药指导原则",
+      "file_path": "raw/docs/SRC-NHC-PHAR-2015-01.md",
+      "key_scope": "抗菌药物安全/有效/经济核心原则，非限制/限制/特殊使用级三级处方权限与会诊制度，I类切口围手术期预防用药指征，经验用药与病原学送检",
+      "status": "active"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite FTS Index Cache (can be regenerated with python3 -m tools.cli index)
+.search_index.db
+.search_index.db*
+
+# Obsidian local cache & workspace state
+.obsidian/workspace*
+
+# macOS System Files
+.DS_Store
