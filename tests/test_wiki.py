@@ -16,8 +16,8 @@ class TestMedicalWiki(unittest.TestCase):
     def test_collector_validates_sources(self):
         collector = SourceCollector(self.root_dir)
         report = collector.validate_sources()
-        self.assertEqual(report["total_registered"], 10)
-        self.assertEqual(report["valid_count"], 10)
+        self.assertGreaterEqual(report["total_registered"], 16)
+        self.assertEqual(report["valid_count"], report["total_registered"])
         self.assertEqual(len(report["missing_files"]), 0)
         self.assertEqual(len(report["empty_files"]), 0)
 

@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "last_updated": "2026-10-06",
   "sources": [
     {
@@ -120,6 +120,78 @@
       "level": "国家法定临床用药指导原则",
       "file_path": "raw/docs/SRC-NHC-PHAR-2015-01.md",
       "key_scope": "抗菌药物安全/有效/经济核心原则，非限制/限制/特殊使用级三级处方权限与会诊制度，I类切口围手术期预防用药指征，经验用药与病原学送检",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-CARD-2023-03",
+      "title": "中国血脂管理指南（2023年）",
+      "authority": "国家心血管病专家委员会 / 中华医学会心血管病学分会 / 中华医学会内分泌学分会",
+      "publication": "中华心血管病杂志 2023年第51卷第3期",
+      "year": 2023,
+      "category": "心血管与代谢系统",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-CARD-2023-03.md",
+      "key_scope": "ASCVD总体心血管危险评估，LDL-C分层控制目标（极高危<1.8且降幅>50%，超高危<1.4且降幅>50%），中等强度他汀为基础，依折麦布与PCSK9抑制剂联合降脂",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-ENDO-2024-02",
+      "title": "中国高尿酸血症与痛风诊疗指南（2024年更新版）",
+      "authority": "中华医学会内分泌学分会",
+      "publication": "中华内分泌代谢杂志 2024年",
+      "year": 2024,
+      "category": "内分泌代谢系统",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-ENDO-2024-02.md",
+      "key_scope": "空腹血尿酸≥420 μmol/L高尿酸血症诊断，痛风控制目标（一般≤360，痛风石≤300 μmol/L），一线降尿酸药物（非布司他、别嘌醇、苯溴马隆），HLA-B*5801检测与碱化尿液",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-GAST-2022-01",
+      "title": "2022中国幽门螺杆菌感染治疗指南（全国共识报告）",
+      "authority": "中华医学会消化病学分会幽门螺杆菌学组",
+      "publication": "中华消化杂志 2022年第42卷第11期",
+      "year": 2022,
+      "category": "消化系统",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-GAST-2022-01.md",
+      "key_scope": "含铋剂四联（PPI/P-CAB + 铋剂 + 2种抗生素）标准14天首选根除方案，抗生素耐药特征，13C/14C尿素呼气试验（UBT）停药4周复查金标准",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-CARD-2019-03",
+      "title": "中国急性ST段抬高型心肌梗死诊断和治疗指南",
+      "authority": "中华医学会心血管病学分会 / 中华心血管病杂志编辑委员会",
+      "publication": "中华心血管病杂志 2019年第47卷第10期",
+      "year": 2019,
+      "category": "心血管急重症",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-CARD-2019-03.md",
+      "key_scope": "STEMI急诊绿色通道，心电图ST弓背抬高与肌钙蛋白cTn确诊，再灌注直接PCI（D2B<90分钟）为首选，双联抗血小板（阿司匹林+替格瑞洛）强化抗栓与早期他汀降脂",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-NEPH-2024-01",
+      "title": "中国慢性肾脏病早期筛查、诊断及治疗临床实践指南",
+      "authority": "中华医学会肾脏病学分会 / 临床实践指南工作组",
+      "publication": "中华肾脏病杂志 2024/2026年版",
+      "year": 2024,
+      "category": "肾脏内科",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-NEPH-2024-01.md",
+      "key_scope": "CKD病程>3个月诊断标准（eGFR<60或UACR≥30 mg/g），CGA分期（eGFR G1-G5与蛋白尿A1-A3），RAS阻断剂与SGLT2抑制剂/非奈利酮（非甾体MRA）靶器官肾脏保护基石",
+      "status": "active"
+    },
+    {
+      "id": "SRC-NHC-ONC-2024-03",
+      "title": "乳腺癌诊疗指南（2024年版）",
+      "authority": "中华人民共和国国家卫生健康委员会医政司 / 中国临床肿瘤学会 (CSCO)",
+      "publication": "国家卫生健康委官方发文 / 中华肿瘤杂志",
+      "year": 2024,
+      "category": "肿瘤系统",
+      "level": "国家卫生健康委官方诊疗指南",
+      "file_path": "raw/docs/SRC-NHC-ONC-2024-03.md",
+      "key_scope": "乳腺癌四大分子分型（HR+/HER2-、HER2阳性、HER2低表达、三阴性TNBC），抗HER2双靶向新辅助/辅助（曲妥珠单抗+帕妥珠单抗），晚期HR+一线CDK4/6抑制剂联合内分泌治疗，ADC抗体偶联药物应用",
       "status": "active"
     }
   ]

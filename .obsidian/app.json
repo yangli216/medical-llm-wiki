@@ -1,0 +1,9 @@
+{
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "current",
+  "attachmentFolderPath": "raw/assets",
+  "promptDelete": false,
+  "useTab": true,
+  "tabSize": 2,
+  "readableLineLength": true
+}
