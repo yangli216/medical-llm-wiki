@@ -182,26 +182,32 @@ class WikiGraph:
             "orphans": orphans,
         }
 
-    def to_json_graph(self) -> Dict[str, Any]:
+    def to_json_graph(self, include_meta: bool = False) -> Dict[str, Any]:
         """Exports graph in D3/Cytoscape format for web visualization."""
         nodes = []
         links = []
+        filtered_pids = set()
 
         for pid, page in self.pages.items():
+            if not include_meta and page.page_type in ("index", "log"):
+                filtered_pids.add(pid)
+                continue
             nodes.append({
                 "id": pid,
                 "title": page.title,
                 "type": page.page_type,
                 "tags": page.tags,
                 "path": str(page.rel_path),
-                "in_degree": len(self.backlinks.get(pid, [])),
-                "out_degree": len(page.links),
+                "in_degree": len([b for b in self.backlinks.get(pid, []) if b not in filtered_pids]),
+                "out_degree": len([l for l in page.links if self.resolve_link(l) not in filtered_pids]),
             })
 
         for src_id, page in self.pages.items():
+            if src_id in filtered_pids:
+                continue
             for target in page.links:
                 resolved = self.resolve_link(target)
-                if resolved:
+                if resolved and resolved not in filtered_pids:
                     links.append({
                         "source": src_id,
                         "target": resolved,
