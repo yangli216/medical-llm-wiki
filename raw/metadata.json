@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "last_updated": "2026-10-06",
   "sources": [
     {
@@ -192,6 +192,78 @@
       "level": "国家卫生健康委官方诊疗指南",
       "file_path": "raw/docs/SRC-NHC-ONC-2024-03.md",
       "key_scope": "乳腺癌四大分子分型（HR+/HER2-、HER2阳性、HER2低表达、三阴性TNBC），抗HER2双靶向新辅助/辅助（曲妥珠单抗+帕妥珠单抗），晚期HR+一线CDK4/6抑制剂联合内分泌治疗，ADC抗体偶联药物应用",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CSGP-GP-2023-01",
+      "title": "全科医疗服务中以人为中心健康照顾与接诊规范专家共识",
+      "authority": "中华医学会全科医学分会 / 中国医师协会全科医师分会",
+      "publication": "中华全科医师杂志 2023年",
+      "year": 2023,
+      "category": "全科医学服务模式",
+      "level": "国家权威专科共识",
+      "file_path": "raw/docs/SRC-CSGP-GP-2023-01.md",
+      "key_scope": "全科医疗五大核心特征（首诊负责、持续性、综合性、协调性、人性化），BATHE问诊技巧，生物-心理-社会医学模式，SOAP全科病历书写规范，生活方式处方",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CSGP-GERI-2023-02",
+      "title": "基层医疗卫生机构老年人多重用药与慢病共病全科安全管理指南",
+      "authority": "中华医学会全科医学分会 / 中华医学会老年医学分会 / 《中华全科医师杂志》编辑委员会",
+      "publication": "中华全科医师杂志 2023年第22卷",
+      "year": 2023,
+      "category": "全科与老年医学",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CSGP-GERI-2023-02.md",
+      "key_scope": "多重用药（>=5种药物）筛查与风险评估，中国版老年人潜在不适当用药目录（PIM），Beers标准与STOPP/START标准，处方精简（Deprescribing）五步法，处方瀑布识别",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CSGP-SYMP-2020-01",
+      "title": "头晕/眩晕基层诊疗指南（2020年）",
+      "authority": "中华医学会全科医学分会 / 中华医学会神经病学分会 / 《中华全科医师杂志》",
+      "publication": "中华全科医师杂志 2020年第19卷第5期",
+      "year": 2020,
+      "category": "全科常见症状排查",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CSGP-SYMP-2020-01.md",
+      "key_scope": "全科头晕/眩晕/晕厥前兆鉴别，良性阵发性位置性眩晕（BPPV耳石症）Dix-Hallpike试验与Epley手法复位，HINTS三步床旁检查（头脉冲-眼震-偏斜测试）排查后循环缺血卒中，急危重症红旗征",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CSGP-SYMP-2021-02",
+      "title": "慢性咳嗽基层诊疗指南（2021年）",
+      "authority": "中华医学会全科医学分会 / 中华医学会呼吸病学分会哮喘学组 / 《中华全科医师杂志》",
+      "publication": "中华全科医师杂志 2021年第20卷第4期",
+      "year": 2021,
+      "category": "全科常见症状排查",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CSGP-SYMP-2021-02.md",
+      "key_scope": "咳嗽病程>8周未分化咳嗽全科解剖学诊断路径，四大核心病因（CVA、UACS、EB、GERC），ACEI药物性咳嗽排查，阶梯式经验性治疗与转诊时机",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CSGP-MSK-2023-01",
+      "title": "非特异性腰痛基层全科诊疗与康复管理指南",
+      "authority": "中华医学会全科医学分会 / 中华医学会骨科学分会",
+      "publication": "中华全科医师杂志 2023年",
+      "year": 2023,
+      "category": "全科骨骼肌肉问题",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CSGP-MSK-2023-01.md",
+      "key_scope": "基层非特异性腰痛（NLBP）评估，红旗征（Red Flags：马尾综合征、肿瘤、感染、骨折）紧急排除，黄旗征（心理社会因素）筛查，非药物运动治疗与阶梯镇痛，生活方式处方",
+      "status": "active"
+    },
+    {
+      "id": "SRC-NHC-PRIM-2022-01",
+      "title": "基层医疗卫生机构急危重症早期识别与双向转诊规范",
+      "authority": "中华人民共和国国家卫生健康委员会基层卫生健康司 / 中华医学会全科医学分会",
+      "publication": "国家卫生健康委官方发文 / 中华全科医师杂志",
+      "year": 2022,
+      "category": "分级诊疗与急诊分流",
+      "level": "国家卫生健康委官方规范",
+      "file_path": "raw/docs/SRC-NHC-PRIM-2022-01.md",
+      "key_scope": "全科守门人分级诊疗职责，国家早期预警评分（NEWS/MEWS），胸痛、急性呼吸困难、突发意识障碍、休克基层就地初期复苏与“绿色通道”上转标准，大医院病情稳定期下转闭环",
       "status": "active"
     }
   ]
