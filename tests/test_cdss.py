@@ -27,7 +27,7 @@ class TestCdssEngine(unittest.TestCase):
     def test_load_all_protocols(self):
         repo = self.engine.repo
         protocols = repo.list_all()
-        self.assertEqual(len(protocols), 18)
+        self.assertEqual(len(protocols), 23)
 
         htn = repo.get("PROT-HTN-001")
         self.assertIsNotNone(htn)
@@ -45,6 +45,11 @@ class TestCdssEngine(unittest.TestCase):
         self.assertIsNotNone(repo.get("PROT-AR-016"))
         self.assertIsNotNone(repo.get("PROT-ANX-017"))
         self.assertIsNotNone(repo.get("PROT-TCM-018"))
+        self.assertIsNotNone(repo.get("PROT-INSOM-019"))
+        self.assertIsNotNone(repo.get("PROT-MIGR-020"))
+        self.assertIsNotNone(repo.get("PROT-OSTEO-021"))
+        self.assertIsNotNone(repo.get("PROT-DRYEYE-022"))
+        self.assertIsNotNone(repo.get("PROT-CONSTIP-023"))
 
     def test_search_protocols(self):
         # 1. Search by condition
@@ -76,6 +81,21 @@ class TestCdssEngine(unittest.TestCase):
         matches_herpes = self.engine.search_protocols("带状疱疹", limit=1)
         self.assertGreater(len(matches_herpes), 0)
         self.assertEqual(matches_herpes[0]["protocolId"], "PROT-HERPES-015")
+
+        # 7. Search by migraine
+        matches_migr = self.engine.search_protocols("偏头痛", limit=1)
+        self.assertGreater(len(matches_migr), 0)
+        self.assertEqual(matches_migr[0]["protocolId"], "PROT-MIGR-020")
+
+        # 8. Search by osteoporosis
+        matches_osteo = self.engine.search_protocols("骨质疏松", limit=1)
+        self.assertGreater(len(matches_osteo), 0)
+        self.assertEqual(matches_osteo[0]["protocolId"], "PROT-OSTEO-021")
+
+        # 9. Search by dry eye
+        matches_dry = self.engine.search_protocols("干眼症", limit=1)
+        self.assertGreater(len(matches_dry), 0)
+        self.assertEqual(matches_dry[0]["protocolId"], "PROT-DRYEYE-022")
 
     def test_rhn_plan_intent_contract(self):
         compiled = self.engine.compile_rhn_plan("2型糖尿病")
@@ -185,6 +205,26 @@ class TestCdssEngine(unittest.TestCase):
         res_herpes_val = self.engine.audit_prescription(["盐酸伐昔洛韦片 0.5g"], {"egfr": 35})
         self.assertTrue(res_herpes_val["is_safe"])
         self.assertTrue(any(a["ruleId"] == "RULE-HERPES-VALACYCLOVIR-RENAL" for a in res_herpes_val["alerts"]))
+
+        # 13. Triptan in CAD patient (Red Alert)
+        res_triptan_cad = self.engine.audit_prescription(["佐米曲普坦片 2.5mg"], {"history": "既往冠心病陈旧性心肌梗死史"})
+        self.assertFalse(res_triptan_cad["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-MIGR-TRIPTAN-CARDIOVASCULAR" for a in res_triptan_cad["alerts"]))
+
+        # 14. Bisphosphonate in severe renal impairment eGFR < 35 (Red Alert)
+        res_osteo_renal = self.engine.audit_prescription(["阿仑膦酸钠片 70mg"], {"egfr": 28})
+        self.assertFalse(res_osteo_renal["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-OSTEO-BISPHOSPHONATE-RENAL" for a in res_osteo_renal["alerts"]))
+
+        # 15. Stimulant laxative alert (Yellow Alert)
+        res_stim_lax = self.engine.audit_prescription(["番泻叶颗粒", "比沙可啶肠溶片 5mg"])
+        self.assertTrue(res_stim_lax["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-CONSTIP-STIMULANT-LAXATIVE" for a in res_stim_lax["alerts"]))
+
+        # 16. Pure dry eye with antibiotic eyedrops misuse (Red Alert)
+        res_dry_abx = self.engine.audit_prescription(["左氧氟沙星滴眼液", "玻璃酸钠滴眼液"], {"diagnosis": "双眼干眼症"})
+        self.assertFalse(res_dry_abx["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-DRYEYE-ANTIBIOTIC-MISUSE" for a in res_dry_abx["alerts"]))
 
     def test_http_api_endpoints(self):
         server_thread = threading.Thread(target=run_server, kwargs={"port": 8789}, daemon=True)

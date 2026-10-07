@@ -334,6 +334,59 @@ class CdssEngine:
             except (ValueError, TypeError):
                 pass
 
+        # Rule 15: Triptans in Ischemic Cardiovascular/Cerebrovascular Disease
+        has_triptan = any(x in meds_text for x in ["曲普坦", "佐米曲普坦", "利扎曲普坦", "舒马曲普坦"])
+        history_text = str(profile.get("history", "") or profile.get("disease", "") or "").lower()
+        has_cvd = any(k in history_text for k in ["冠心病", "心绞痛", "心肌梗死", "脑梗", "脑卒中", "tia", "缺血性", "高血压"]) or bool(profile.get("has_cad") or profile.get("has_stroke"))
+        if has_triptan and has_cvd:
+            alerts.append({
+                "ruleId": "RULE-MIGR-TRIPTAN-CARDIOVASCULAR",
+                "severity": "RED",
+                "title": "缺血性心脑血管疾病严禁使用曲普坦类",
+                "message": "曲普坦类具有强效外周及冠状动脉收缩作用，患有冠心病、心绞痛、心肌梗死史、脑卒中/TIA 或未控制高血压者绝对禁用！可诱发严重冠脉痉挛导致心肌梗死或心律失常猝死。",
+                "guideline": "《中国偏头痛诊治指南（2022版）》",
+            })
+
+        # Rule 16: Bisphosphonates in Severe Renal Impairment (eGFR < 35)
+        has_bisphosphonate = any(x in meds_text for x in ["阿仑膦酸", "唑来膦酸", "利塞膦酸", "依班膦酸"])
+        if has_bisphosphonate and egfr is not None:
+            try:
+                egfr_val = float(egfr)
+                if egfr_val < 35:
+                    alerts.append({
+                        "ruleId": "RULE-OSTEO-BISPHOSPHONATE-RENAL",
+                        "severity": "RED",
+                        "title": "重度肾功能不全禁用双膦酸盐类抗骨吸收药物",
+                        "message": f"患者 eGFR = {egfr_val} ml/min/1.73m² (< 35)，双膦酸盐完全经肾小球滤过与肾小管排泄，重度肾损伤蓄积可诱发急性肾小管坏死及不可逆肾衰竭！绝对禁用，推荐换用地舒单抗或活性维生素D。",
+                        "guideline": "《原发性骨质疏松症诊疗指南（2022）》",
+                    })
+            except (ValueError, TypeError):
+                pass
+
+        # Rule 17: Stimulant laxative overuse alert
+        has_stimulant_lax = any(x in meds_text for x in ["番泻叶", "大黄苏打", "比沙可啶", "酚酞", "芦荟胶囊"])
+        if has_stimulant_lax:
+            alerts.append({
+                "ruleId": "RULE-CONSTIP-STIMULANT-LAXATIVE",
+                "severity": "YELLOW",
+                "title": "刺激性泻药长期使用警戒（结肠黑变病与神经损伤风险）",
+                "message": "番泻叶、比沙可啶等刺激性泻药仅限短期（≤1周）临时备用；长期大剂量使用可导致结肠平滑肌肌间神经丛变性坏死及结肠黑变病，门诊慢性便秘推荐换用渗透性（聚乙二醇/乳果糖）或容积性泻药。",
+                "guideline": "《慢性便秘基层诊疗指南（2020年）》",
+            })
+
+        # Rule 18: Pure dry eye with antibiotic eye drops misuse
+        is_dry_eye = any(k in str(profile.get("diagnosis", "")).lower() for k in ["干眼", "角结膜干燥"])
+        has_abx_eyedrop = any(x in meds_text for x in ["左氧氟沙星滴眼液", "妥布霉素滴眼液", "氯霉素滴眼液", "加替沙星滴眼液"])
+        if is_dry_eye and has_abx_eyedrop:
+            alerts.append({
+                "ruleId": "RULE-DRYEYE-ANTIBIOTIC-MISUSE",
+                "severity": "RED",
+                "title": "单纯干眼症严禁经验性滥用抗生素滴眼液",
+                "message": "单纯干眼症系非感染性眼表泪膜稳态破坏，无化脓性感染证据严禁使用抗生素眼药水！不仅无效，而且会破坏眼表正常微生物群并诱发耐药性与角膜上皮毒性。",
+                "guideline": "《中国干眼专家共识（2020年）》",
+            })
+
+
 
         return {
             "is_safe": len([a for a in alerts if a["severity"] == "RED"]) == 0,
