@@ -27,7 +27,7 @@ class TestCdssEngine(unittest.TestCase):
     def test_load_all_protocols(self):
         repo = self.engine.repo
         protocols = repo.list_all()
-        self.assertEqual(len(protocols), 23)
+        self.assertEqual(len(protocols), 25)
 
         htn = repo.get("PROT-HTN-001")
         self.assertIsNotNone(htn)
@@ -50,6 +50,8 @@ class TestCdssEngine(unittest.TestCase):
         self.assertIsNotNone(repo.get("PROT-OSTEO-021"))
         self.assertIsNotNone(repo.get("PROT-DRYEYE-022"))
         self.assertIsNotNone(repo.get("PROT-CONSTIP-023"))
+        self.assertIsNotNone(repo.get("PROT-PED-024"))
+        self.assertIsNotNone(repo.get("PROT-PED-025"))
 
     def test_search_protocols(self):
         # 1. Search by condition
@@ -96,6 +98,16 @@ class TestCdssEngine(unittest.TestCase):
         matches_dry = self.engine.search_protocols("干眼症", limit=1)
         self.assertGreater(len(matches_dry), 0)
         self.assertEqual(matches_dry[0]["protocolId"], "PROT-DRYEYE-022")
+
+        # 10. Search by pediatric mycoplasma pneumonia
+        matches_mpp = self.engine.search_protocols("支原体肺炎", limit=1)
+        self.assertGreater(len(matches_mpp), 0)
+        self.assertEqual(matches_mpp[0]["protocolId"], "PROT-PED-024")
+
+        # 11. Search by childhood asthma
+        matches_asthma = self.engine.search_protocols("儿童哮喘", limit=1)
+        self.assertGreater(len(matches_asthma), 0)
+        self.assertEqual(matches_asthma[0]["protocolId"], "PROT-PED-025")
 
     def test_rhn_plan_intent_contract(self):
         compiled = self.engine.compile_rhn_plan("2型糖尿病")
@@ -225,6 +237,25 @@ class TestCdssEngine(unittest.TestCase):
         res_dry_abx = self.engine.audit_prescription(["左氧氟沙星滴眼液", "玻璃酸钠滴眼液"], {"diagnosis": "双眼干眼症"})
         self.assertFalse(res_dry_abx["is_safe"])
         self.assertTrue(any(a["ruleId"] == "RULE-DRYEYE-ANTIBIOTIC-MISUSE" for a in res_dry_abx["alerts"]))
+
+        # 17. Pediatric Macrolide + QT prolongation drugs (Red Alert)
+        res_ped_qt = self.engine.audit_prescription(["阿奇霉素干混悬剂 0.1g", "多潘立酮片 10mg"], {"age": 7})
+        self.assertFalse(res_ped_qt["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-PED-MACROLIDE-QT" for a in res_ped_qt["alerts"]))
+
+        # 18. Pediatric Tetracycline <8 years without and with off-label consent
+        res_ped_tetra_no = self.engine.audit_prescription(["盐酸多西环素片 0.1g"], {"age": 6})
+        self.assertFalse(res_ped_tetra_no["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-PED-TETRACYCLINE-AGE" for a in res_ped_tetra_no["alerts"]))
+
+        res_ped_tetra_yes = self.engine.audit_prescription(["盐酸多西环素片 0.1g"], {"age": 6, "off_label_consent": True})
+        self.assertTrue(res_ped_tetra_yes["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-PED-TETRACYCLINE-AGE" for a in res_ped_tetra_yes["alerts"]))
+
+        # 19. Pediatric Asthma with oral SABA or oral systemic steroid (Red Alert)
+        res_ped_asthma = self.engine.audit_prescription(["硫酸沙丁胺醇片 2mg"], {"age": 8, "diagnosis": "支气管哮喘"})
+        self.assertFalse(res_ped_asthma["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-PED-ASTHMA-ORAL-STEROID" for a in res_ped_asthma["alerts"]))
 
     def test_http_api_endpoints(self):
         server_thread = threading.Thread(target=run_server, kwargs={"port": 8789}, daemon=True)

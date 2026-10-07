@@ -386,6 +386,64 @@ class CdssEngine:
                 "guideline": "《中国干眼专家共识（2020年）》",
             })
 
+        # Rule 19: Pediatric Macrolide + QT prolongation drugs / QT history
+        has_macrolide = any(x in meds_text for x in ["阿奇霉素", "克拉霉素", "红霉素", "罗红霉素"])
+        has_qt_drugs = any(x in meds_text for x in ["多潘立酮", "昂丹司琼", "西沙必利", "胺碘酮", "索他洛尔", "喹尼丁", "特非那定"])
+        has_qt_risk = any(k in history_text for k in ["qt延长", "长qt", "心律失常", "尖端扭转"]) or bool(profile.get("has_long_qt"))
+        if has_macrolide and (has_qt_drugs or has_qt_risk):
+            alerts.append({
+                "ruleId": "RULE-PED-MACROLIDE-QT",
+                "severity": "RED",
+                "title": "大环内酯类合并延长 QT 间期药物/心律失常风险强阻断",
+                "message": "阿奇霉素等大环内酯类药物可抑制心肌复极延迟心电图 QT 间期。合用多潘立酮/昂丹司琼或心律失常体质者可协同显著延长 QTc，极易诱发致命性尖端扭转型室性心动过速（TdP）及心室颤动！绝对禁止联合使用。",
+                "guideline": "《儿童肺炎支原体肺炎诊疗指南（2023年版）》与国家药监局大环内酯类心脏安全性警示",
+            })
+
+        # Rule 20: Pediatric Tetracyclines (<8 years off-label boundary)
+        has_tetracycline = any(x in meds_text for x in ["多西环素", "米诺环素", "四环素", "美他环素"])
+        if has_tetracycline and age is not None:
+            try:
+                age_val = int(age)
+                if age_val < 8:
+                    has_consent = bool(profile.get("off_label_consent") or profile.get("informed_consent"))
+                    if has_consent:
+                        alerts.append({
+                            "ruleId": "RULE-PED-TETRACYCLINE-AGE",
+                            "severity": "YELLOW",
+                            "title": "8岁以下儿童使用新型四环素类超说明书告知与监测",
+                            "message": f"患者年龄 {age_val} 岁 (<8)，多西环素/米诺环素用于大环内酯耐药重症支原体肺炎属于超说明书用药。已记录监护人知情同意，请严格按照指南疗程用药，并密切监测牙齿黄染釉质发育及胃肠道反应。",
+                            "guideline": "《儿童肺炎支原体肺炎诊疗指南（2023年版）》",
+                        })
+                    else:
+                        alerts.append({
+                            "ruleId": "RULE-PED-TETRACYCLINE-AGE",
+                            "severity": "RED",
+                            "title": "8岁以下儿童禁用四环素类（牙釉质发育不全与骨生长发育毒性）",
+                            "message": f"患者年龄 {age_val} 岁 (<8)，四环素类与钙离子螯合沉积于牙齿和骨骼，可导致永久性牙齿黄染、牙釉质发育不良及骨生长抑制！除耐药重症充分知情同意外，常规门诊严禁处方。",
+                            "guideline": "《儿童肺炎支原体肺炎诊疗指南（2023年版）》",
+                        })
+            except (ValueError, TypeError):
+                pass
+
+        # Rule 21: Pediatric Asthma - Avoid oral SABA monotherapy or systemic steroids long-term
+        diag_text = str(profile.get("diagnosis", "")).lower()
+        is_asthma = any(k in diag_text for k in ["哮喘", "喘息"]) or any(k in history_text for k in ["哮喘"])
+        has_oral_saba = any(x in meds_text for x in ["沙丁胺醇片", "沙丁胺醇胶囊", "特布他林片"])
+        has_oral_steroid = any(x in meds_text for x in ["泼尼松片", "强的松片", "地塞米松片", "甲泼尼龙片"])
+        if is_asthma and (has_oral_saba or has_oral_steroid) and age is not None:
+            try:
+                if int(age) < 18:
+                    alerts.append({
+                        "ruleId": "RULE-PED-ASTHMA-ORAL-STEROID",
+                        "severity": "RED",
+                        "title": "儿童哮喘维持期严禁常规口服短效舒张剂或无指征口服激素",
+                        "message": "儿童支气管哮喘控制基石为吸入性糖皮质激素（ICS），严禁长期规律单用口服沙丁胺醇等 SABA（可引起受体下调和气道反应性反跳增加死亡风险），且严禁常规门诊长期口服泼尼松等全身激素作为维持治疗（严重抑制骨骼生长发育及肾上腺皮质轴）！",
+                        "guideline": "《儿童支气管哮喘诊断与防治指南（2020年版）》",
+                    })
+            except (ValueError, TypeError):
+                pass
+
+
 
 
         return {
