@@ -443,6 +443,65 @@ class CdssEngine:
             except (ValueError, TypeError):
                 pass
 
+        # Rule 22: Clopidogrel + CYP2C19-inhibiting PPIs (Omeprazole/Esomeprazole)
+        has_clopidogrel = any(x in meds_text for x in ["氯吡格雷", "波立维", "泰嘉"])
+        has_cyp2c19_ppi = any(x in meds_text for x in ["奥美拉唑", "艾司奥美拉唑", "埃索美拉唑"])
+        if has_clopidogrel and has_cyp2c19_ppi:
+            alerts.append({
+                "ruleId": "RULE-GERD-PPI-CLOPIDOGREL",
+                "severity": "RED",
+                "title": "严禁氯吡格雷联合奥美拉唑/艾司奥美拉唑（支架内急性血栓风险）",
+                "message": "奥美拉唑及艾司奥美拉唑对肝药酶 CYP2C19 具有强竞争性抑制作用，与氯吡格雷合用时阻断其转化为活性抗血小板代谢产物，显著增加心肌梗死、支架内血栓及心血管死亡风险！绝对禁止联合处方，推荐换用对 CYP2C19 影响极小的雷贝拉唑或泮托拉唑。",
+                "guideline": "《2020年中国胃食管反流病专家共识》与国家药监局氯吡格雷安全警示",
+            })
+
+        # Rule 23: Statin + Gemfibrozil (Severe Rhabdomyolysis)
+        has_statin = any(x in meds_text for x in ["他汀", "阿托伐他汀", "瑞舒伐他汀", "辛伐他汀", "普伐他汀", "氟伐他汀", "匹伐他汀"])
+        has_gemfibrozil = any(x in meds_text for x in ["吉非罗齐", "诺衡"])
+        if has_statin and has_gemfibrozil:
+            alerts.append({
+                "ruleId": "RULE-LIPID-STATIN-GEMFIBROZIL",
+                "severity": "RED",
+                "title": "致命横纹肌溶解：严禁他汀类与吉非罗齐联合处方",
+                "message": "吉非罗齐强效抑制他汀类药物的葡萄糖醛酸化清除代谢途径，使他汀血药浓度急剧暴增数倍，诱发致死性急性横纹肌溶解综合征、肌红蛋白尿及急性肾衰竭！绝对禁止联合使用，若高甘油三酯血症需联用贝特类首选非诺贝特。",
+                "guideline": "《中国血脂管理指南（2023年）》",
+            })
+
+        # Rule 24: Nitrofurantoin in severe renal impairment (eGFR < 30)
+        has_nitrofurantoin = any(x in meds_text for x in ["呋喃妥因", "呋喃咀啶"])
+        if has_nitrofurantoin and egfr is not None:
+            try:
+                egfr_val = float(egfr)
+                if egfr_val < 30:
+                    alerts.append({
+                        "ruleId": "RULE-UTI-NITROFURANTOIN-RENAL",
+                        "severity": "RED",
+                        "title": "重度肾功能不全禁用呋喃妥因（治疗无效与神经肺毒性）",
+                        "message": f"患者 eGFR = {egfr_val} ml/min/1.73m² (< 30)，呋喃妥因无法正常滤过排泄至尿液导致尿液杀菌浓度不足（治疗无效），且药物在血液组织中严重蓄积可诱发不可逆外周神经病变与严重肺纤维化毒性！绝对禁用，推荐换用头孢克肟等药物。",
+                        "guideline": "《尿路感染基层合理用药指南（2021年）》",
+                    })
+            except (ValueError, TypeError):
+                pass
+
+        # Rule 25: Statin in active hepatic disease or ALT/AST > 3x ULN
+        is_active_hepatic = any(k in history_text for k in ["活动性肝炎", "肝衰竭", "失代偿期肝硬化", "肝功能衰竭"]) or bool(profile.get("alt_above_3x") or profile.get("ast_above_3x"))
+        alt_val = profile.get("alt")
+        alt_high = False
+        if alt_val is not None:
+            try:
+                alt_high = float(alt_val) >= 120
+            except (ValueError, TypeError):
+                pass
+        if has_statin and (is_active_hepatic or alt_high):
+            alerts.append({
+                "ruleId": "RULE-LIPID-STATIN-HEPATIC",
+                "severity": "RED",
+                "title": "活动性肝病或转氨酶显著升高禁用他汀类",
+                "message": "患者存在活动性肝病或血清转氨酶 ALT/AST 持续升高达正常上限 3 倍以上，此时开具他汀类药物可加剧急性肝细胞损伤与药物性肝衰竭！严禁处方全量他汀，须暂停用药并积极保肝复查。",
+                "guideline": "《中国血脂管理指南（2023年）》",
+            })
+
+
 
 
 

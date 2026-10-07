@@ -27,7 +27,7 @@ class TestCdssEngine(unittest.TestCase):
     def test_load_all_protocols(self):
         repo = self.engine.repo
         protocols = repo.list_all()
-        self.assertEqual(len(protocols), 25)
+        self.assertEqual(len(protocols), 28)
 
         htn = repo.get("PROT-HTN-001")
         self.assertIsNotNone(htn)
@@ -52,6 +52,9 @@ class TestCdssEngine(unittest.TestCase):
         self.assertIsNotNone(repo.get("PROT-CONSTIP-023"))
         self.assertIsNotNone(repo.get("PROT-PED-024"))
         self.assertIsNotNone(repo.get("PROT-PED-025"))
+        self.assertIsNotNone(repo.get("PROT-GERD-026"))
+        self.assertIsNotNone(repo.get("PROT-LIPID-027"))
+        self.assertIsNotNone(repo.get("PROT-UTI-028"))
 
     def test_search_protocols(self):
         # 1. Search by condition
@@ -108,6 +111,21 @@ class TestCdssEngine(unittest.TestCase):
         matches_asthma = self.engine.search_protocols("儿童哮喘", limit=1)
         self.assertGreater(len(matches_asthma), 0)
         self.assertEqual(matches_asthma[0]["protocolId"], "PROT-PED-025")
+
+        # 12. Search by GERD
+        matches_gerd = self.engine.search_protocols("胃食管反流病", limit=1)
+        self.assertGreater(len(matches_gerd), 0)
+        self.assertEqual(matches_gerd[0]["protocolId"], "PROT-GERD-026")
+
+        # 13. Search by dyslipidemia
+        matches_lipid = self.engine.search_protocols("高脂血症", limit=1)
+        self.assertGreater(len(matches_lipid), 0)
+        self.assertEqual(matches_lipid[0]["protocolId"], "PROT-LIPID-027")
+
+        # 14. Search by UTI
+        matches_uti = self.engine.search_protocols("急性膀胱炎", limit=1)
+        self.assertGreater(len(matches_uti), 0)
+        self.assertEqual(matches_uti[0]["protocolId"], "PROT-UTI-028")
 
     def test_rhn_plan_intent_contract(self):
         compiled = self.engine.compile_rhn_plan("2型糖尿病")
@@ -256,6 +274,26 @@ class TestCdssEngine(unittest.TestCase):
         res_ped_asthma = self.engine.audit_prescription(["硫酸沙丁胺醇片 2mg"], {"age": 8, "diagnosis": "支气管哮喘"})
         self.assertFalse(res_ped_asthma["is_safe"])
         self.assertTrue(any(a["ruleId"] == "RULE-PED-ASTHMA-ORAL-STEROID" for a in res_ped_asthma["alerts"]))
+
+        # 20. Clopidogrel + Esomeprazole (Red Alert)
+        res_clopi_ppi = self.engine.audit_prescription(["硫酸氢氯吡格雷片 75mg", "艾司奥美拉唑镁肠溶胶囊 20mg"])
+        self.assertFalse(res_clopi_ppi["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-GERD-PPI-CLOPIDOGREL" for a in res_clopi_ppi["alerts"]))
+
+        # 21. Statin + Gemfibrozil (Red Alert)
+        res_statin_gem = self.engine.audit_prescription(["阿托伐他汀钙片 20mg", "吉非罗齐胶囊 0.3g"])
+        self.assertFalse(res_statin_gem["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-LIPID-STATIN-GEMFIBROZIL" for a in res_statin_gem["alerts"]))
+
+        # 22. Nitrofurantoin with eGFR < 30 (Red Alert)
+        res_nitro_renal = self.engine.audit_prescription(["呋喃妥因肠溶片 50mg"], {"egfr": 22})
+        self.assertFalse(res_nitro_renal["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-UTI-NITROFURANTOIN-RENAL" for a in res_nitro_renal["alerts"]))
+
+        # 23. Statin with marked ALT elevation (Red Alert)
+        res_statin_alt = self.engine.audit_prescription(["阿托伐他汀钙片 20mg"], {"alt": 160})
+        self.assertFalse(res_statin_alt["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-LIPID-STATIN-HEPATIC" for a in res_statin_alt["alerts"]))
 
     def test_http_api_endpoints(self):
         server_thread = threading.Thread(target=run_server, kwargs={"port": 8789}, daemon=True)
