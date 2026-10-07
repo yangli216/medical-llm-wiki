@@ -27,7 +27,7 @@ class TestCdssEngine(unittest.TestCase):
     def test_load_all_protocols(self):
         repo = self.engine.repo
         protocols = repo.list_all()
-        self.assertEqual(len(protocols), 31)
+        self.assertEqual(len(protocols), 35)
 
         htn = repo.get("PROT-HTN-001")
         self.assertIsNotNone(htn)
@@ -58,6 +58,10 @@ class TestCdssEngine(unittest.TestCase):
         self.assertIsNotNone(repo.get("PROT-GYN-029"))
         self.assertIsNotNone(repo.get("PROT-THY-030"))
         self.assertIsNotNone(repo.get("PROT-TONSIL-031"))
+        self.assertIsNotNone(repo.get("PROT-KOA-032"))
+        self.assertIsNotNone(repo.get("PROT-URT-033"))
+        self.assertIsNotNone(repo.get("PROT-BPH-034"))
+        self.assertIsNotNone(repo.get("PROT-RABIES-035"))
 
     def test_search_protocols(self):
         # 1. Search by condition
@@ -144,6 +148,26 @@ class TestCdssEngine(unittest.TestCase):
         matches_tonsil = self.engine.search_protocols("急性扁桃体炎", limit=1)
         self.assertGreater(len(matches_tonsil), 0)
         self.assertEqual(matches_tonsil[0]["protocolId"], "PROT-TONSIL-031")
+
+        # 18. Search by Knee Osteoarthritis
+        matches_koa = self.engine.search_protocols("膝骨关节炎", limit=1)
+        self.assertGreater(len(matches_koa), 0)
+        self.assertEqual(matches_koa[0]["protocolId"], "PROT-KOA-032")
+
+        # 19. Search by Urticaria
+        matches_urt = self.engine.search_protocols("荨麻疹", limit=1)
+        self.assertGreater(len(matches_urt), 0)
+        self.assertEqual(matches_urt[0]["protocolId"], "PROT-URT-033")
+
+        # 20. Search by BPH
+        matches_bph = self.engine.search_protocols("前列腺增生", limit=1)
+        self.assertGreater(len(matches_bph), 0)
+        self.assertEqual(matches_bph[0]["protocolId"], "PROT-BPH-034")
+
+        # 21. Search by Rabies Exposure
+        matches_rabies = self.engine.search_protocols("狂犬病", limit=1)
+        self.assertGreater(len(matches_rabies), 0)
+        self.assertEqual(matches_rabies[0]["protocolId"], "PROT-RABIES-035")
 
     def test_rhn_plan_intent_contract(self):
         compiled = self.engine.compile_rhn_plan("2型糖尿病")
@@ -332,6 +356,34 @@ class TestCdssEngine(unittest.TestCase):
         res_pen_allergy = self.engine.audit_prescription(["阿莫西林胶囊 0.5g"], {"allergy": "青霉素过敏史"})
         self.assertFalse(res_pen_allergy["is_safe"])
         self.assertTrue(any(a["ruleId"] == "RULE-ALLERGY-PENICILLIN" for a in res_pen_allergy["alerts"]))
+
+        # 28. KOA + Systemic Steroids (Red Alert)
+        res_koa_steroid = self.engine.audit_prescription(["醋酸地塞米松片 0.75mg"], {"disease": "双膝骨关节炎"})
+        self.assertFalse(res_koa_steroid["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-KOA-SYSTEMIC-STEROID" for a in res_koa_steroid["alerts"]))
+
+        # 29. Elderly + 1st Generation Antihistamine (Yellow Alert)
+        res_elder_antihist = self.engine.audit_prescription(["马来酸氯苯那敏片 4mg"], {"age": 70})
+        self.assertTrue(res_elder_antihist["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-ANTIHISTAMINE-ELDERLY" for a in res_elder_antihist["alerts"]))
+
+        # 30. BPH + Anticholinergic drugs (Red Alert)
+        res_bph_antichol = self.engine.audit_prescription(["消旋山莨菪碱片 5mg"], {"history": "良性前列腺增生伴排尿困难"})
+        self.assertFalse(res_bph_antichol["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-BPH-ANTICHOLINERGIC" for a in res_bph_antichol["alerts"]))
+
+        # 31. Rabies Grade III missing HRIG (Red Alert)
+        res_rabies_no_hrig = self.engine.audit_prescription(["人用狂犬病疫苗 0.5ml"], {"history": "被狗咬伤出血，明确III级暴露"})
+        self.assertFalse(res_rabies_no_hrig["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-RABIES-III-PASSIVE-IMMUNITY" for a in res_rabies_no_hrig["alerts"]))
+
+        # 32. Rabies Grade III with HRIG (Safe from missing HRIG)
+        res_rabies_with_hrig = self.engine.audit_prescription(["人用狂犬病疫苗 0.5ml", "狂犬病人免疫球蛋白 200IU"], {"history": "被狗咬伤出血，明确III级暴露"})
+        self.assertFalse(any(a["ruleId"] == "RULE-RABIES-III-PASSIVE-IMMUNITY" for a in res_rabies_with_hrig["alerts"]))
+
+        # 33. Dirty wound missing Tetanus (Yellow Alert)
+        res_dirty_tetanus = self.engine.audit_prescription(["双氯芬酸钠贴膏"], {"history": "生锈铁钉刺伤"})
+        self.assertTrue(any(a["ruleId"] == "RULE-TETANUS-DEEP-DIRTY" for a in res_dirty_tetanus["alerts"]))
 
     def test_http_api_endpoints(self):
         server_thread = threading.Thread(target=run_server, kwargs={"port": 8789}, daemon=True)

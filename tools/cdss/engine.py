@@ -38,6 +38,12 @@ class CdssEngine:
             "阴道炎": ["外阴阴道假丝酵母菌病", "细菌性阴道病", "滴虫阴道炎"],
             "尿路感染": ["急性单纯性尿路感染", "急性膀胱炎"],
             "反流": ["胃食管反流", "胃食管反流病"],
+            "膝骨关节炎": ["骨关节炎", "退行性膝关节炎", "膝关节炎"],
+            "骨关节炎": ["膝骨关节炎", "膝关节退变"],
+            "荨麻疹": ["风疹块", "过敏性风团", "急性荨麻疹"],
+            "前列腺增生": ["良性前列腺增生", "前列腺肥大", "bph"],
+            "狂犬病": ["狂犬病暴露", "动物致伤", "犬伤", "动物咬伤"],
+            "犬伤": ["狂犬病暴露", "动物致伤与犬伤暴露"],
         }
         for k, syn_list in synonyms_map.items():
             if k in q:
@@ -570,6 +576,78 @@ class CdssEngine:
                 "title": "青霉素过敏史患者严禁使用青霉素类药物（致死性过敏性休克风险）",
                 "message": "患者明确记录有青霉素过敏史或皮试阳性，严禁处方阿莫西林或青霉素类药物！强行使用可诱发急性喉头水肿、支气管痉挛及严重过敏性休克致死！推荐换用头孢菌素或大环内酯类。",
                 "guideline": "《急性咽峡炎/扁桃体炎基层诊疗指南（2020年）》与国家药典临床用药须知",
+            })
+
+        # Rule 30: Knee Osteoarthritis with Systemic Corticosteroids (Accelerated Cartilage Destruction)
+        is_koa = any(k in history_text for k in ["膝骨关节炎", "骨关节炎", "退行性关节炎", "膝痛"]) or bool(profile.get("is_koa"))
+        has_systemic_steroid = any(x in meds_text for x in ["泼尼松片", "地塞米松片", "地塞米松磷酸钠注射液", "甲泼尼龙片", "氢化可的松注射液", "倍他米松注射液"])
+        if is_koa and has_systemic_steroid:
+            alerts.append({
+                "ruleId": "RULE-KOA-SYSTEMIC-STEROID",
+                "severity": "RED",
+                "title": "膝骨关节炎严禁常规全身口服或静滴糖皮质激素",
+                "message": "骨关节炎属于非化脓性退行性软骨退变，常规口服或静滴糖皮质激素并不能阻断疾病进展，反而加速关节软骨破坏坏死、诱发股骨头无菌性坏死及全身骨质疏松！绝对禁止系统性使用激素，首选外用或口服非甾体抗炎药。",
+                "guideline": "《膝骨关节炎基层诊疗指南（2019年）》",
+            })
+
+        # Rule 31: 1st Generation Antihistamines in Elderly Patients (Falls & Anticholinergic toxicity)
+        has_first_gen_antihistamine = any(x in meds_text for x in ["氯苯那敏", "扑尔敏", "苯海拉明", "异丙嗪", "赛庚啶"])
+        if is_elderly and has_first_gen_antihistamine:
+            alerts.append({
+                "ruleId": "RULE-ANTIHISTAMINE-ELDERLY",
+                "severity": "YELLOW",
+                "title": "高龄患者避免常规处方第一代中枢镇静抗组胺药",
+                "message": f"患者年龄高龄 (>=65岁)，第一代抗组胺药（扑尔敏、苯海拉明等）具有强脂溶性中枢抑制和抗胆碱能效应，极易引起白天重度嗜睡、步态不稳摔倒骨折及加重老年认知障碍/诱发排尿困难！推荐优先换用第二代非镇静抗组胺药（氯雷他定或左西替利嗪）。",
+                "guideline": "《中国荨麻疹诊疗指南（2022版）》与《老年人多重用药安全管理指南》",
+            })
+
+        # Rule 32: BPH / Severe Lower Urinary Tract Symptoms + Anticholinergic drugs (Acute Urinary Retention)
+        is_bph = any(k in history_text for k in ["前列腺增生", "前列腺肥大", "bph", "排尿困难", "尿潴留"]) or bool(profile.get("is_bph"))
+        has_anticholinergic_drug = any(x in meds_text for x in ["阿托品", "山莨菪碱", "654-2", "东莨菪碱", "颠茄", "奥昔布宁"])
+        if is_bph and has_anticholinergic_drug:
+            alerts.append({
+                "ruleId": "RULE-BPH-ANTICHOLINERGIC",
+                "severity": "RED",
+                "title": "良性前列腺增生患者严禁盲目开具抗胆碱能药物（致急性尿潴留）",
+                "message": "阿托品、消旋山莨菪碱（654-2）等抗胆碱药可强力阻断膀胱逼尿肌 M 受体，导致逼尿肌收缩无力、残余尿量急剧暴增，直接诱发急性尿潴留（AUR）与肾功能损伤！下尿路梗阻患者绝对禁止使用。",
+                "guideline": "《良性前列腺增生基层诊疗指南（2019年）》",
+            })
+
+        # Rule 33: Rabies Grade III Exposure Missing Rabies Immunoglobulin (HRIG)
+        is_rabies_grade3 = any(k in history_text for k in ["iii级", "3级", "出血", "咬伤出血", "肉眼出血", "贯通伤", "黏膜被舔"]) or bool(profile.get("rabies_grade_3") or profile.get("is_rabies_grade_3"))
+        has_rabies_vaccine = any(x in meds_text for x in ["狂犬病疫苗", "狂犬疫苗"])
+        has_rabies_hrig = any(x in meds_text for x in ["狂犬病人免疫球蛋白", "hrig", "抗狂犬病血清"])
+        if is_rabies_grade3 and has_rabies_vaccine and not has_rabies_hrig:
+            alerts.append({
+                "ruleId": "RULE-RABIES-III-PASSIVE-IMMUNITY",
+                "severity": "RED",
+                "title": "狂犬病 III 级出血暴露必须同时开具狂犬病人免疫球蛋白 (HRIG)",
+                "message": "狂犬病发病后致死率几乎 100%！患者存在皮肤贯通出血或黏膜破损，属于狂犬病 III 级暴露。人用狂犬疫苗接种后主动抗体产生需要 7~10 天，在此防御空白期内病毒可侵入外周神经组织！国家规范强制要求必须首剂即刻在伤口周围浸润注射狂犬病人免疫球蛋白（HRIG 20 IU/kg），严禁漏开！",
+                "guideline": "《狂犬病暴露预防处置工作规范（2023年版）》",
+            })
+
+        # Rule 34: Animal bite / Deep dirty wound Missing Tetanus prophylaxis
+        is_dirty_wound = any(k in history_text for k in ["生锈", "铁钉刺伤", "土壤污染", "动物咬伤", "犬咬伤"]) or bool(profile.get("dirty_wound"))
+        has_tetanus_prophylaxis = any(x in meds_text for x in ["破伤风", "tig", "tat"])
+        if is_dirty_wound and not has_tetanus_prophylaxis:
+            alerts.append({
+                "ruleId": "RULE-TETANUS-DEEP-DIRTY",
+                "severity": "YELLOW",
+                "title": "深部污染伤口或动物致伤未评估开具破伤风免疫预防",
+                "message": "患者存在动物咬伤或深部污染创面，属于破伤风梭菌厌氧感染高危创口。必须立即评估患者破伤风免疫史，未在 5~10 年内加强者应及时注射吸附破伤风疫苗（TT）及破伤风人免疫球蛋白（TIG 250 IU）防范破伤风感染。",
+                "guideline": "《非新生儿破伤风诊疗规范（2019年版）》",
+            })
+
+        # Rule 35: BPH Patient on Tamsulosin + Multiple Antihypertensives (Orthostatic Hypotension)
+        has_tamsulosin = any(x in meds_text for x in ["坦索罗辛", "哈乐"])
+        has_multidrug_htn = bool(profile.get("has_cad") or profile.get("orthostatic_hypotension")) or (is_elderly and has_acei and has_ccb)
+        if has_tamsulosin and has_multidrug_htn:
+            alerts.append({
+                "ruleId": "RULE-BPH-HYPOTENSION-TAMSULOSIN",
+                "severity": "YELLOW",
+                "title": "高龄多重降压患者使用坦索罗辛体位性低血压晕厥警戒",
+                "message": "坦索罗辛具有血管平滑肌松弛作用，与多种降压药物合用易发生叠加扩张效应，导致老年人夜间起床排尿时发生严重体位性低血压、晕厥与摔倒！必须指导每晚临睡前服药，起床排尿时缓慢起身。",
+                "guideline": "《良性前列腺增生基层诊疗指南（2019年）》",
             })
 
 
