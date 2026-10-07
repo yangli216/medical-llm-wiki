@@ -741,7 +741,7 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
 
         if path in ("/v1/chat/completions", "/chat/completions"):
             self._handle_chat_completions(payload)
-        elif path == "/api/knowledge/search":
+        elif path in ("/api/knowledge/search", "/v1/knowledge/pmphai/search"):
             self._handle_knowledge_search(payload)
         elif path == "/api/cdss/compile-rhn-plan":
             query = payload.get("input") or payload.get("naturalInput") or payload.get("protocolId") or ""
