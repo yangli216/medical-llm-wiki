@@ -62,35 +62,49 @@ class WikiPage:
                 self.links.append(clean_lnk)
 
     def _parse_yaml(self, raw_yaml: str) -> None:
-        """Naive but robust YAML frontmatter parser without external dependencies."""
-        current_list_key = None
+        """Robust indentation-aware YAML frontmatter parser supporting nested mappings and lists."""
+        current_parent_key = None
+
         for line in raw_yaml.splitlines():
+            indent = len(line) - len(line.lstrip())
             clean = line.strip()
             if not clean or clean.startswith("#"):
                 continue
 
-            if clean.startswith("- ") and current_list_key:
-                val = clean[2:].strip().strip('"').strip("'")
-                if current_list_key in self.frontmatter and isinstance(self.frontmatter[current_list_key], list):
-                    self.frontmatter[current_list_key].append(val)
-                continue
-
-            if ":" in clean:
-                current_list_key = None
-                key, val = clean.split(":", 1)
-                key = key.strip()
-                val = val.strip().strip('"').strip("'")
-                if not val:
-                    # Could be start of a list
-                    self.frontmatter[key] = []
-                    current_list_key = key
-                else:
-                    # Check inline list [a, b]
-                    if val.startswith("[") and val.endswith("]"):
+            if indent == 0:
+                if ":" in clean:
+                    key, val = clean.split(":", 1)
+                    key = key.strip()
+                    val = val.strip().strip('"').strip("'")
+                    if not val:
+                        self.frontmatter[key] = None
+                        current_parent_key = key
+                    elif val.startswith("[") and val.endswith("]"):
                         items = [x.strip().strip('"').strip("'") for x in val[1:-1].split(",") if x.strip()]
                         self.frontmatter[key] = items
+                        current_parent_key = None
                     else:
                         self.frontmatter[key] = val
+                        current_parent_key = None
+            else:
+                if current_parent_key:
+                    if clean.startswith("- "):
+                        if not isinstance(self.frontmatter.get(current_parent_key), list):
+                            self.frontmatter[current_parent_key] = []
+                        item_val = clean[2:].strip().strip('"').strip("'")
+                        self.frontmatter[current_parent_key].append(item_val)
+                    elif ":" in clean:
+                        if not isinstance(self.frontmatter.get(current_parent_key), dict):
+                            self.frontmatter[current_parent_key] = {}
+                        sub_k, sub_v = clean.split(":", 1)
+                        sub_k = sub_k.strip()
+                        sub_v = sub_v.strip().strip('"').strip("'")
+                        self.frontmatter[current_parent_key][sub_k] = sub_v
+
+        # Clean up any None values
+        for k, v in list(self.frontmatter.items()):
+            if v is None:
+                self.frontmatter[k] = []
 
         self.title = str(self.frontmatter.get("title", ""))
         self.page_type = str(self.frontmatter.get("type", "unclassified"))
@@ -127,14 +141,17 @@ class WikiGraph:
             primary_id = md_path.stem
             self.pages[primary_id] = page
 
-            # Map primary_id and title
+        # Map primary_id and title first
+        for primary_id, page in self.pages.items():
             self.alias_map[primary_id] = primary_id
             if page.title:
                 self.alias_map[page.title] = primary_id
 
-            # Map all aliases
+        # Map all aliases without clobbering primary page stems
+        for primary_id, page in self.pages.items():
             for alias in page.aliases:
-                self.alias_map[alias] = primary_id
+                if alias not in self.pages:
+                    self.alias_map[alias] = primary_id
 
         # Compute backlinks
         for node_id in self.pages:

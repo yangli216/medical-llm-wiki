@@ -18,6 +18,7 @@ from tools.compiler.compiler import WikiGraph
 from tools.search.searcher import WikiSearcher
 from tools.collector.collector import SourceCollector
 from tools.cdss.engine import CdssEngine
+from tools.cdss.drug_checker import DrugInsertRepository, DrugContraindicationAuditor
 
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -621,6 +622,8 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
     searcher: WikiSearcher = WikiSearcher(root_dir)
     collector: SourceCollector = SourceCollector(root_dir)
     cdss: CdssEngine = CdssEngine(root_dir)
+    drug_repo: DrugInsertRepository = DrugInsertRepository(root_dir)
+    drug_auditor: DrugContraindicationAuditor = DrugContraindicationAuditor(drug_repo)
 
     def do_OPTIONS(self) -> None:
         self.send_response(204)
@@ -643,6 +646,7 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
                 "service": "Medical LLM Wiki & CDSS Intelligence Gateway",
                 "protocols": len(self.cdss.repo.list_all()),
                 "rules": 35,
+                "drug_inserts": len(self.drug_repo.list_all()),
                 "guidelines": len(self.collector.list_sources()),
                 "articles": len(self.graph.pages),
             })
@@ -723,6 +727,70 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             q = query_params.get("q", [""])[0]
             matches = self.cdss.search_protocols(q, limit=5)
             self._send_json(matches)
+        elif path == "/api/drugs":
+            category = query_params.get("category", [""])[0]
+            q = query_params.get("q", [""])[0]
+            if q:
+                drugs = self.drug_repo.search(q, limit=20)
+                data = [{
+                    "id": d["id"],
+                    "genericName": d["generic_name"],
+                    "englishName": d["english_name"],
+                    "category": d["category"],
+                    "atcCode": d["atc_code"],
+                    "approvalCategory": d["approval_category"],
+                    "tradeNames": d["trade_names"],
+                    "standardDosage": d["standard_maintenance_dose"],
+                    "maxDailyDose": d["max_daily_dose"],
+                    "keyContraindications": d["key_contraindications"],
+                    "relPath": d["rel_path"],
+                } for d in drugs]
+            else:
+                all_drugs = self.drug_repo.list_all()
+                if category:
+                    all_drugs = [d for d in all_drugs if category in d["category"]]
+                data = [{
+                    "id": d["id"],
+                    "genericName": d["generic_name"],
+                    "englishName": d["english_name"],
+                    "category": d["category"],
+                    "atcCode": d["atc_code"],
+                    "approvalCategory": d["approval_category"],
+                    "tradeNames": d["trade_names"],
+                    "standardDosage": d["standard_maintenance_dose"],
+                    "maxDailyDose": d["max_daily_dose"],
+                    "keyContraindications": d["key_contraindications"],
+                    "relPath": d["rel_path"],
+                } for d in all_drugs]
+            self._send_json(data)
+        elif path.startswith("/api/drugs/"):
+            raw_id = path[len("/api/drugs/"):]
+            drug_name = urllib.parse.unquote(raw_id)
+            d = self.drug_repo.get(drug_name)
+            if d:
+                html_body = self._markdown_to_html(d["raw_body"])
+                self._send_json({
+                    "id": d["id"],
+                    "genericName": d["generic_name"],
+                    "englishName": d["english_name"],
+                    "category": d["category"],
+                    "atcCode": d["atc_code"],
+                    "approvalCategory": d["approval_category"],
+                    "tradeNames": d["trade_names"],
+                    "formsAndSpecs": d["forms_and_specs"],
+                    "maxDailyDose": d["max_daily_dose"],
+                    "standardMaintenanceDose": d["standard_maintenance_dose"],
+                    "keyContraindications": d["key_contraindications"],
+                    "specialPopulations": d["special_populations"],
+                    "storage": d["storage"],
+                    "sources": d["sources"],
+                    "tags": d["tags"],
+                    "title": d["title"],
+                    "relPath": d["rel_path"],
+                    "html": html_body,
+                })
+            else:
+                self._send_json({"error": "Drug monograph not found", "query": drug_name}, status=404)
         else:
             self.send_response(404)
             self.end_headers()
@@ -758,6 +826,19 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             patient = payload.get("patient", {})
             audit_res = self.cdss.audit_prescription(meds, patient)
             self._send_json(audit_res)
+        elif path == "/api/drugs/check-contraindications":
+            meds = payload.get("medications") or []
+            if isinstance(meds, str):
+                meds = [meds]
+            single_drug = payload.get("drug")
+            if single_drug and not meds:
+                meds = [single_drug]
+            patient = payload.get("patient", {})
+            if len(meds) == 1:
+                res = self.drug_auditor.audit(meds[0], patient)
+            else:
+                res = self.drug_auditor.audit_prescription(meds, patient)
+            self._send_json(res)
         else:
             self.send_response(404)
             self.end_headers()

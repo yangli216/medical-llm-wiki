@@ -282,3 +282,63 @@ class WikiSearcher:
             "answer": "\n".join(answer_sections),
             "references": citations,
         }
+
+    def search_drug_inserts(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
+        """
+        Specialized search for drug package inserts and monographs.
+        Matches generic names, trade names, indications, and ATC codes.
+        """
+        clean_q = query.strip()
+        if not clean_q:
+            return []
+
+        terms = extract_search_terms(clean_q)
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT id, title, page_type, rel_path, raw_body FROM wiki_fts WHERE page_type = 'drug_insert'")
+        rows = cursor.fetchall()
+
+        scored = []
+        for r in rows:
+            pid, title, ptype, rel_path, raw_body = r[0], r[1], r[2], r[3], r[4]
+            clean_title = title.replace(" ", "")
+            score = 0.0
+            for t in terms:
+                if t in clean_title or t in pid:
+                    score += 50.0
+                if t in raw_body:
+                    score += 5.0
+            if score > 0:
+                snippet = self._generate_snippet(raw_body, clean_q, terms)
+                scored.append({
+                    "id": pid,
+                    "title": clean_title or pid,
+                    "type": ptype,
+                    "rel_path": rel_path,
+                    "snippet": snippet,
+                    "score": round(score, 2),
+                })
+
+        scored.sort(key=lambda x: x["score"], reverse=True)
+        if scored:
+            return scored[:limit]
+
+        # Fallback direct scan over wiki/inserts/
+        inserts_dir = self.wiki_dir / "inserts"
+        drug_hits = []
+        if inserts_dir.exists():
+            from tools.compiler.compiler import WikiPage
+            for p in sorted(inserts_dir.glob("*.md")):
+                raw_text = p.read_text(encoding="utf-8")
+                if any(t.lower() in p.stem.lower() or t.lower() in raw_text.lower() for t in terms):
+                    page = WikiPage(p, self.wiki_dir)
+                    drug_hits.append({
+                        "id": p.stem,
+                        "title": page.title,
+                        "type": page.page_type,
+                        "rel_path": str(page.rel_path),
+                        "snippet": page.body[:200],
+                        "score": 10.0,
+                    })
+                    if len(drug_hits) >= limit:
+                        break
+        return drug_hits[:limit]

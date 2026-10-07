@@ -53,7 +53,9 @@ class TestRhnLiveIntegration(unittest.TestCase):
             return json.loads(body)
 
     def _get_json(self, path: str) -> dict:
-        url = f"{BASE_URL}{path}"
+        import urllib.parse
+        quoted_path = urllib.parse.quote(path, safe="/:?=&")
+        url = f"{BASE_URL}{quoted_path}"
         req = urllib.request.Request(url, method="GET")
         with self.opener.open(req, timeout=10) as resp:
             body = resp.read().decode("utf-8")
@@ -280,6 +282,33 @@ class TestRhnLiveIntegration(unittest.TestCase):
         })
         self.assertFalse(audit5["is_safe"])
         self.assertTrue(any(a["ruleId"] == "RULE-ALLERGY-PENICILLIN" for a in audit5["alerts"]))
+
+    def test_08_drug_inserts_api_endpoints(self):
+        """Verifies /api/drugs, /api/drugs/<name>, and /api/drugs/check-contraindications live endpoints."""
+        # 1. Test List all drugs
+        all_drugs = self._get_json("/api/drugs")
+        self.assertEqual(len(all_drugs), 62)
+        self.assertTrue(any(d["genericName"] == "盐酸二甲双胍片" for d in all_drugs))
+
+        # 2. Test Category filter
+        cvd_drugs = self._get_json("/api/drugs?category=心血管系统")
+        self.assertEqual(len(cvd_drugs), 10)
+
+        # 3. Test Detail lookup
+        detail = self._get_json("/api/drugs/盐酸二甲双胍片")
+        self.assertEqual(detail["id"], "盐酸二甲双胍片")
+        self.assertIn("html", detail)
+        self.assertIn("specialPopulations", detail)
+        self.assertEqual(detail["atcCode"], "A10BA02")
+
+        # 4. Test Contraindication Check (Nitroglycerin + Sildenafil DDI lethal block)
+        audit_res = self._post_json("/api/drugs/check-contraindications", {
+            "medications": ["硝酸甘油片", "枸橼酸西地那非片"],
+            "patient": {"age": 60}
+        })
+        self.assertFalse(audit_res["canPrescribe"])
+        self.assertEqual(audit_res["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "DDI_NITRO_PDE5I" for a in audit_res["alerts"]))
 
 
 if __name__ == "__main__":
