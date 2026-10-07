@@ -28,6 +28,23 @@ class CdssEngine:
         for w in re.split(r"[\s,，、/]+", q):
             if w and w not in tokens:
                 tokens.append(w)
+
+        # Expand clinical synonyms
+        synonyms_map = {
+            "甲减": ["甲状腺功能减退", "甲状腺功能减退症"],
+            "甲亢": ["甲状腺功能亢进", "甲状腺功能亢进症"],
+            "上感": ["急性上呼吸道感染", "普通感冒"],
+            "扁桃体炎": ["急性扁桃体炎", "化脓性扁桃体炎"],
+            "阴道炎": ["外阴阴道假丝酵母菌病", "细菌性阴道病", "滴虫阴道炎"],
+            "尿路感染": ["急性单纯性尿路感染", "急性膀胱炎"],
+            "反流": ["胃食管反流", "胃食管反流病"],
+        }
+        for k, syn_list in synonyms_map.items():
+            if k in q:
+                for syn in syn_list:
+                    if syn not in tokens:
+                        tokens.append(syn)
+
         # Extract 2-character n-grams for Chinese queries
         if len(q) >= 4:
             for i in range(len(q) - 1):
@@ -500,6 +517,61 @@ class CdssEngine:
                 "message": "患者存在活动性肝病或血清转氨酶 ALT/AST 持续升高达正常上限 3 倍以上，此时开具他汀类药物可加剧急性肝细胞损伤与药物性肝衰竭！严禁处方全量他汀，须暂停用药并积极保肝复查。",
                 "guideline": "《中国血脂管理指南（2023年）》",
             })
+
+        # Rule 26: Pregnancy + Oral Fluconazole (Teratogenicity & Spontaneous Abortion)
+        has_fluconazole = any(x in meds_text for x in ["氟康唑", "大扶康"])
+        if is_pregnant and has_fluconazole:
+            alerts.append({
+                "ruleId": "RULE-PREGNANCY-ORAL-FLUCONAZOLE",
+                "severity": "RED",
+                "title": "妊娠期严禁口服氟康唑（胎儿先天畸形与自发流产风险）",
+                "message": "流行病学研究证实妊娠早期系统暴露于氟康唑可显著增加胎儿复杂先天性心脏畸形、颅面畸形及自然流产风险！妊娠期外阴阴道假丝酵母菌病绝对禁用口服氟康唑，推荐选用局部克霉唑阴道栓。",
+                "guideline": "《阴道炎症诊断与治疗规范（2021版）》与国家药监局氟康唑妊娠安全性警示",
+            })
+
+        # Rule 27: Levothyroxine + Multivalent Cation Chelation (Calcium / Iron / Aluminum)
+        has_lt4 = any(x in meds_text for x in ["左甲状腺素", "优甲乐", "雷替斯"])
+        has_chelating_metals = any(x in meds_text for x in ["碳酸钙", "醋酸钙", "硫酸亚铁", "富马酸亚铁", "铝碳酸镁", "氢氧化铝"])
+        if has_lt4 and has_chelating_metals:
+            alerts.append({
+                "ruleId": "RULE-LEVOTHYROXINE-CHELATION",
+                "severity": "YELLOW",
+                "title": "左甲状腺素钠与钙/铁/铝制剂螯合吸收障碍预警",
+                "message": "碳酸钙、硫酸亚铁及铝碳酸镁等多价阳离子在胃肠道与左甲状腺素强烈螯合形成不溶性沉淀，导致左甲状腺素生物利用度下降超50%引起甲减控制失败！两类药物服用时间必须间隔至少 4 小时以上（建议左甲状腺素清晨空腹服用，钙铁铝剂改在午餐或晚餐后）。",
+                "guideline": "《成人甲状腺功能减退症诊治指南》",
+            })
+
+        # Rule 28: Levothyroxine in elderly or CAD patient - Avoid large starting dose
+        has_cad_history = any(k in history_text for k in ["冠心病", "心绞痛", "心肌梗死", "心肌缺血", "支架"]) or bool(profile.get("has_cad"))
+        is_elderly = False
+        if age is not None:
+            try:
+                is_elderly = int(age) >= 65
+            except (ValueError, TypeError):
+                pass
+        has_high_dose_lt4 = any(x in meds_text for x in ["左甲状腺素钠片 50μg", "左甲状腺素钠片 100μg", "优甲乐 50μg", "优甲乐 100μg", "左甲状腺素钠片 75μg"])
+        if has_lt4 and (has_cad_history or is_elderly) and (has_high_dose_lt4 or bool(profile.get("lt4_dose_above_25"))):
+            alerts.append({
+                "ruleId": "RULE-THYROID-CAD-DOSE",
+                "severity": "RED",
+                "title": "冠心病或高龄患者左甲状腺素严禁大剂量直接起始",
+                "message": "患者伴有冠心病缺血病史或高龄 (>=65岁)，甲状腺激素可急剧增加心肌做功与耗氧量，大剂量（>=50μg/d）直接起始极易诱发急性心绞痛、心肌梗死或致死性心律失常！指南强制要求必须从超小剂量（12.5~25μg/d）起始、每2~4周缓慢滴定。",
+                "guideline": "《成人甲状腺功能减退症诊治指南》",
+            })
+
+        # Rule 29: Penicillin Allergy + Penicillins
+        allergy_text = str(profile.get("allergy", "") or profile.get("allergies", "") or "").lower()
+        has_penicillin_allergy = any(k in allergy_text for k in ["青霉素", "阿莫西林", "penicillin"]) or bool(profile.get("penicillin_allergy"))
+        has_penicillin_drug = any(x in meds_text for x in ["阿莫西林", "青霉素", "氨苄西林", "哌拉西林", "舒巴坦"])
+        if has_penicillin_allergy and has_penicillin_drug:
+            alerts.append({
+                "ruleId": "RULE-ALLERGY-PENICILLIN",
+                "severity": "RED",
+                "title": "青霉素过敏史患者严禁使用青霉素类药物（致死性过敏性休克风险）",
+                "message": "患者明确记录有青霉素过敏史或皮试阳性，严禁处方阿莫西林或青霉素类药物！强行使用可诱发急性喉头水肿、支气管痉挛及严重过敏性休克致死！推荐换用头孢菌素或大环内酯类。",
+                "guideline": "《急性咽峡炎/扁桃体炎基层诊疗指南（2020年）》与国家药典临床用药须知",
+            })
+
 
 
 

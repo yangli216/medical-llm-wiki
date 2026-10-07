@@ -27,7 +27,7 @@ class TestCdssEngine(unittest.TestCase):
     def test_load_all_protocols(self):
         repo = self.engine.repo
         protocols = repo.list_all()
-        self.assertEqual(len(protocols), 28)
+        self.assertEqual(len(protocols), 31)
 
         htn = repo.get("PROT-HTN-001")
         self.assertIsNotNone(htn)
@@ -55,6 +55,9 @@ class TestCdssEngine(unittest.TestCase):
         self.assertIsNotNone(repo.get("PROT-GERD-026"))
         self.assertIsNotNone(repo.get("PROT-LIPID-027"))
         self.assertIsNotNone(repo.get("PROT-UTI-028"))
+        self.assertIsNotNone(repo.get("PROT-GYN-029"))
+        self.assertIsNotNone(repo.get("PROT-THY-030"))
+        self.assertIsNotNone(repo.get("PROT-TONSIL-031"))
 
     def test_search_protocols(self):
         # 1. Search by condition
@@ -126,6 +129,21 @@ class TestCdssEngine(unittest.TestCase):
         matches_uti = self.engine.search_protocols("急性膀胱炎", limit=1)
         self.assertGreater(len(matches_uti), 0)
         self.assertEqual(matches_uti[0]["protocolId"], "PROT-UTI-028")
+
+        # 15. Search by vaginitis
+        matches_gyn = self.engine.search_protocols("阴道炎", limit=1)
+        self.assertGreater(len(matches_gyn), 0)
+        self.assertEqual(matches_gyn[0]["protocolId"], "PROT-GYN-029")
+
+        # 16. Search by hypothyroidism
+        matches_thy = self.engine.search_protocols("甲减", limit=1)
+        self.assertGreater(len(matches_thy), 0)
+        self.assertEqual(matches_thy[0]["protocolId"], "PROT-THY-030")
+
+        # 17. Search by tonsillitis
+        matches_tonsil = self.engine.search_protocols("急性扁桃体炎", limit=1)
+        self.assertGreater(len(matches_tonsil), 0)
+        self.assertEqual(matches_tonsil[0]["protocolId"], "PROT-TONSIL-031")
 
     def test_rhn_plan_intent_contract(self):
         compiled = self.engine.compile_rhn_plan("2型糖尿病")
@@ -294,6 +312,26 @@ class TestCdssEngine(unittest.TestCase):
         res_statin_alt = self.engine.audit_prescription(["阿托伐他汀钙片 20mg"], {"alt": 160})
         self.assertFalse(res_statin_alt["is_safe"])
         self.assertTrue(any(a["ruleId"] == "RULE-LIPID-STATIN-HEPATIC" for a in res_statin_alt["alerts"]))
+
+        # 24. Pregnancy + Oral Fluconazole (Red Alert)
+        res_preg_fluc = self.engine.audit_prescription(["氟康唑胶囊 150mg"], {"is_pregnant": True})
+        self.assertFalse(res_preg_fluc["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-PREGNANCY-ORAL-FLUCONAZOLE" for a in res_preg_fluc["alerts"]))
+
+        # 25. Levothyroxine + Calcium chelation (Yellow Alert)
+        res_lt4_cal = self.engine.audit_prescription(["左甲状腺素钠片 50μg", "碳酸钙D3片 600mg"])
+        self.assertTrue(res_lt4_cal["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-LEVOTHYROXINE-CHELATION" for a in res_lt4_cal["alerts"]))
+
+        # 26. Elderly/CAD Levothyroxine large initial dose (Red Alert)
+        res_lt4_cad = self.engine.audit_prescription(["左甲状腺素钠片 50μg"], {"history": "既往冠心病史"})
+        self.assertFalse(res_lt4_cad["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-THYROID-CAD-DOSE" for a in res_lt4_cad["alerts"]))
+
+        # 27. Penicillin allergy + Amoxicillin (Red Alert)
+        res_pen_allergy = self.engine.audit_prescription(["阿莫西林胶囊 0.5g"], {"allergy": "青霉素过敏史"})
+        self.assertFalse(res_pen_allergy["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-ALLERGY-PENICILLIN" for a in res_pen_allergy["alerts"]))
 
     def test_http_api_endpoints(self):
         server_thread = threading.Thread(target=run_server, kwargs={"port": 8789}, daemon=True)

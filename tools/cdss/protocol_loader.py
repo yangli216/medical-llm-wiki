@@ -127,20 +127,43 @@ class ClinicalProtocol:
         if len(parts) < 3:
             return
         raw_yaml = parts[1]
+        current_list_key = None
         for line in raw_yaml.splitlines():
-            line = line.strip()
-            if not line or line.startswith("#"):
+            clean = line.strip()
+            if not clean or clean.startswith("#"):
                 continue
-            if ":" in line:
-                key, val = line.split(":", 1)
+
+            if clean.startswith("- ") and current_list_key:
+                val = clean[2:].strip().strip('"').strip("'")
+                if current_list_key in self.frontmatter and isinstance(self.frontmatter[current_list_key], list):
+                    self.frontmatter[current_list_key].append(val)
+                continue
+
+            if ":" in clean:
+                current_list_key = None
+                key, val = clean.split(":", 1)
                 k = key.strip()
                 v = val.strip().strip('"').strip("'")
-                self.frontmatter[k] = v
+                if not v:
+                    self.frontmatter[k] = []
+                    current_list_key = k
+                else:
+                    self.frontmatter[k] = v
 
         self.protocol_id = str(self.frontmatter.get("protocol_id", self.file_path.stem))
         self.title = str(self.frontmatter.get("title", ""))
         self.icd10 = str(self.frontmatter.get("icd10", ""))
         self.category = str(self.frontmatter.get("category", ""))
+        raw_aliases = self.frontmatter.get("aliases", [])
+        if isinstance(raw_aliases, list):
+            self.aliases = [str(a) for a in raw_aliases]
+        elif isinstance(raw_aliases, str) and raw_aliases:
+            self.aliases = [raw_aliases]
+        raw_sources = self.frontmatter.get("sources", [])
+        if isinstance(raw_sources, list):
+            self.sources = [str(s) for s in raw_sources]
+        elif isinstance(raw_sources, str) and raw_sources:
+            self.sources = [raw_sources]
 
     def _parse_summary(self) -> None:
         m = re.search(r"## 1\. 临床方案概述.*?\n(.*?)(?=\n## 2\.|\Z)", self.raw_text, re.DOTALL)
