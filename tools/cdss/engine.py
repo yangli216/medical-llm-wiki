@@ -61,6 +61,15 @@ class CdssEngine:
         scored: List[tuple[float, ClinicalProtocol]] = []
         for prot in self.repo.list_all():
             score = 0.0
+            # 0. Full query match in title or aliases
+            if q.lower() in prot.title.lower():
+                score += 60.0
+            for alias in prot.aliases:
+                if q.lower() == alias.lower():
+                    score += 80.0
+                elif q.lower() in alias.lower() or alias.lower() in q.lower():
+                    score += 50.0
+
             # 1. Exact ICD-10 match
             if prot.icd10 and any(prot.icd10.lower() == t for t in tokens):
                 score += 50.0

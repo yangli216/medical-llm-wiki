@@ -41,24 +41,54 @@ class ClinicalProtocolItem:
             "orderDraft": None,
         }
         if self.kind == "MEDICATION" and self.order_draft_raw and self.order_draft_raw != "-":
-            parts = [p.strip() for p in self.order_draft_raw.split(",")]
-            route = parts[0] if len(parts) > 0 else "PO"
-            freq = parts[1] if len(parts) > 1 else "QD"
-            dose_str = parts[2] if len(parts) > 2 else ""
-            duration_str = parts[3] if len(parts) > 3 else "30天"
-
+            route = "PO"
+            freq = "QD"
             dose_val = None
             dose_unit = "mg"
-            if dose_str:
-                m = re.search(r"([\d\.]+)\s*([a-zA-Zμg]+)", dose_str)
-                if m:
+            duration_days = 30
+
+            if "routeCode" in self.order_draft_raw or "frequencyCode" in self.order_draft_raw:
+                m_route = re.search(r"routeCode[`:\s]+([^<\n,`]+)", self.order_draft_raw)
+                m_freq = re.search(r"frequencyCode[`:\s]+([^<\n,`]+)", self.order_draft_raw)
+                m_dose = re.search(r"doseValue[`:\s]+([\d\.]+)", self.order_draft_raw)
+                m_unit = re.search(r"doseUnit[`:\s]+([^<\n,`]+)", self.order_draft_raw)
+                m_dur = re.search(r"durationValue[`:\s]+(\d+)", self.order_draft_raw)
+                if m_route:
+                    route = m_route.group(1).strip()
+                if m_freq:
+                    freq = m_freq.group(1).strip()
+                if m_dose:
                     try:
-                        dose_val = float(m.group(1))
-                        dose_unit = m.group(2)
+                        dose_val = float(m_dose.group(1))
                     except ValueError:
                         pass
+                if m_unit:
+                    dose_unit = m_unit.group(1).strip()
+                if m_dur:
+                    try:
+                        duration_days = int(m_dur.group(1))
+                    except ValueError:
+                        pass
+            else:
+                parts = [p.strip() for p in self.order_draft_raw.split(",")]
+                route = parts[0] if len(parts) > 0 else "PO"
+                freq = parts[1] if len(parts) > 1 else "QD"
+                dose_str = parts[2] if len(parts) > 2 else ""
+                duration_str = parts[3] if len(parts) > 3 else "30天"
+
+                if dose_str:
+                    m = re.search(r"([\d\.]+)\s*([a-zA-Zμg]+)", dose_str)
+                    if m:
+                        try:
+                            dose_val = float(m.group(1))
+                            dose_unit = m.group(2)
+                        except ValueError:
+                            pass
+                m_dur = re.search(r"(\d+)", duration_str)
+                if m_dur:
+                    duration_days = int(m_dur.group(1))
+
             if dose_val is None:
-                # Fallback: extract from details "每次 5mg" or spec "5mg/片"
                 m_det = re.search(r"每次\s*([\d\.]+)\s*([a-zA-Zμg片粒包袋吸贴]+)", self.details)
                 if not m_det and self.spec:
                     m_det = re.search(r"([\d\.]+)\s*([a-zA-Zμg]+)", self.spec)
@@ -69,15 +99,10 @@ class ClinicalProtocolItem:
                     except ValueError:
                         pass
 
-            duration_days = 30
-            m_dur = re.search(r"(\d+)", duration_str)
-            if m_dur:
-                duration_days = int(m_dur.group(1))
-
             res["orderDraft"] = {
                 "routeCode": route,
                 "frequencyCode": freq,
-                "doseValue": dose_val,
+                "doseValue": dose_val or 1.0,
                 "doseUnit": dose_unit,
                 "durationValue": duration_days,
                 "quantity": 1,
@@ -178,7 +203,7 @@ class ClinicalProtocol:
             "medicalHistory": r"### 既往史 \(medicalHistory\)\s*\n(.*?)(?=\n###|\n##|\Z)",
             "physicalExam": r"### 体格检查 \(physicalExam\)\s*\n(.*?)(?=\n###|\n##|\Z)",
             "healthEducation": r"### 健康宣教 \(healthEducation\)\s*\n(.*?)(?=\n###|\n##|\Z)",
-            "followUp": r"### 复诊与随访计划 \(followUp\)\s*\n(.*?)(?=\n###|\n##|\Z)",
+            "followUp": r"### (?:复诊与随访计划|随访计划|复诊随访计划) \(followUp\)\s*\n(.*?)(?=\n###|\n##|\Z)",
         }
         for key, pattern in sections.items():
             m = re.search(pattern, self.raw_text, re.DOTALL)
@@ -189,7 +214,7 @@ class ClinicalProtocol:
 
     def _parse_items(self) -> None:
         """Parses structured markdown table rows."""
-        table_pattern = re.search(r"\| 类别 \(kind\).*?\n(.*?)(?=\n## 4\.|\Z)", self.raw_text, re.DOTALL)
+        table_pattern = re.search(r"\| (?:类别 \(kind\)|类型).*?\n(.*?)(?=\n## 4\.|\Z)", self.raw_text, re.DOTALL)
         if not table_pattern:
             return
         table_body = table_pattern.group(1).strip()
@@ -214,8 +239,14 @@ class ClinicalProtocol:
                         clean_name = m_link.group(1).strip()
 
                 spec = cells[2].strip()
-                details = cells[3].strip()
-                order_draft = cells[4].strip()
+                if len(cells) >= 6:
+                    usage = cells[3].strip()
+                    order_draft = cells[4].strip()
+                    rationale = cells[5].strip()
+                    details = f"用法：{usage}；依据：{rationale}" if rationale and usage != "-" else (rationale or usage)
+                else:
+                    details = cells[3].strip()
+                    order_draft = cells[4].strip()
 
                 item = ClinicalProtocolItem(
                     kind=kind,
@@ -223,7 +254,7 @@ class ClinicalProtocol:
                     spec=spec,
                     details=details,
                     order_draft_raw=order_draft,
-                    source_quote=self.title,
+                    source_quote="",
                     origin="SUGGESTED",
                 )
                 self.items.append(item)
@@ -253,8 +284,18 @@ class ClinicalProtocol:
 
     def to_rhn_plan_intent(self) -> Dict[str, Any]:
         """Builds com.rhn.ai.application.ClinicalAiModelGateway.PlanIntent record structure."""
+        kind_order = {
+            "DIAGNOSIS": 1,
+            "CONDITION": 2,
+            "MEDICATION": 3,
+            "LABORATORY": 4,
+            "EXAMINATION": 5,
+            "EDUCATION": 6,
+            "FOLLOW_UP": 7,
+        }
+        sorted_items = sorted(self.items, key=lambda x: kind_order.get(x.kind, 99))
         narrative_parts = []
-        for item in self.items:
+        for item in sorted_items:
             prefix = {
                 "DIAGNOSIS": "诊断",
                 "CONDITION": "适用条件",
@@ -270,10 +311,10 @@ class ClinicalProtocol:
         return {
             "name": self.title,
             "description": f"依据国家权威指南建立的门诊标准化诊疗协议（ICD-10: {self.icd10}）",
-            "narrative": narrative,
-            "items": [it.to_rhn_intent_item() for it in self.items],
-            "referenceTemplateId": None,
             "noteTemplateContent": self.note_template,
+            "items": [it.to_rhn_intent_item() for it in sorted_items],
+            "referenceTemplateId": None,
+            "narrative": narrative,
         }
 
     def to_rhn_plan_candidate(self, candidate_id: int = 1) -> Dict[str, Any]:
