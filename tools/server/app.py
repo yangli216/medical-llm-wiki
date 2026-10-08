@@ -267,10 +267,55 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             left: 0;
             right: 0;
             background: #090d16;
+            overflow: hidden;
         }
         #graph-canvas {
             width: 100%;
             height: 100%;
+            cursor: pointer;
+        }
+        .graph-controls {
+            position: absolute;
+            top: 16px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .filter-pill {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-pill:hover, .filter-pill.active {
+            background: #0284c7;
+            color: #fff;
+            border-color: #38bdf8;
+        }
+        .graph-tooltip {
+            position: absolute;
+            display: none;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 0.8rem;
+            pointer-events: none;
+            z-index: 20;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            line-height: 1.4;
         }
         .graph-legend {
             position: absolute;
@@ -331,12 +376,23 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
 
         <div id="graph-container">
+            <div class="graph-controls">
+                <span style="font-size:0.75rem; color:#94a3b8; margin-right:4px;">分类筛选:</span>
+                <button class="filter-pill active" id="btnFilterAll" onclick="setGraphFilter('all')">全部</button>
+                <button class="filter-pill" id="btnFilterDisease" onclick="setGraphFilter('disease')">🔴 疾病</button>
+                <button class="filter-pill" id="btnFilterDrug" onclick="setGraphFilter('drug')">🟢 药物与说明书</button>
+                <button class="filter-pill" id="btnFilterSynthesis" onclick="setGraphFilter('synthesis')">🟣 方案协议</button>
+                <button class="filter-pill" id="btnFilterConcept" onclick="setGraphFilter('concept')">🟡 概念分期</button>
+                <button class="filter-pill" id="btnFilterSource" onclick="setGraphFilter('source')">🔵 来源</button>
+                <button class="filter-pill" onclick="resetEgoNetwork()" style="margin-left:8px; border-color:#ef4444; color:#fca5a5;">重置邻域</button>
+            </div>
             <canvas id="graph-canvas"></canvas>
+            <div id="graph-tooltip" class="graph-tooltip"></div>
             <div class="graph-legend">
                 <div><span class="legend-dot" style="background:#ef4444;"></span> 疾病实体 (Disease)</div>
-                <div><span class="legend-dot" style="background:#10b981;"></span> 药物与疗法 (Drug)</div>
+                <div><span class="legend-dot" style="background:#10b981;"></span> 药物与说明书 (Drug)</div>
+                <div><span class="legend-dot" style="background:#8b5cf6;"></span> 门诊方案 (Synthesis)</div>
                 <div><span class="legend-dot" style="background:#f59e0b;"></span> 概念与分期 (Concept)</div>
-                <div><span class="legend-dot" style="background:#8b5cf6;"></span> 综合专题 (Synthesis)</div>
                 <div><span class="legend-dot" style="background:#38bdf8;"></span> 权威来源 (Source)</div>
             </div>
         </div>
@@ -480,14 +536,47 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             });
         }
 
-        // Lightweight Force-Directed Canvas Graph
+        // Enhanced Force-Directed Canvas Graph with 1-Hop Ego Network & Filtering
         let canvas, ctx;
         let simNodes = [], simLinks = [];
+        let graphFilter = 'all';
+        let egoCenterNodeId = null;
+        let egoNeighbors = null;
+        let hoveredNode = null;
+
+        function setGraphFilter(type) {
+            graphFilter = type;
+            document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(
+                type === 'all' ? 'btnFilterAll' :
+                type === 'disease' ? 'btnFilterDisease' :
+                type === 'drug' ? 'btnFilterDrug' :
+                type === 'synthesis' ? 'btnFilterSynthesis' :
+                type === 'concept' ? 'btnFilterConcept' : 'btnFilterSource'
+            );
+            if (activeBtn) activeBtn.classList.add('active');
+            egoCenterNodeId = null;
+            egoNeighbors = null;
+            drawGraph();
+        }
+
+        function resetEgoNetwork() {
+            egoCenterNodeId = null;
+            egoNeighbors = null;
+            renderCanvas();
+        }
 
         function setupCanvas() {
             canvas = document.getElementById('graph-canvas');
             ctx = canvas.getContext('2d');
             window.addEventListener('resize', resizeCanvas);
+            canvas.addEventListener('mousemove', onCanvasMouseMove);
+            canvas.addEventListener('click', onCanvasClick);
+            canvas.addEventListener('dblclick', onCanvasDblClick);
+            canvas.addEventListener('mouseleave', () => {
+                document.getElementById('graph-tooltip').style.display = 'none';
+                hoveredNode = null;
+            });
             resizeCanvas();
         }
 
@@ -503,19 +592,30 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             const width = canvas.width;
             const height = canvas.height;
 
+            // Filter nodes by category if selected
+            let filteredNodes = graphData.nodes;
+            if (graphFilter !== 'all') {
+                filteredNodes = graphData.nodes.filter(n => {
+                    if (graphFilter === 'drug') return n.type === 'drug' || n.type === 'drug_insert';
+                    return n.type === graphFilter;
+                });
+            }
+            const allowedIds = new Set(filteredNodes.map(n => n.id));
+
             // Setup simulation nodes
-            simNodes = graphData.nodes.map((n, i) => {
-                const angle = (i / graphData.nodes.length) * Math.PI * 2;
-                const r = Math.min(width, height) * 0.35;
+            simNodes = filteredNodes.map((n, i) => {
+                const angle = (i / filteredNodes.length) * Math.PI * 2;
+                const r = Math.min(width, height) * 0.36;
                 return {
                     id: n.id,
                     title: n.title,
                     type: n.type,
-                    x: width / 2 + Math.cos(angle) * r + (Math.random() - 0.5) * 40,
-                    y: height / 2 + Math.sin(angle) * r + (Math.random() - 0.5) * 40,
+                    in_degree: n.in_degree || 0,
+                    x: width / 2 + Math.cos(angle) * r + (Math.random() - 0.5) * 60,
+                    y: height / 2 + Math.sin(angle) * r + (Math.random() - 0.5) * 60,
                     vx: 0,
                     vy: 0,
-                    r: n.id === currentPageId ? 14 : Math.min(12, 6 + (n.in_degree || 0) * 0.8)
+                    r: n.id === currentPageId ? 14 : Math.min(13, 6 + (n.in_degree || 0) * 0.7)
                 };
             });
 
@@ -524,19 +624,24 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
             simLinks = [];
             graphData.links.forEach(l => {
-                if (nodeMap[l.source] && nodeMap[l.target]) {
-                    simLinks.push({ source: nodeMap[l.source], target: nodeMap[l.target] });
+                if (allowedIds.has(l.source) && allowedIds.has(l.target) && nodeMap[l.source] && nodeMap[l.target]) {
+                    simLinks.push({
+                        source: nodeMap[l.source],
+                        target: nodeMap[l.target],
+                        sourceId: l.source,
+                        targetId: l.target
+                    });
                 }
             });
 
-            // Run simple simulation steps
-            for (let step = 0; step < 60; step++) {
-                // Link spring attraction
+            // Run force simulation relaxation
+            for (let step = 0; step < 70; step++) {
+                // Spring attraction
                 simLinks.forEach(link => {
                     const dx = link.target.x - link.source.x;
                     const dy = link.target.y - link.source.y;
                     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const force = (dist - 120) * 0.03;
+                    const force = (dist - 110) * 0.035;
                     link.source.x += (dx / dist) * force;
                     link.source.y += (dy / dist) * force;
                     link.target.x -= (dx / dist) * force;
@@ -549,12 +654,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                         const dx = b.x - a.x;
                         const dy = b.y - a.y;
                         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                        if (dist < 200) {
-                            const rep = (200 - dist) / dist * 1.5;
-                            a.x -= dx * rep * 0.05;
-                            a.y -= dy * rep * 0.05;
-                            b.x += dx * rep * 0.05;
-                            b.y += dy * rep * 0.05;
+                        if (dist < 180) {
+                            const rep = (180 - dist) / dist * 1.6;
+                            a.x -= dx * rep * 0.04;
+                            a.y -= dy * rep * 0.04;
+                            b.x += dx * rep * 0.04;
+                            b.y += dy * rep * 0.04;
                         }
                     }
                 }
@@ -566,7 +671,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         function getColor(type) {
             switch(type) {
                 case 'disease': return '#ef4444';
-                case 'drug': return '#10b981';
+                case 'drug':
+                case 'drug_insert': return '#10b981';
                 case 'concept': return '#f59e0b';
                 case 'synthesis': return '#8b5cf6';
                 case 'source': return '#38bdf8';
@@ -574,36 +680,160 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             }
         }
 
+        function findNodeAt(x, y) {
+            for (let i = simNodes.length - 1; i >= 0; i--) {
+                const n = simNodes[i];
+                const dx = x - n.x;
+                const dy = y - n.y;
+                if (dx * dx + dy * dy <= (n.r + 5) * (n.r + 5)) {
+                    return n;
+                }
+            }
+            return null;
+        }
+
+        function onCanvasMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const node = findNodeAt(mouseX, mouseY);
+            const tooltip = document.getElementById('graph-tooltip');
+
+            if (node) {
+                hoveredNode = node;
+                canvas.style.cursor = 'pointer';
+                tooltip.style.display = 'block';
+                tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                tooltip.style.top = (e.clientY - rect.top - 20) + 'px';
+                tooltip.innerHTML = `
+                    <div style="font-weight:600;color:#f8fafc;font-size:0.85rem;">${node.title}</div>
+                    <div style="color:#94a3b8;font-size:0.75rem;margin-top:2px;">
+                        分类: <span>${node.type}</span> | 核心入度: <span style="color:#38bdf8;">${node.in_degree}</span>
+                    </div>
+                    <div style="color:#38bdf8;font-size:0.7rem;margin-top:4px;">
+                        💡 单击展开 1-Hop 邻域 | 双击打开词条
+                    </div>
+                `;
+            } else {
+                hoveredNode = null;
+                canvas.style.cursor = 'default';
+                tooltip.style.display = 'none';
+            }
+        }
+
+        function onCanvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const node = findNodeAt(mouseX, mouseY);
+
+            if (node) {
+                if (egoCenterNodeId === node.id) {
+                    resetEgoNetwork();
+                } else {
+                    egoCenterNodeId = node.id;
+                    const neighbors = new Set([node.id]);
+                    graphData.links.forEach(l => {
+                        if (l.source === node.id) neighbors.add(l.target);
+                        if (l.target === node.id) neighbors.add(l.source);
+                    });
+                    egoNeighbors = neighbors;
+                    renderCanvas();
+                }
+            } else {
+                if (egoCenterNodeId) {
+                    resetEgoNetwork();
+                }
+            }
+        }
+
+        function onCanvasDblClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const node = findNodeAt(mouseX, mouseY);
+            if (node) {
+                loadPage(node.id);
+                toggleView('doc');
+            }
+        }
+
         function renderCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw links
-            ctx.strokeStyle = 'rgba(100, 116, 139, 0.25)';
-            ctx.lineWidth = 1;
             simLinks.forEach(l => {
+                const isEgoActive = egoNeighbors !== null;
+                const inEgo = isEgoActive && (egoNeighbors.has(l.sourceId) && egoNeighbors.has(l.targetId));
+                const connectsToCenter = isEgoActive && (l.sourceId === egoCenterNodeId || l.targetId === egoCenterNodeId);
+
+                ctx.save();
+                if (isEgoActive) {
+                    if (connectsToCenter) {
+                        ctx.strokeStyle = '#38bdf8';
+                        ctx.lineWidth = 2.2;
+                        ctx.globalAlpha = 0.95;
+                    } else if (inEgo) {
+                        ctx.strokeStyle = 'rgba(148, 163, 184, 0.6)';
+                        ctx.lineWidth = 1.2;
+                        ctx.globalAlpha = 0.6;
+                    } else {
+                        ctx.strokeStyle = 'rgba(100, 116, 139, 0.15)';
+                        ctx.lineWidth = 0.5;
+                        ctx.globalAlpha = 0.1;
+                    }
+                } else {
+                    ctx.strokeStyle = 'rgba(100, 116, 139, 0.28)';
+                    ctx.lineWidth = 1;
+                    ctx.globalAlpha = 0.7;
+                }
+
                 ctx.beginPath();
                 ctx.moveTo(l.source.x, l.source.y);
                 ctx.lineTo(l.target.x, l.target.y);
                 ctx.stroke();
+                ctx.restore();
             });
 
             // Draw nodes
             simNodes.forEach(n => {
+                const isEgoActive = egoNeighbors !== null;
+                const inEgo = !isEgoActive || egoNeighbors.has(n.id);
+                const isCenter = isEgoActive && (n.id === egoCenterNodeId);
+
+                ctx.save();
+                ctx.globalAlpha = inEgo ? 1.0 : 0.12;
+
+                // Node circle
                 ctx.beginPath();
-                ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+                ctx.arc(n.x, n.y, isCenter ? n.r + 4 : n.r, 0, Math.PI * 2);
                 ctx.fillStyle = getColor(n.type);
                 ctx.fill();
-                if (n.id === currentPageId) {
+
+                if (isCenter) {
+                    // Center pulsating ring
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 3.5;
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.r + 9, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                } else if (n.id === currentPageId) {
                     ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 2.5;
                     ctx.stroke();
                 }
 
                 // Label
-                ctx.fillStyle = '#f8fafc';
-                ctx.font = '10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(n.title.slice(0, 10), n.x, n.y + n.r + 12);
+                if (inEgo || n.in_degree > 15) {
+                    ctx.fillStyle = isCenter ? '#38bdf8' : (inEgo ? '#f8fafc' : '#64748b');
+                    ctx.font = isCenter ? 'bold 12px sans-serif' : '10px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(n.title.slice(0, 12), n.x, n.y + n.r + (isCenter ? 16 : 13));
+                }
+                ctx.restore();
             });
         }
 

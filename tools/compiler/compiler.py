@@ -236,3 +236,74 @@ class WikiGraph:
             "links": links,
             "stats": self.get_stats(),
         }
+
+    def rename_page(self, old_id: str, new_id: str) -> Dict[str, Any]:
+        """
+        Safely renames a wiki page and refactors all cross-references across the knowledge base.
+        Updates frontmatter IDs, [[WikiLinks]] (including piped aliases), and physical file paths on disk.
+        """
+        old_id = old_id.strip()
+        new_id = new_id.strip()
+        if not old_id or not new_id:
+            return {"success": False, "error": "页面 ID 不能为空"}
+        if old_id == new_id:
+            return {"success": False, "error": "新旧页面 ID 相同，无需重命名"}
+
+        if old_id not in self.pages:
+            return {"success": False, "error": f"原页面 '{old_id}' 在知识库中不存在"}
+        if new_id in self.pages:
+            return {"success": False, "error": f"目标页面 ID '{new_id}' 已存在，请指定未使用的 ID"}
+
+        target_page = self.pages[old_id]
+        old_path = target_page.file_path
+        new_path = old_path.parent / f"{new_id}.md"
+
+        if new_path.exists():
+            return {"success": False, "error": f"目标物理文件 '{new_path}' 已存在"}
+
+        # Pattern for matching [[old_id]] or [[old_id|alias]] or [[old_id\|alias]]
+        link_regex = re.compile(rf"\[\[{re.escape(old_id)}(\\?\|[^\]]+)?\]\]")
+        id_fm_regex = re.compile(rf"^(\s*id:\s*['\"]?){re.escape(old_id)}(['\"]?\s*)$", re.MULTILINE)
+
+        modified_files = []
+
+        # 1. Update references in all wiki markdown files
+        for md_file in self.wiki_dir.rglob("*.md"):
+            try:
+                content = md_file.read_text(encoding="utf-8")
+            except Exception:
+                continue
+
+            new_content = link_regex.sub(rf"[[{new_id}\1]]", content)
+
+            # If it's the target file itself, also update frontmatter id if present
+            if md_file.resolve() == old_path.resolve():
+                new_content = id_fm_regex.sub(rf"\g<1>{new_id}\g<2>", new_content)
+
+            if new_content != content:
+                md_file.write_text(new_content, encoding="utf-8")
+                rel = str(md_file.relative_to(self.wiki_dir))
+                modified_files.append(rel)
+
+        # 2. Rename physical file
+        old_path.rename(new_path)
+
+        # 3. Reload graph and refresh index
+        self.load_graph()
+        try:
+            from tools.search.searcher import WikiSearcher
+            searcher = WikiSearcher(self.root_dir)
+            searcher.index_wiki(incremental=True)
+        except Exception:
+            pass
+
+        return {
+            "success": True,
+            "old_id": old_id,
+            "new_id": new_id,
+            "old_path": str(old_path.relative_to(self.wiki_dir)),
+            "new_path": str(new_path.relative_to(self.wiki_dir)),
+            "affected_files_count": len(modified_files),
+            "affected_files": modified_files,
+        }
+

@@ -149,6 +149,38 @@ def cmd_cdss(args):
         print("-" * 65)
 
 
+def cmd_rename_page(args):
+    graph = WikiGraph(ROOT_DIR)
+    graph.load_graph()
+    res = graph.rename_page(args.old_id, args.new_id)
+    if not res.get("success"):
+        print(f"❌ 重命名失败: {res.get('error')}")
+        sys.exit(1)
+
+    print("=" * 65)
+    print("  🔄 知识库词条重构与双向引用批量安全更新完成")
+    print("=" * 65)
+    print(f"原词条 ID:     {res['old_id']}")
+    print(f"新词条 ID:     {res['new_id']}")
+    print(f"原物理文件:   wiki/{res['old_path']}")
+    print(f"新物理文件:   wiki/{res['new_path']}")
+    print(f"受影响词条数: {res['affected_files_count']} 篇")
+    if res["affected_files"]:
+        print("已自动同步更新以下文件中的 WikiLink 引用:")
+        for af in res["affected_files"][:10]:
+            print(f"  • wiki/{af}")
+        if len(res["affected_files"]) > 10:
+            print(f"  ... 以及其他 {len(res['affected_files']) - 10} 篇文件")
+
+    # Run lint to ensure zero broken links
+    linter = WikiLinter(ROOT_DIR)
+    rep = linter.run_all_checks()
+    if rep["is_healthy"]:
+        print("✅ 全库一致性体检通过: 0 断链、0 孤岛，知识图谱拓扑完整！")
+    else:
+        print(f"⚠️ 警告: 重命名后存在 {len(rep['broken_links'])} 处断链，请人工检查！")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Medical LLM Wiki: 中国医学权威指南与标准本地知识库管理工具",
@@ -164,6 +196,11 @@ def main():
 
     # index
     subparsers.add_parser("index", help="构建或重建 SQLite FTS5 本地全文索引")
+
+    # rename-page
+    p_rename = subparsers.add_parser("rename-page", help="安全重命名知识库词条并批量重构全库 WikiLink 引用与索引")
+    p_rename.add_argument("old_id", help="原词条 ID (文件名 stem)")
+    p_rename.add_argument("new_id", help="新词条 ID (新文件名 stem)")
 
     # search
     p_search = subparsers.add_parser("search", help="对知识库执行全文搜索与关键词高亮匹配")
@@ -198,6 +235,7 @@ def main():
         "status": cmd_status,
         "lint": cmd_lint,
         "index": cmd_index,
+        "rename-page": cmd_rename_page,
         "search": cmd_search,
         "ask": cmd_ask,
         "serve": cmd_serve,

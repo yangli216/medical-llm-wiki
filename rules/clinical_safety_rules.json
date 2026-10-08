@@ -1,0 +1,861 @@
+{
+  "rules": [
+    {
+      "id": "RULE-SAFETY-RAS-DUAL",
+      "domain": "clinical",
+      "title": "严禁双重 RAS 轴阻断",
+      "severity": "RED",
+      "message": "严禁 ACEI、ARB 或 ARNI 重叠联合使用。双重阻断不增加临床获益，反而急剧增加急性肾损伤（AKI）和恶性高钾血症风险！",
+      "guideline": "《中国高血压防治指南（2024年修订版）》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "普利",
+              "卡托普利",
+              "依那普利",
+              "贝那普利",
+              "培哚普利",
+              "雷米普利"
+            ],
+            "group_b": [
+              "沙坦",
+              "氯沙坦",
+              "缬沙坦",
+              "厄贝沙坦",
+              "替米沙坦",
+              "坎地沙坦"
+            ]
+          },
+          {
+            "group_a": [
+              "普利",
+              "卡托普利",
+              "依那普利",
+              "贝那普利",
+              "培哚普利"
+            ],
+            "group_b": [
+              "沙库巴曲",
+              "arni"
+            ]
+          },
+          {
+            "group_a": [
+              "沙坦",
+              "氯沙坦",
+              "缬沙坦",
+              "厄贝沙坦",
+              "替米沙坦"
+            ],
+            "group_b": [
+              "沙库巴曲",
+              "arni"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-SAFETY-PREGNANCY-RAS",
+      "domain": "clinical",
+      "title": "妊娠期禁用 RAS 抑制剂",
+      "severity": "RED",
+      "message": "ACEI/ARB/ARNI 具有明确的胎儿畸形与致死性毒性，妊娠期女性绝对禁用！建议换用拉贝洛尔或硝苯地平控释片。",
+      "guideline": "《中国高血压防治指南》",
+      "conditions": {
+        "pregnancy": true,
+        "drugs_any": [
+          "普利",
+          "卡托普利",
+          "依那普利",
+          "贝那普利",
+          "培哚普利",
+          "沙坦",
+          "氯沙坦",
+          "缬沙坦",
+          "厄贝沙坦",
+          "替米沙坦",
+          "沙库巴曲",
+          "arni"
+        ]
+      }
+    },
+    {
+      "id": "RULE-SAFETY-METFORMIN-RENAL",
+      "domain": "clinical",
+      "title": "重度肾功能不全禁用二甲双胍",
+      "severity": "RED",
+      "message": "患者 eGFR < 30 ml/min/1.73m²，二甲双胍蓄积导致致死性乳酸酸中毒风险极高，绝对禁用！",
+      "guideline": "《中国2型糖尿病防治指南（2024版）》",
+      "conditions": {
+        "drugs_any": [
+          "二甲双胍"
+        ],
+        "egfr_lt": 30
+      }
+    },
+    {
+      "id": "RULE-SAFETY-METFORMIN-WARN",
+      "domain": "clinical",
+      "title": "中重度肾损伤二甲双胍减量提醒",
+      "severity": "YELLOW",
+      "message": "患者 eGFR 在 30~44 ml/min/1.73m²，二甲双胍每日最大剂量不得超过 1000mg，并每 3 个月复查肾功能。",
+      "guideline": "《中国2型糖尿病防治指南（2024版）》",
+      "conditions": {
+        "drugs_any": [
+          "二甲双胍"
+        ],
+        "egfr_range": [
+          30,
+          45
+        ]
+      }
+    },
+    {
+      "id": "RULE-SAFETY-NITRATE-PDE5",
+      "domain": "clinical",
+      "title": "致命低血压休克：硝酸酯类合用 PDE-5 抑制剂绝对禁忌",
+      "severity": "RED",
+      "message": "24小时内严禁合用西地那非，48小时内严禁合用他达拉非！协同舒血管会导致难治性恶性低血压休克及猝死！",
+      "guideline": "《中国急性ST段抬高型心肌梗死诊断和治疗指南》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "硝酸甘油",
+              "单硝酸",
+              "硝酸异山梨酯"
+            ],
+            "group_b": [
+              "西地那非",
+              "他达拉非",
+              "伐地那非",
+              "伟哥",
+              "pde5"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-CASCADE-CCB-EDEMA",
+      "domain": "clinical",
+      "title": "处方瀑布预警：CCB 下肢水肿防误用利尿剂",
+      "severity": "YELLOW",
+      "message": "二氢吡啶类 CCB 引起的脚踝水肿为微血管扩张压力差所致，非水钠潴留。加用利尿剂常引发低钾与脱水；指南推荐联合 ARB/ACEI 扩张微静脉以减轻水肿。",
+      "guideline": "《基层医疗卫生机构老年人多重用药与慢病共病全科安全管理指南》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "氨氯地平",
+              "硝苯地平",
+              "非洛地平",
+              "左氨氯地平"
+            ],
+            "group_b": [
+              "呋塞米",
+              "托拉塞米",
+              "氢氯噻嗪"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-SAFETY-DUAL-NSAIDS",
+      "domain": "clinical",
+      "title": "严禁口服两种及以上非甾体抗炎药(NSAIDs)",
+      "severity": "RED",
+      "message": "处方中检测到多种 NSAIDs 重复口服。不增加镇痛疗效，急剧增加急性消化道穿孔大出血及肾损伤风险！",
+      "guideline": "《非特异性腰痛基层全科诊疗与康复管理指南》",
+      "conditions": {
+        "drugs_count_gte": {
+          "keywords": [
+            "布洛芬",
+            "双氯芬酸",
+            "塞来昔布",
+            "美洛昔康",
+            "双氯芬酸钠",
+            "依托考昔",
+            "艾瑞昔布",
+            "萘普生"
+          ],
+          "min_count": 2
+        }
+      }
+    },
+    {
+      "id": "RULE-SAFETY-MONTMORILLONITE-INTERVAL",
+      "domain": "clinical",
+      "title": "蒙脱石散服药间隔警示",
+      "severity": "YELLOW",
+      "message": "蒙脱石散具有强吸附作用，与抗生素或活菌制剂必须间隔至少 2 小时服用，避免其他药物被物理吸附排出失效！",
+      "guideline": "《全科常见症状基层诊疗指南》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "蒙脱石散"
+            ],
+            "group_b": [
+              "抗生素",
+              "阿莫西林",
+              "头孢",
+              "益生菌",
+              "双歧杆菌",
+              "左氧氟沙星",
+              "阿奇霉素"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-PIM-ELDERLY-BZD",
+      "domain": "clinical",
+      "title": "老年人潜在不适当用药(PIM)：避免长期长效苯二氮䓬",
+      "severity": "RED",
+      "message": "长效苯二氮䓬类具有强肌松和镇静蓄积作用，高龄老人显著增加跌倒、股骨骨折和急性谵妄风险！",
+      "guideline": "《基层医疗卫生机构老年人多重用药与慢病共病全科安全管理指南》",
+      "conditions": {
+        "age_gte": 65,
+        "drugs_any": [
+          "地西泮",
+          "安定",
+          "氯硝西泮",
+          "艾司唑仑"
+        ]
+      }
+    },
+    {
+      "id": "RULE-PEDIATRIC-ASPIRIN",
+      "domain": "clinical",
+      "title": "儿童发热严禁使用阿司匹林（Reye综合征风险）",
+      "severity": "RED",
+      "message": "儿童青少年病毒感染发热使用阿司匹林/赖氨匹林可诱发致死性 Reye 综合征（急性脑病合并肝衰竭），绝对禁用！推荐退热换用对乙酰氨基酚或布洛芬。",
+      "guideline": "《儿童急性呼吸道感染与急性支气管炎规范化诊疗专家共识（2023）》",
+      "conditions": {
+        "age_lt": 18,
+        "drugs_any": [
+          "阿司匹林",
+          "赖氨匹林",
+          "巴米尔"
+        ]
+      }
+    },
+    {
+      "id": "RULE-PEDIATRIC-QUINOLONE",
+      "domain": "clinical",
+      "title": "18岁以下儿童禁用喹诺酮类抗生素（软骨发育毒性）",
+      "severity": "RED",
+      "message": "喹诺酮类抗菌药物可导致幼年动物负重关节软骨损伤与骨骺退变，儿童门诊严禁开具！推荐遵指征选用头孢菌素或阿莫西林克拉维酸钾。",
+      "guideline": "《中国儿童急性感染性腹泻病临床实践指南（2022）》",
+      "conditions": {
+        "age_lt": 18,
+        "drugs_any": [
+          "左氧氟沙星",
+          "莫西沙星",
+          "诺氟沙星",
+          "环丙沙星",
+          "氧氟沙星",
+          "氟沙星"
+        ]
+      }
+    },
+    {
+      "id": "RULE-PEDIATRIC-LOPERAMIDE",
+      "domain": "clinical",
+      "title": "儿童急性腹泻严禁使用洛哌丁胺等肠蠕动抑制剂",
+      "severity": "RED",
+      "message": "洛哌丁胺等强效止泻药在儿童中极易引发麻痹性肠梗阻、中毒性巨结肠及中枢神经抑制，严禁使用！儿童补液首选口服补液盐散(III)。",
+      "guideline": "《中国儿童急性感染性腹泻病临床实践指南（2022）》",
+      "conditions": {
+        "age_lt": 12,
+        "drugs_any": [
+          "洛哌丁胺",
+          "易蒙停",
+          "地芬诺酯"
+        ]
+      }
+    },
+    {
+      "id": "RULE-TCM-XIAOKE-SULFONYLUREA",
+      "domain": "clinical",
+      "title": "消渴丸严禁与磺脲类降糖西药重复联用",
+      "severity": "RED",
+      "message": "消渴丸每 10 丸含格列本脲 2.5mg，与西药磺脲类降糖药叠加会导致严重、不可逆的致死性低血糖昏迷与脑水肿，绝对禁止联合处方！",
+      "guideline": "《中成药临床应用指导原则与中西药联合安全规范》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "消渴丸"
+            ],
+            "group_b": [
+              "格列本脲",
+              "优降糖",
+              "格列齐特",
+              "格列美脲",
+              "格列吡嗪"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-TCM-ACETAMINOPHEN-DUAL",
+      "domain": "clinical",
+      "title": "含对乙酰氨基酚中成药与西药感冒药重叠（暴发性肝坏死风险）",
+      "severity": "RED",
+      "message": "感冒灵颗粒（每袋含0.2g对乙酰氨基酚）或维C银翘片严禁与含扑热息痛西药叠加开具，否则对乙酰氨基酚日剂量超标可导致急性药物性肝衰竭与肝坏死！",
+      "guideline": "《中成药临床应用指导原则与中西药联合安全规范》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "感冒灵",
+              "维c银翘片"
+            ],
+            "group_b": [
+              "对乙酰氨基酚",
+              "扑热息痛",
+              "酚麻美敏",
+              "散利痛",
+              "泰诺",
+              "白加黑",
+              "快克"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-HERPES-VALACYCLOVIR-RENAL",
+      "domain": "clinical",
+      "title": "肾功能减退患者抗疱疹病毒药物剂量调整预警",
+      "severity": "YELLOW",
+      "message": "患者 eGFR < 50 ml/min/1.73m²，伐昔洛韦/阿昔洛韦主要经肾脏排泄，高剂量易析出肾小管针状结晶加重急性肾损伤。必须根据肾功能减量。",
+      "guideline": "《中国带状疱疹诊疗专家共识（2023版）》",
+      "conditions": {
+        "drugs_any": [
+          "伐昔洛韦",
+          "阿昔洛韦"
+        ],
+        "egfr_lt": 50
+      }
+    },
+    {
+      "id": "RULE-MIGR-TRIPTAN-CARDIOVASCULAR",
+      "domain": "clinical",
+      "title": "缺血性心脑血管疾病严禁使用曲普坦类",
+      "severity": "RED",
+      "message": "曲普坦类具有强效外周及冠状动脉收缩作用，患有冠心病、心绞痛、心肌梗死史、脑卒中/TIA 或未控制高血压者绝对禁用！可诱发严重冠脉痉挛导致心肌梗死或心律失常猝死。",
+      "guideline": "《中国偏头痛诊治指南（2022版）》",
+      "conditions": {
+        "drugs_any": [
+          "曲普坦",
+          "佐米曲普坦",
+          "利扎曲普坦",
+          "舒马曲普坦"
+        ],
+        "history_any": [
+          "冠心病",
+          "心绞痛",
+          "心肌梗死",
+          "脑梗",
+          "脑卒中",
+          "tia",
+          "缺血性",
+          "高血压"
+        ],
+        "profile_flags": [
+          "has_cad",
+          "has_stroke"
+        ]
+      }
+    },
+    {
+      "id": "RULE-OSTEO-BISPHOSPHONATE-RENAL",
+      "domain": "clinical",
+      "title": "重度肾功能不全禁用双膦酸盐类抗骨吸收药物",
+      "severity": "RED",
+      "message": "患者 eGFR < 35 ml/min/1.73m²，双膦酸盐完全经肾小球滤过与肾小管排泄，重度肾损伤蓄积可诱发急性肾小管坏死及不可逆肾衰竭！绝对禁用，推荐换用地舒单抗或活性维生素D。",
+      "guideline": "《原发性骨质疏松症诊疗指南（2022）》",
+      "conditions": {
+        "drugs_any": [
+          "阿仑膦酸",
+          "唑来膦酸",
+          "利塞膦酸",
+          "依班膦酸"
+        ],
+        "egfr_lt": 35
+      }
+    },
+    {
+      "id": "RULE-CONSTIP-STIMULANT-LAXATIVE",
+      "domain": "clinical",
+      "title": "刺激性泻药长期使用警戒（结肠黑变病与神经损伤风险）",
+      "severity": "YELLOW",
+      "message": "番泻叶、比沙可啶等刺激性泻药仅限短期（≤1周）临时备用；长期大剂量使用可导致结肠平滑肌肌间神经丛变性坏死及结肠黑变病，门诊慢性便秘推荐换用渗透性（聚乙二醇/乳果糖）或容积性泻药。",
+      "guideline": "《慢性便秘基层诊疗指南（2020年）》",
+      "conditions": {
+        "drugs_any": [
+          "番泻叶",
+          "大黄苏打",
+          "比沙可啶",
+          "酚酞",
+          "芦荟胶囊"
+        ]
+      }
+    },
+    {
+      "id": "RULE-DRYEYE-ANTIBIOTIC-MISUSE",
+      "domain": "clinical",
+      "title": "单纯干眼症严禁经验性滥用抗生素滴眼液",
+      "severity": "RED",
+      "message": "单纯干眼症系非感染性眼表泪膜稳态破坏，无化脓性感染证据严禁使用抗生素眼药水！不仅无效，而且会破坏眼表正常微生物群并诱发耐药性与角膜上皮毒性。",
+      "guideline": "《中国干眼专家共识（2020年）》",
+      "conditions": {
+        "history_any": [
+          "干眼",
+          "角结膜干燥"
+        ],
+        "drugs_any": [
+          "左氧氟沙星滴眼液",
+          "妥布霉素滴眼液",
+          "氯霉素滴眼液",
+          "加替沙星滴眼液"
+        ]
+      }
+    },
+    {
+      "id": "RULE-PED-MACROLIDE-QT",
+      "domain": "clinical",
+      "title": "大环内酯类合并延长 QT 间期药物/心律失常风险强阻断",
+      "severity": "RED",
+      "message": "阿奇霉素等大环内酯类药物可抑制心肌复极延迟心电图 QT 间期。合用多潘立酮/昂丹司琼或心律失常体质者可协同显著延长 QTc，极易诱发致命性尖端扭转型室性心动过速（TdP）及心室颤动！绝对禁止联合使用。",
+      "guideline": "《儿童肺炎支原体肺炎诊疗指南（2023年版）》与国家药监局大环内酯类心脏安全性警示",
+      "conditions": {
+        "drugs_any": [
+          "阿奇霉素",
+          "克拉霉素",
+          "红霉素",
+          "罗红霉素"
+        ],
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "阿奇霉素",
+              "克拉霉素",
+              "红霉素",
+              "罗红霉素"
+            ],
+            "group_b": [
+              "多潘立酮",
+              "昂丹司琼",
+              "西沙必利",
+              "胺碘酮",
+              "索他洛尔",
+              "喹尼丁",
+              "特非那定"
+            ]
+          }
+        ],
+        "history_any": [
+          "qt延长",
+          "长qt",
+          "心律失常",
+          "尖端扭转"
+        ],
+        "profile_flags": [
+          "has_long_qt"
+        ],
+        "ddi_or_history": true
+      }
+    },
+    {
+      "id": "RULE-PED-TETRACYCLINE-AGE",
+      "domain": "clinical",
+      "title": "8岁以下儿童禁用四环素类（牙釉质发育不全与骨生长发育毒性）",
+      "severity": "RED",
+      "message": "8岁以下儿童四环素类与钙离子螯合沉积于牙齿和骨骼，可导致永久性牙齿黄染、牙釉质发育不良及骨生长抑制！除耐药重症充分知情同意外，常规门诊严禁处方。",
+      "guideline": "《儿童肺炎支原体肺炎诊疗指南（2023年版）》",
+      "conditions": {
+        "age_lt": 8,
+        "drugs_any": [
+          "多西环素",
+          "米诺环素",
+          "四环素",
+          "美他环素"
+        ]
+      }
+    },
+    {
+      "id": "RULE-PED-ASTHMA-ORAL-STEROID",
+      "domain": "clinical",
+      "title": "儿童哮喘维持期严禁常规口服短效舒张剂或无指征口服激素",
+      "severity": "RED",
+      "message": "儿童支气管哮喘控制基石为吸入性糖皮质激素（ICS），严禁长期规律单用口服沙丁胺醇等 SABA，且严禁常规门诊长期口服泼尼松等全身激素作为维持治疗！",
+      "guideline": "《儿童支气管哮喘诊断与防治指南（2020年版）》",
+      "conditions": {
+        "age_lt": 18,
+        "history_any": [
+          "哮喘",
+          "喘息"
+        ],
+        "drugs_any": [
+          "沙丁胺醇片",
+          "沙丁胺醇胶囊",
+          "特布他林片",
+          "泼尼松片",
+          "强的松片",
+          "地塞米松片",
+          "甲泼尼龙片"
+        ]
+      }
+    },
+    {
+      "id": "RULE-GERD-PPI-CLOPIDOGREL",
+      "domain": "clinical",
+      "title": "严禁氯吡格雷联合奥美拉唑/艾司奥美拉唑（支架内急性血栓风险）",
+      "severity": "RED",
+      "message": "奥美拉唑及艾司奥美拉唑对肝药酶 CYP2C19 具有强竞争性抑制作用，与氯吡格雷合用时阻断其转化为活性抗血小板代谢产物，显著增加心肌梗死、支架内血栓及心血管死亡风险！绝对禁止联合处方，推荐换用对 CYP2C19 影响极小的雷贝拉唑或泮托拉唑。",
+      "guideline": "《2020年中国胃食管反流病专家共识》与国家药监局氯吡格雷安全警示",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "氯吡格雷",
+              "波立维",
+              "泰嘉"
+            ],
+            "group_b": [
+              "奥美拉唑",
+              "艾司奥美拉唑",
+              "埃索美拉唑"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-LIPID-STATIN-GEMFIBROZIL",
+      "domain": "clinical",
+      "title": "致命横纹肌溶解：严禁他汀类与吉非罗齐联合处方",
+      "severity": "RED",
+      "message": "吉非罗齐强效抑制他汀类药物的葡萄糖醛酸化清除代谢途径，使他汀血药浓度急剧暴增数倍，诱发致死性急性横纹肌溶解综合征、肌红蛋白尿及急性肾衰竭！绝对禁止联合使用，若高甘油三酯血症需联用贝特类首选非诺贝特。",
+      "guideline": "《中国血脂管理指南（2023年）》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "他汀",
+              "阿托伐他汀",
+              "瑞舒伐他汀",
+              "辛伐他汀",
+              "普伐他汀",
+              "氟伐他汀",
+              "匹伐他汀"
+            ],
+            "group_b": [
+              "吉非罗齐",
+              "诺衡"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-UTI-NITROFURANTOIN-RENAL",
+      "domain": "clinical",
+      "title": "重度肾功能不全禁用呋喃妥因（治疗无效与神经肺毒性）",
+      "severity": "RED",
+      "message": "患者 eGFR < 30 ml/min/1.73m²，呋喃妥因无法正常滤过排泄至尿液导致尿液杀菌浓度不足（治疗无效），且药物在血液组织中严重蓄积可诱发不可逆外周神经病变与严重肺纤维化毒性！绝对禁用，推荐换用头孢克肟等药物。",
+      "guideline": "《尿路感染基层合理用药指南（2021年）》",
+      "conditions": {
+        "drugs_any": [
+          "呋喃妥因",
+          "呋喃咀啶"
+        ],
+        "egfr_lt": 30
+      }
+    },
+    {
+      "id": "RULE-LIPID-STATIN-HEPATIC",
+      "domain": "clinical",
+      "title": "活动性肝病或转氨酶显著升高禁用他汀类",
+      "severity": "RED",
+      "message": "患者存在活动性肝病或血清转氨酶 ALT/AST 持续升高达正常上限 3 倍以上，此时开具他汀类药物可加剧急性肝细胞损伤与药物性肝衰竭！严禁处方全量他汀，须暂停用药并积极保肝复查。",
+      "guideline": "《中国血脂管理指南（2023年）》",
+      "conditions": {
+        "drugs_any": [
+          "他汀",
+          "阿托伐他汀",
+          "瑞舒伐他汀",
+          "辛伐他汀",
+          "普伐他汀",
+          "氟伐他汀",
+          "匹伐他汀"
+        ],
+        "history_any": [
+          "活动性肝炎",
+          "肝衰竭",
+          "失代偿期肝硬化",
+          "肝功能衰竭"
+        ],
+        "profile_flags": [
+          "alt_above_3x",
+          "ast_above_3x"
+        ]
+      }
+    },
+    {
+      "id": "RULE-PREGNANCY-ORAL-FLUCONAZOLE",
+      "domain": "clinical",
+      "title": "妊娠期严禁口服氟康唑（胎儿先天畸形与自发流产风险）",
+      "severity": "RED",
+      "message": "流行病学研究证实妊娠早期系统暴露于氟康唑可显著增加胎儿复杂先天性心脏畸形、颅面畸形及自然流产风险！妊娠期外阴阴道假丝酵母菌病绝对禁用口服氟康唑，推荐选用局部克霉唑阴道栓。",
+      "guideline": "《阴道炎症诊断与治疗规范（2021版）》与国家药监局氟康唑妊娠安全性警示",
+      "conditions": {
+        "pregnancy": true,
+        "drugs_any": [
+          "氟康唑",
+          "大扶康"
+        ]
+      }
+    },
+    {
+      "id": "RULE-LEVOTHYROXINE-CHELATION",
+      "domain": "clinical",
+      "title": "左甲状腺素钠与钙/铁/铝制剂螯合吸收障碍预警",
+      "severity": "YELLOW",
+      "message": "碳酸钙、硫酸亚铁及铝碳酸镁等多价阳离子在胃肠道与左甲状腺素强烈螯合形成不溶性沉淀，导致左甲状腺素生物利用度下降超50%引起甲减控制失败！两类药物服用时间必须间隔至少 4 小时以上。",
+      "guideline": "《成人甲状腺功能减退症诊治指南》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "左甲状腺素",
+              "优甲乐",
+              "雷替斯"
+            ],
+            "group_b": [
+              "碳酸钙",
+              "醋酸钙",
+              "硫酸亚铁",
+              "富马酸亚铁",
+              "铝碳酸镁",
+              "氢氧化铝"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-THYROID-CAD-DOSE",
+      "domain": "clinical",
+      "title": "冠心病或高龄患者左甲状腺素严禁大剂量直接起始",
+      "severity": "RED",
+      "message": "患者伴有冠心病缺血病史或高龄 (>=65岁)，甲状腺激素可急剧增加心肌做功与耗氧量，大剂量（>=50μg/d）直接起始极易诱发急性心绞痛、心肌梗死或致死性心律失常！指南强制要求必须从超小剂量（12.5~25μg/d）起始、每2~4周缓慢滴定。",
+      "guideline": "《成人甲状腺功能减退症诊治指南》",
+      "conditions": {
+        "drugs_any": [
+          "左甲状腺素",
+          "优甲乐",
+          "雷替斯"
+        ],
+        "profile_flag_true": "lt4_dose_above_25",
+        "history_any": [
+          "冠心病",
+          "心绞痛",
+          "心肌梗死",
+          "心肌缺血",
+          "支架"
+        ],
+        "profile_flags": [
+          "has_cad"
+        ]
+      }
+    },
+    {
+      "id": "RULE-ALLERGY-PENICILLIN",
+      "domain": "clinical",
+      "title": "青霉素过敏史患者严禁使用青霉素类药物（致死性过敏性休克风险）",
+      "severity": "RED",
+      "message": "患者明确记录有青霉素过敏史或皮试阳性，严禁处方阿莫西林或青霉素类药物！强行使用可诱发急性喉头水肿、支气管痉挛及严重过敏性休克致死！推荐换用头孢菌素或大环内酯类。",
+      "guideline": "《急性咽峡炎/扁桃体炎基层诊疗指南（2020年）》与国家药典临床用药须知",
+      "conditions": {
+        "drugs_any": [
+          "阿莫西林",
+          "青霉素",
+          "氨苄西林",
+          "哌拉西林",
+          "舒巴坦"
+        ],
+        "allergy_any": [
+          "青霉素",
+          "阿莫西林",
+          "penicillin"
+        ],
+        "allergy_flags": [
+          "penicillin_allergy"
+        ]
+      }
+    },
+    {
+      "id": "RULE-KOA-SYSTEMIC-STEROID",
+      "domain": "clinical",
+      "title": "膝骨关节炎严禁常规全身口服或静滴糖皮质激素",
+      "severity": "RED",
+      "message": "骨关节炎属于非化脓性退行性软骨退变，常规口服或静滴糖皮质激素并不能阻断疾病进展，反而加速关节软骨破坏坏死、诱发股骨头无菌性坏死及全身骨质疏松！绝对禁止系统性使用激素，首选外用或口服非甾体抗炎药。",
+      "guideline": "《膝骨关节炎基层诊疗指南（2019年）》",
+      "conditions": {
+        "history_any": [
+          "膝骨关节炎",
+          "骨关节炎",
+          "退行性关节炎",
+          "膝痛"
+        ],
+        "profile_flags": [
+          "is_koa"
+        ],
+        "drugs_any": [
+          "泼尼松片",
+          "地塞米松片",
+          "地塞米松磷酸钠注射液",
+          "甲泼尼龙片",
+          "氢化可的松注射液",
+          "倍他米松注射液"
+        ]
+      }
+    },
+    {
+      "id": "RULE-ANTIHISTAMINE-ELDERLY",
+      "domain": "clinical",
+      "title": "高龄患者避免常规处方第一代中枢镇静抗组胺药",
+      "severity": "YELLOW",
+      "message": "高龄 (>=65岁) 患者第一代抗组胺药（扑尔敏、苯海拉明等）具有强脂溶性中枢抑制和抗胆碱能效应，极易引起白天重度嗜睡、步态不稳摔倒骨折及加重老年认知障碍/诱发排尿困难！推荐优先换用第二代非镇静抗组胺药。",
+      "guideline": "《中国荨麻疹诊疗指南（2022版）》与《老年人多重用药安全管理指南》",
+      "conditions": {
+        "age_gte": 65,
+        "drugs_any": [
+          "氯苯那敏",
+          "扑尔敏",
+          "苯海拉明",
+          "异丙嗪",
+          "赛庚啶"
+        ]
+      }
+    },
+    {
+      "id": "RULE-BPH-ANTICHOLINERGIC",
+      "domain": "clinical",
+      "title": "良性前列腺增生患者严禁盲目开具抗胆碱能药物（致急性尿潴留）",
+      "severity": "RED",
+      "message": "阿托品、消旋山莨菪碱（654-2）等抗胆碱药可强力阻断膀胱逼尿肌 M 受体，导致逼尿肌收缩无力、残余尿量急剧暴增，直接诱发急性尿潴留（AUR）与肾功能损伤！下尿路梗阻患者绝对禁止使用。",
+      "guideline": "《良性前列腺增生基层诊疗指南（2019年）》",
+      "conditions": {
+        "history_any": [
+          "前列腺增生",
+          "前列腺肥大",
+          "bph",
+          "排尿困难",
+          "尿潴留"
+        ],
+        "profile_flags": [
+          "is_bph"
+        ],
+        "drugs_any": [
+          "阿托品",
+          "山莨菪碱",
+          "654-2",
+          "东莨菪碱",
+          "颠茄",
+          "奥昔布宁"
+        ]
+      }
+    },
+    {
+      "id": "RULE-RABIES-III-PASSIVE-IMMUNITY",
+      "domain": "clinical",
+      "title": "狂犬病 III 级出血暴露必须同时开具狂犬病人免疫球蛋白 (HRIG)",
+      "severity": "RED",
+      "message": "狂犬病发病后致死率几乎 100%！患者存在皮肤贯通出血或黏膜破损，属于狂犬病 III 级暴露。国家规范强制要求必须首剂即刻在伤口周围浸润注射狂犬病人免疫球蛋白（HRIG 20 IU/kg），严禁漏开！",
+      "guideline": "《狂犬病暴露预防处置工作规范（2023年版）》",
+      "conditions": {
+        "history_any": [
+          "iii级",
+          "3级",
+          "出血",
+          "咬伤出血",
+          "肉眼出血",
+          "贯通伤",
+          "黏膜被舔"
+        ],
+        "profile_flags": [
+          "rabies_grade_3",
+          "is_rabies_grade_3"
+        ],
+        "drugs_any": [
+          "狂犬病疫苗",
+          "狂犬疫苗"
+        ],
+        "drugs_not_any": [
+          "狂犬病人免疫球蛋白",
+          "hrig",
+          "抗狂犬病血清"
+        ]
+      }
+    },
+    {
+      "id": "RULE-TETANUS-DEEP-DIRTY",
+      "domain": "clinical",
+      "title": "深部污染伤口或动物致伤未评估开具破伤风免疫预防",
+      "severity": "YELLOW",
+      "message": "患者存在动物咬伤或深部污染创面，属于破伤风梭菌厌氧感染高危创口。必须立即评估患者破伤风免疫史，未在 5~10 年内加强者应及时注射吸附破伤风疫苗（TT）及破伤风人免疫球蛋白（TIG 250 IU）防范破伤风感染。",
+      "guideline": "《非新生儿破伤风诊疗规范（2019年版）》",
+      "conditions": {
+        "history_any": [
+          "生锈",
+          "铁钉刺伤",
+          "土壤污染",
+          "动物咬伤",
+          "犬咬伤"
+        ],
+        "profile_flags": [
+          "dirty_wound"
+        ],
+        "drugs_not_any": [
+          "破伤风",
+          "tig",
+          "tat"
+        ]
+      }
+    },
+    {
+      "id": "RULE-BPH-HYPOTENSION-TAMSULOSIN",
+      "domain": "clinical",
+      "title": "高龄多重降压患者使用坦索罗辛体位性低血压晕厥警戒",
+      "severity": "YELLOW",
+      "message": "坦索罗辛具有血管平滑肌松弛作用，与多种降压药物合用易发生叠加扩张效应，导致老年人夜间起床排尿时发生严重体位性低血压、晕厥与摔倒！必须指导每晚临睡前服药，起床排尿时缓慢起身。",
+      "guideline": "《良性前列腺增生基层诊疗指南（2019年）》",
+      "conditions": {
+        "drugs_any": [
+          "坦索罗辛",
+          "哈乐"
+        ],
+        "history_any": [
+          "高血压",
+          "冠心病",
+          "体位性低血压"
+        ],
+        "profile_flags": [
+          "has_cad",
+          "orthostatic_hypotension"
+        ]
+      }
+    }
+  ]
+}
