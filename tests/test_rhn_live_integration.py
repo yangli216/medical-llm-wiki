@@ -287,12 +287,13 @@ class TestRhnLiveIntegration(unittest.TestCase):
         """Verifies /api/drugs, /api/drugs/<name>, and /api/drugs/check-contraindications live endpoints."""
         # 1. Test List all drugs
         all_drugs = self._get_json("/api/drugs")
-        self.assertEqual(len(all_drugs), 62)
+        self.assertEqual(len(all_drugs), 100)
         self.assertTrue(any(d["genericName"] == "盐酸二甲双胍片" for d in all_drugs))
+        self.assertTrue(any("沙库巴曲缬沙坦" in d["genericName"] for d in all_drugs))
 
         # 2. Test Category filter
         cvd_drugs = self._get_json("/api/drugs?category=心血管系统")
-        self.assertEqual(len(cvd_drugs), 10)
+        self.assertEqual(len(cvd_drugs), 19)
 
         # 3. Test Detail lookup
         detail = self._get_json("/api/drugs/盐酸二甲双胍片")
@@ -309,6 +310,15 @@ class TestRhnLiveIntegration(unittest.TestCase):
         self.assertFalse(audit_res["canPrescribe"])
         self.assertEqual(audit_res["level"], "BLOCK")
         self.assertTrue(any(a["rule"] == "DDI_NITRO_PDE5I" for a in audit_res["alerts"]))
+
+        # 5. Test 2026 Essential Drug Check (Sacubitril/Valsartan + Enalapril 36h Washout)
+        audit_arni = self._post_json("/api/drugs/check-contraindications", {
+            "medications": ["沙库巴曲缬沙坦钠片", "马来酸依那普利片"],
+            "patient": {"age": 65}
+        })
+        self.assertFalse(audit_arni["canPrescribe"])
+        self.assertEqual(audit_arni["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "DDI_ARNI_ACEI_WASHOUT_36H" for a in audit_arni["alerts"]))
 
 
 if __name__ == "__main__":

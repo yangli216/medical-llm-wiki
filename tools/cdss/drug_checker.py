@@ -248,6 +248,85 @@ class DrugContraindicationAuditor:
                         "evidence": "《中国药典临床用药须知》利尿药章节",
                     })
 
+            # Empagliflozin: eGFR < 20 or dialysis BLOCK, < 45 WARNING
+            elif "恩格列净" in gname:
+                if egfr < 20:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "RENAL_EGFR_LT_20_EMPA",
+                        "title": "终末期肾病/透析禁用SGLT2抑制剂(恩格列净)",
+                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (< 20)，缺乏肾小球有效滤过底物，控糖与靶器官获益丧失，说明书列为禁忌！",
+                        "evidence": "《恩格列净片说明书》【特殊人群用药】",
+                    })
+                elif egfr < 45:
+                    alerts.append({
+                        "level": "WARNING",
+                        "rule": "RENAL_EGFR_LT_45_EMPA_GLUCOSE",
+                        "title": "降糖效果减弱提示",
+                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (< 45)，恩格列净降糖效果减弱，单纯降糖不建议起始，但心衰/CKD适应证仍可使用10mg qd。",
+                        "evidence": "《恩格列净片说明书》【用法用量】",
+                    })
+
+            # Rivaroxaban: eGFR < 15 BLOCK, 15~49 WARNING
+            elif "利伐沙班" in gname:
+                if egfr < 15:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "RENAL_RIVAROXABAN_LT_15",
+                        "title": "重度肾功能不全禁用利伐沙班",
+                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (< 15)，血药浓度显著蓄积，诱发不可逆大出血风险极高，说明书列为禁忌！",
+                        "evidence": "《利伐沙班片说明书》【禁忌】",
+                    })
+                elif egfr < 50:
+                    alerts.append({
+                        "level": "WARNING",
+                        "rule": "RENAL_RIVAROXABAN_15_49_ADJUST",
+                        "title": "中度肾功能受损剂量下调警示",
+                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (15~49)，用于非瓣膜性房颤卒中预防时，推荐剂量由每日20mg下调至每日15mg顿服！",
+                        "evidence": "《利伐沙班片说明书》【肾功能不全患者用法用量】",
+                    })
+
+            # Dabigatran: eGFR < 30 BLOCK, 30~50 WARNING
+            elif "达比加群" in gname:
+                if egfr < 30:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "RENAL_DABIGATRAN_LT_30",
+                        "title": "重度肾损伤绝对禁用达比加群酯",
+                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (< 30)，达比加群80%依赖肾脏原型清除，严重肾功能损害导致极度蓄积诱发致死性出血！",
+                        "evidence": "《甲磺酸达比加群酯胶囊说明书》【禁忌】",
+                    })
+                elif egfr <= 50:
+                    alerts.append({
+                        "level": "WARNING",
+                        "rule": "RENAL_DABIGATRAN_30_50_ADJUST",
+                        "title": "中度肾损伤推荐减量使用",
+                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (30~50)，存在出血高危风险，建议酌情减量至每次110mg，每日2次，并严密监测肾功能！",
+                        "evidence": "《甲磺酸达比加群酯胶囊说明书》【用法用量】",
+                    })
+
+            # Spironolactone / Compound Reserpine (Potassium sparing): eGFR < 30 BLOCK
+            elif "螺内酯" in gname or "氨苯蝶啶" in gname:
+                if egfr < 30:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "RENAL_SPIRONOLACTONE_LT_30",
+                        "title": "重度肾功能不全禁用保钾利尿剂",
+                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (< 30)，排钾障碍叠加保钾利尿效应，极易暴发致死性高钾血症与心脏骤停！",
+                        "evidence": "《螺内酯片说明书》及《复方利血平氨苯蝶啶片说明书》【禁忌】",
+                    })
+
+            # Duloxetine: eGFR < 30 BLOCK
+            elif "度洛西汀" in gname:
+                if egfr < 30:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "RENAL_DULOXETINE_LT_30",
+                        "title": "终末期肾病禁用盐酸度洛西汀",
+                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (< 30)，活性代谢物血药浓度增加数十倍，说明书明确列为禁忌！",
+                        "evidence": "《盐酸度洛西汀肠溶胶囊说明书》【禁忌】",
+                    })
+
             # Bismuth: eGFR < 30 BLOCK
             elif "铋" in gname:
                 if egfr < 30:
@@ -300,19 +379,19 @@ class DrugContraindicationAuditor:
                         "evidence": "《盐酸西替利嗪片说明书》【禁忌】",
                     })
 
-            # Rosuvastatin: eGFR < 30 BLOCK
-            elif "瑞舒伐他汀" in gname:
+            # Rosuvastatin / Pitavastatin: eGFR < 30 BLOCK
+            elif any(k in gname for k in ["瑞舒伐他汀", "匹伐他汀"]):
                 if egfr < 30:
                     alerts.append({
                         "level": "BLOCK",
                         "rule": "RENAL_ROSUVA_LT_30",
-                        "title": "重度肾功能受损禁用瑞舒伐他汀",
-                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (< 30)，血药浓度成倍蓄积，横纹肌溶解与肌毒性风险剧增，禁用！",
-                        "evidence": "《瑞舒伐他汀钙片说明书》【禁忌】",
+                        "title": "重度肾功能受损禁用他汀强效类",
+                        "reason": f"患者 eGFR = {egfr} mL/min/1.73m² (< 30)，血药浓度成倍蓄积，横纹肌溶解与肌毒性风险剧增，说明书列为禁忌！",
+                        "evidence": "官方药品说明书【禁忌】及中国药典临床用药须知",
                     })
 
             # NSAIDs: eGFR < 30 BLOCK
-            elif any(k in gname for k in ["布洛芬", "双氯芬酸", "塞来昔布", "依托考昔"]):
+            elif any(k in gname for k in ["布洛芬", "双氯芬酸", "塞来昔布", "依托考昔", "艾瑞昔布"]):
                 if egfr < 30:
                     alerts.append({
                         "level": "BLOCK",
@@ -324,35 +403,44 @@ class DrugContraindicationAuditor:
 
         # ---------------- 2. Pregnancy & Lactation ----------------
         if is_pregnant:
-            # ACEI / ARB
-            if any(k in gname for k in ["缬沙坦", "氯沙坦", "厄贝沙坦", "依那普利"]):
+            # ACEI / ARB / ARNI
+            if any(k in gname for k in ["缬沙坦", "氯沙坦", "厄贝沙坦", "依那普利", "沙库巴曲"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "PREGNANCY_RAS_INHIBITOR",
-                    "title": "妊娠期绝对禁用 RAS 抑制剂 (普利/沙坦类)",
+                    "title": "妊娠期绝对禁用 RAS/ARNI 抑制剂 (普利/沙坦/沙库巴曲类)",
                     "reason": "FDA 明确评定为 D 类/严重致畸黑框！妊娠中晚期使用可直接致胎儿肾发育不全、无尿、羊水过少、颅骨发育畸形及胎死宫内！发现妊娠必须立即停药并改用甲基多巴或拉贝洛尔！",
                     "evidence": "《中国高血压防治指南》及官方药品说明书【黑框警告】",
                 })
             # Statins
-            elif any(k in gname for k in ["阿托伐他汀", "瑞舒伐他汀"]):
+            elif any(k in gname for k in ["阿托伐他汀", "瑞舒伐他汀", "匹伐他汀"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "PREGNANCY_STATIN_X",
                     "title": "妊娠期绝对禁用他汀类降脂药 (FDA X类)",
                     "reason": "胆固醇及其生物合成产物为胎儿神经及器官组织发育所必需，他汀类具有明确的人类致畸性与流产风险，育龄期服药必须严格避孕！",
-                    "evidence": "《阿托伐他汀钙片说明书》【禁忌】",
+                    "evidence": "官方药品说明书【禁忌】",
+                })
+            # Anticoagulants (Rivaroxaban / Dabigatran)
+            elif any(k in gname for k in ["利伐沙班", "达比加群"]):
+                alerts.append({
+                    "level": "BLOCK",
+                    "rule": "PREGNANCY_NOAC",
+                    "title": "妊娠期禁用新型口服抗凝药 (NOAC)",
+                    "reason": "利伐沙班与达比加群可通过胎盘屏障，具有明显的胚胎毒性与产道大出血风险，孕期抗凝优先选择低分子肝素！",
+                    "evidence": "《利伐沙班片说明书》及《甲磺酸达比加群酯胶囊说明书》【禁忌】",
                 })
             # Quinolones
-            elif any(k in gname for k in ["左氧氟沙星", "莫西沙星"]):
+            elif any(k in gname for k in ["左氧氟沙星", "莫西沙星", "诺氟沙星"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "PREGNANCY_QUINOLONES",
                     "title": "妊娠期绝对禁用氟喹诺酮类抗菌药",
                     "reason": "动物试验明确显示喹诺酮类可引起负重关节软骨持久性侵蚀坏死畸变，妊娠期禁用！",
-                    "evidence": "《左氧氟沙星片说明书》【禁忌】",
+                    "evidence": "官方药品说明书【禁忌】",
                 })
             # NSAIDs
-            elif any(k in gname for k in ["布洛芬", "双氯芬酸", "塞来昔布", "依托考昔"]):
+            elif any(k in gname for k in ["布洛芬", "双氯芬酸", "塞来昔布", "依托考昔", "艾瑞昔布"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "PREGNANCY_NSAIDS_THIRD_TRIMESTER",
@@ -360,14 +448,14 @@ class DrugContraindicationAuditor:
                     "reason": "尤其在孕20周后慎用，孕30周后绝对禁用！抑制前列腺素导致胎儿动脉导管过早闭合、持续性肺动脉高压及难产！",
                     "evidence": "国家药监局《关于修订含NSAIDs口服制剂说明书的公告》",
                 })
-            # Sedative hypnotics
-            elif any(k in gname for k in ["艾司唑仑", "唑吡坦"]):
+            # Sedative hypnotics & Tramadol
+            elif any(k in gname for k in ["艾司唑仑", "唑吡坦", "曲马多"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "PREGNANCY_BENZO_ZDRUG",
-                    "title": "妊娠期禁用镇静催眠药",
+                    "title": "妊娠期禁用镇静催眠药及中枢镇痛药",
                     "reason": "致畸畸胎风险，临产前用药可导致新生儿松弛肌无力综合征（Floppy Infant）与严重呼吸中枢抑制！",
-                    "evidence": "《艾司唑仑片说明书》【禁忌】",
+                    "evidence": "官方药品说明书【禁忌】",
                 })
             # Sulfonylurea
             elif "格列美脲" in gname:
@@ -379,30 +467,39 @@ class DrugContraindicationAuditor:
                     "evidence": "《格列美脲片说明书》【禁忌】",
                 })
             # Gout
-            elif any(k in gname for k in ["别嘌醇", "苯溴马隆"]):
+            elif any(k in gname for k in ["别嘌醇", "苯溴马隆", "非布司他"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "PREGNANCY_GOUT_DRUGS",
                     "title": "妊娠期禁用降尿酸药物",
-                    "reason": "具有生殖胚胎毒性与流产风险，孕妇痛风仅限对症处理，禁用别嘌醇与苯溴马隆！",
+                    "reason": "具有生殖胚胎毒性与流产风险，孕妇痛风仅限对症处理，禁用别嘌醇、苯溴马隆与非布司他！",
                     "evidence": "《中国高尿酸血症与痛风诊疗指南》",
                 })
 
         if is_lactating:
-            if any(k in gname for k in ["他汀", "格列美脲", "艾司唑仑", "唑吡坦", "左氧氟沙星", "莫西沙星"]):
+            if any(k in gname for k in ["他汀", "格列美脲", "艾司唑仑", "唑吡坦", "左氧氟沙星", "莫西沙星", "诺氟沙星", "利伐沙班", "达比加群"]):
                 notes.append("哺乳期提示：该药物可通过母乳排泄，存在潜在婴儿不良反应，建议服药期间暂停母乳喂养。")
 
         # ---------------- 3. Pediatric & Elderly Rules ----------------
         if age is not None:
             if age < 18:
                 # Quinolones in pediatric
-                if any(k in gname for k in ["左氧氟沙星", "莫西沙星"]):
+                if any(k in gname for k in ["左氧氟沙星", "莫西沙星", "诺氟沙星"]):
                     alerts.append({
                         "level": "BLOCK",
                         "rule": "PEDIATRIC_QUINOLONES_LT_18",
                         "title": "18岁以下未成年人绝对禁用喹诺酮类",
                         "reason": "软骨发育毒性黑框警告！在未成年儿童中可导致负重关节软骨坏死侵蚀与关节病变，18岁以下绝对禁用！",
                         "evidence": "国家药监局法定说明书黑框警告及《抗菌药物临床应用指导原则》",
+                    })
+                # Tramadol in pediatric
+                if "曲马多" in gname and age < 12:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "PEDIATRIC_TRAMADOL_LT_12",
+                        "title": "12岁以下儿童绝对禁用曲马多",
+                        "reason": "曲马多具有呼吸抑制致死黑框风险，因儿童CYP2D6超快代谢个体差异可暴发致死性阿片中毒，12岁以下禁用！",
+                        "evidence": "国家药监局官方说明书【黑框警告】",
                     })
                 # Aspirin in viral infection
                 if "阿司匹林" in gname and any(c in conditions for c in ["上感", "流感", "感冒", "发热", "水痘", "病毒感染"]):
@@ -426,7 +523,7 @@ class DrugContraindicationAuditor:
 
         # ---------------- 4. Allergies ----------------
         for alg in allergies:
-            if "青霉素" in alg and "阿莫西林" in gname:
+            if "青霉素" in alg and any(k in gname for k in ["阿莫西林"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "ALLERGY_PENICILLIN_AMOXICILLIN",
@@ -434,13 +531,13 @@ class DrugContraindicationAuditor:
                     "reason": "阿莫西林为青霉素类β-内酰胺抗菌药，青霉素过敏者使用可诱发致死性过敏性休克与窒息，系统最高级别红色阻断！",
                     "evidence": "《阿莫西林胶囊说明书》【禁忌】",
                 })
-            elif "头孢" in alg and "头孢克肟" in gname:
+            elif "头孢" in alg and any(k in gname for k in ["头孢克肟", "头孢呋辛"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "ALLERGY_CEPHALOSPORIN_CEFIXIME",
-                    "title": "头孢类过敏患者绝对禁用头孢克肟",
-                    "reason": "头孢菌素过敏史患者禁用头孢克肟，防严重过敏反应！",
-                    "evidence": "《头孢克肟分散片说明书》【禁忌】",
+                    "title": "头孢类过敏患者绝对禁用头孢菌素",
+                    "reason": f"头孢菌素过敏史患者禁用{gname}，防严重过敏反应！",
+                    "evidence": "官方药品说明书【禁忌】",
                 })
             elif "磺胺" in alg and ("塞来昔布" in gname or "吲达帕胺" in gname or "格列美脲" in gname):
                 alerts.append({
@@ -450,7 +547,7 @@ class DrugContraindicationAuditor:
                     "reason": f"{gname}化学结构含苯磺酰胺基团，磺胺类药物过敏史者禁用塞来昔布（严重剥脱性皮炎及休克风险）！",
                     "evidence": "《塞来昔布胶囊说明书》【禁忌】",
                 })
-            elif "阿司匹林" in alg and any(k in gname for k in ["阿司匹林", "布洛芬", "双氯芬酸", "塞来昔布", "依托考昔"]):
+            elif "阿司匹林" in alg and any(k in gname for k in ["阿司匹林", "布洛芬", "双氯芬酸", "塞来昔布", "依托考昔", "艾瑞昔布"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "ALLERGY_ASPIRIN_TRIAD",
@@ -461,7 +558,7 @@ class DrugContraindicationAuditor:
 
         # ---------------- 5. Patient Conditions ----------------
         for cond in conditions:
-            # Heart condition + Diclofenac / Etoricoxib
+            # Heart condition + Diclofenac / Etoricoxib / Imrecoxib
             if any(k in cond for k in ["心肌梗死", "冠心病", "心绞痛", "脑梗", "卒中", "cabg"]):
                 if any(k in gname for k in ["双氯芬酸", "依托考昔", "塞来昔布"]):
                     alerts.append({
@@ -472,15 +569,78 @@ class DrugContraindicationAuditor:
                         "evidence": "官方核准说明书【黑框警告】",
                     })
 
-            # Peptic ulcer / Bleeding + NSAIDs / Aspirin
-            if any(k in cond for k in ["胃溃疡", "十二指肠溃疡", "消化道出血", "穿孔", "黑便", "呕血"]):
-                if any(k in gname for k in ["布洛芬", "双氯芬酸", "阿司匹林"]):
+            # Semaglutide + MTC / MEN 2
+            if any(k in cond for k in ["甲状腺髓样癌", "mtc", "men 2", "men2", "多发性内分泌腺瘤"]):
+                if "司美格鲁肽" in gname:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "CONDITION_SEMAGLUTIDE_MTC",
+                        "title": "甲状腺髓样癌/MEN 2 家族史绝对禁用司美格鲁肽",
+                        "reason": "黑框警告！啮齿类及临床监测显示GLP-1受体激动剂具有甲状腺C细胞肿瘤致癌性，既往或家族有MTC或MEN 2病史者绝对禁用！",
+                        "evidence": "《司美格鲁肽注射液说明书》【黑框警告】",
+                    })
+
+            # Reserpine + Depression
+            if any(k in cond for k in ["抑郁", "自杀", "抑郁症", "重性抑郁"]):
+                if "复方利血平" in gname:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "CONDITION_RESERPINE_DEPRESSION",
+                        "title": "活动性抑郁症患者绝对禁用复方利血平制剂",
+                        "reason": "利血平耗竭中枢单胺递质（多巴胺、去甲肾上腺素、5-HT），可诱发严重难治性抑郁发作及恶性自杀冲动，说明书列为绝对禁忌！",
+                        "evidence": "《复方利血平氨苯蝶啶片说明书》【禁忌】",
+                    })
+
+            # Tramadol + Epilepsy / Respiratory depression
+            if any(k in cond for k in ["癫痫", "抽搐", "惊厥", "严重呼吸衰竭"]):
+                if "曲马多" in gname:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "CONDITION_TRAMADOL_EPILEPSY",
+                        "title": "癫痫病史或严重呼吸抑制禁用曲马多",
+                        "reason": "曲马多显著降低大脑惊厥抽搐阈值，诱发大发作性癫痫持续状态，且抑制呼吸中枢，说明书列为禁忌！",
+                        "evidence": "《盐酸曲马多缓释片说明书》【禁忌】",
+                    })
+
+            # Tolterodine + Urinary retention / glaucoma
+            if any(k in cond for k in ["尿潴留", "前列腺肥大伴尿潴留", "重度前列腺增生", "闭角型青光眼"]):
+                if "托特罗定" in gname:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "CONDITION_TOLTERODINE_URINARY_RETENTION",
+                        "title": "尿潴留或未控制闭角型青光眼绝对禁用托特罗定",
+                        "reason": "M受体拮抗剂阻断膀胱逼尿肌收缩，可诱发急性尿潴留危象，说明书列为绝对禁忌！",
+                        "evidence": "《酒石酸托特罗定片说明书》【禁忌】",
+                    })
+
+            # Dabigatran + Mechanical Heart Valve
+            if any(k in cond for k in ["机械瓣", "机械心脏瓣膜", "人工瓣膜置换"]):
+                if "达比加群" in gname:
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "CONDITION_DABIGATRAN_MECHANICAL_VALVE",
+                        "title": "机械心脏瓣膜置换术后绝对禁用达比加群酯",
+                        "reason": "RE-ALIGN大型临床试验明确证实：机械瓣患者使用达比加群血栓栓塞与大出血风险显著高于传统华法林，说明书列为绝对禁忌！",
+                        "evidence": "《甲磺酸达比加群酯胶囊说明书》【禁忌】",
+                    })
+
+            # Peptic ulcer / Bleeding + NSAIDs / Aspirin / Rivaroxaban
+            if any(k in cond for k in ["胃溃疡", "十二指肠溃疡", "消化道出血", "穿孔", "黑便", "呕血", "活动性出血"]):
+                if any(k in gname for k in ["布洛芬", "双氯芬酸", "阿司匹林", "艾瑞昔布"]):
                     alerts.append({
                         "level": "BLOCK",
                         "rule": "CONDITION_GI_BLEEDING_NSAIDS",
                         "title": "活动性消化性溃疡/大出血绝对禁用NSAIDs",
                         "reason": f"患者存在活动性消化道病变（{cond}），NSAIDs抑制前列腺素并抗血小板，极易诱发暴发性胃肠大出血休克穿孔致死！",
                         "evidence": "《布洛芬缓释胶囊说明书》【禁忌】",
+                    })
+                elif any(k in gname for k in ["利伐沙班", "达比加群"]):
+                    alerts.append({
+                        "level": "BLOCK",
+                        "rule": "CONDITION_ACTIVE_BLEEDING_NOAC",
+                        "title": "活动性大出血疾病绝对禁用新型口服抗凝药",
+                        "reason": f"患者存在活动性出血病变（{cond}），强效抗凝治疗导致止血不能，诱发不可逆失血性休克致死！",
+                        "evidence": "官方抗凝药品说明书【禁忌】",
                     })
 
             # Uncontrolled Hypertension + Etoricoxib
@@ -494,20 +654,20 @@ class DrugContraindicationAuditor:
                         "evidence": "《依托考昔片说明书》【禁忌】",
                     })
 
-            # Heart block / severe bradycardia + Beta blockers
+            # Heart block / severe bradycardia + Beta blockers / Diltiazem
             if any(k in cond for k in ["窦缓", "心动过缓", "房室传导阻滞", "病窦"]):
-                if any(k in gname for k in ["美托洛尔", "比索洛尔"]):
+                if any(k in gname for k in ["美托洛尔", "比索洛尔", "地尔硫䓬"]):
                     alerts.append({
                         "level": "BLOCK",
                         "rule": "CONDITION_HEART_BLOCK_BETABLOCKER",
-                        "title": "严重心动过缓或房室传导阻滞禁用β阻滞剂",
-                        "reason": "负性心率与负性传导作用，极易诱发心搏骤停！",
-                        "evidence": "《酒石酸美托洛尔片说明书》【禁忌】",
+                        "title": "严重心动过缓或房室传导阻滞禁用负性变时药",
+                        "reason": "负性心率与房室负性传导抑制作用，极易诱发严重阿-斯综合征与心脏骤停！",
+                        "evidence": "官方药品说明书【禁忌】",
                     })
 
             # Myasthenia gravis + Quinolones / Estazolam
             if "重症肌无力" in cond:
-                if any(k in gname for k in ["左氧氟沙星", "莫西沙星", "艾司唑仑"]):
+                if any(k in gname for k in ["左氧氟沙星", "莫西沙星", "诺氟沙星", "艾司唑仑"]):
                     alerts.append({
                         "level": "BLOCK",
                         "rule": "CONDITION_MYASTHENIA_GRAVIS_BLOCK",
@@ -540,14 +700,63 @@ class DrugContraindicationAuditor:
 
         # ---------------- 6. Drug-Drug Interactions (DDI) ----------------
         for cd in concurrent_drugs:
-            # Nitroglycerin + Sildenafil/Tadalafil
-            if "硝酸甘油" in gname and any(k in cd for k in ["西地那非", "他达拉非", "伐地那非", "伟哥", "pde5"]):
+            # Sacubitril/Valsartan (ARNI) + ACEI (Piril) -> 36h Washout Block
+            if "沙库巴曲" in gname and any(k in cd for k in ["普利", "依那普利", "培哚普利", "贝那普利", "雷米普利", "卡托普利"]):
+                alerts.append({
+                    "level": "BLOCK",
+                    "rule": "DDI_ARNI_ACEI_WASHOUT_36H",
+                    "title": "ARNI 严禁合用 ACEI (36小时洗脱期致死性血管水肿黑框)",
+                    "reason": f"患者合用 {cd}。沙库巴曲（脑啡肽酶抑制剂）与普利类（ACEI）双重阻断缓激肽降解途径，极高概率暴发致死性急性喉头血管神经性水肿与窒息猝死！说明书与心衰指南严禁联用，停用ACEI后必须至少间隔36小时才可起始沙库巴曲缬沙坦；反之亦然！",
+                    "evidence": "《沙库巴曲缬沙坦钠片说明书》【黑框警告】及国家医保基药临床指导规范",
+                })
+            # ACEI + Sacubitril/Valsartan (reverse check)
+            if any(k in gname for k in ["普利", "依那普利", "培哚普利", "贝那普利"]) and "沙库巴曲" in cd:
+                alerts.append({
+                    "level": "BLOCK",
+                    "rule": "DDI_ACEI_ARNI_WASHOUT_36H",
+                    "title": "ACEI 严禁合用 ARNI (36小时洗脱期致死性血管水肿黑框)",
+                    "reason": f"普利类药物与沙库巴曲联用极易暴发致死性急性喉头水肿，严禁联合使用，且必须遵循36小时洗脱期！",
+                    "evidence": "《沙库巴曲缬沙坦钠片说明书》【黑框警告】",
+                })
+
+            # Febuxostat + Azathioprine / Mercaptopurine
+            if "非布司他" in gname and any(k in cd for k in ["硫唑嘌呤", "巯嘌呤"]):
+                alerts.append({
+                    "level": "BLOCK",
+                    "rule": "DDI_FEBUXOSTAT_AZATHIOPRINE",
+                    "title": "非布司他严禁合用硫唑嘌呤/巯嘌呤 (致死性骨髓抑制黑框)",
+                    "reason": f"患者合用 {cd}。非布司他强效抑制黄嘌呤氧化酶，阻断硫唑嘌呤/巯嘌呤的氧化代谢消除，致使细胞毒性活性代谢产物浓度暴增数十倍，诱发致死性全血细胞减少与重度骨髓衰竭，说明书列为绝对禁忌！",
+                    "evidence": "《非布司他片说明书》【禁忌】",
+                })
+
+            # Nitrates + Sildenafil / Tadalafil (including Isosorbide mononitrate)
+            if any(k in gname for k in ["硝酸甘油", "单硝酸异山梨酯"]) and any(k in cd for k in ["西地那非", "他达拉非", "伐地那非", "伟哥", "pde5"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "DDI_NITRO_PDE5I",
-                    "title": "硝酸甘油合用 PDE-5 抑制剂致死性休克强行阻断",
-                    "reason": f"患者合用 {cd}。硝酸酯类在24小时内联用西地那非或48小时内联用他达拉非，协同使血管cGMP剧增致不可逆恶性低血压休克猝死，系统红色最高级强行拦截！",
-                    "evidence": "《中国急性ST段抬高型心肌梗死诊断和治疗指南》及官方药品说明书【黑框警告】",
+                    "title": "硝酸酯类合用 PDE-5 抑制剂致死性休克强行阻断",
+                    "reason": f"患者合用 {cd}。硝酸酯类与西地那非或他达拉非联用，协同使血管平滑肌cGMP剧增致不可逆恶性低血压休克猝死，系统红色最高级强行拦截！",
+                    "evidence": "《单硝酸异山梨酯缓释片说明书》及官方药品说明书【黑框警告】",
+                })
+
+            # NOACs (Rivaroxaban / Dabigatran) + Strong CYP3A4/P-gp inhibitors (Ketoconazole / Itraconazole)
+            if any(k in gname for k in ["利伐沙班", "达比加群"]) and any(k in cd for k in ["酮康唑", "伊曲康唑", "利托那韦", "伏立康唑"]):
+                alerts.append({
+                    "level": "BLOCK",
+                    "rule": "DDI_NOAC_STRONG_CYP3A4_PGP",
+                    "title": "新型口服抗凝药严禁联用强效 CYP3A4/P-gp 抑制剂",
+                    "reason": f"患者合用 {cd}。强效抑制剂使利伐沙班/达比加群血药浓度暴露量升高数倍，导致大出血休克致死风险剧增，说明书列为禁忌！",
+                    "evidence": "《利伐沙班片说明书》及《甲磺酸达比加群酯胶囊说明书》【禁忌】",
+                })
+
+            # Tramadol / Duloxetine + MAOIs
+            if any(k in gname for k in ["曲马多", "度洛西汀"]) and any(k in cd for k in ["单胺氧化酶", "司来吉兰", "吗氯贝胺"]):
+                alerts.append({
+                    "level": "BLOCK",
+                    "rule": "DDI_TRAMADOL_MAOI",
+                    "title": "曲马多/度洛西汀严禁联用单胺氧化酶抑制剂 (MAOI)",
+                    "reason": f"患者合用 {cd}。抑制神经递质再摄取与代谢分解，可诱发恶性五羟色胺综合征（高热、癫痫、昏迷、死亡），必须至少间隔14天！",
+                    "evidence": "官方药品说明书【禁忌】",
                 })
 
             # Clopidogrel + Omeprazole
@@ -581,8 +790,8 @@ class DrugContraindicationAuditor:
                 })
 
             # Dual RAS Blockade (ACEI + ARB)
-            if any(k in gname for k in ["依那普利", "缬沙坦", "氯沙坦", "厄贝沙坦"]) and any(k in cd for k in ["普利", "沙坦"]):
-                if not any(k in cd and k in gname for k in ["依那普利", "缬沙坦", "氯沙坦", "厄贝沙坦"]):
+            if any(k in gname for k in ["依那普利", "缬沙坦", "氯沙坦", "厄贝沙坦", "沙库巴曲"]) and any(k in cd for k in ["普利", "沙坦"]):
+                if not any(k in cd and k in gname for k in ["依那普利", "缬沙坦", "氯沙坦", "厄贝沙坦", "沙库巴曲"]):
                     alerts.append({
                         "level": "BLOCK",
                         "rule": "DDI_DUAL_RAS_BLOCKADE",
@@ -592,7 +801,7 @@ class DrugContraindicationAuditor:
                     })
 
             # Statin + Gemfibrozil
-            if any(k in gname for k in ["阿托伐他汀", "瑞舒伐他汀"]) and "吉非罗齐" in cd:
+            if any(k in gname for k in ["阿托伐他汀", "瑞舒伐他汀", "匹伐他汀"]) and "吉非罗齐" in cd:
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "DDI_STATIN_GEMFIBROZIL",
@@ -612,7 +821,7 @@ class DrugContraindicationAuditor:
                 })
 
             # SSRI + MAOI
-            if any(k in gname for k in ["艾司西酞普兰", "舍曲林"]) and any(k in cd for k in ["单胺氧化酶", "司来吉兰", "吗氯贝胺"]):
+            if any(k in gname for k in ["艾司西酞普兰", "舍曲林", "度洛西汀"]) and any(k in cd for k in ["单胺氧化酶", "司来吉兰", "吗氯贝胺"]):
                 alerts.append({
                     "level": "BLOCK",
                     "rule": "DDI_SSRI_MAOI",

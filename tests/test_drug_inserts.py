@@ -17,10 +17,10 @@ class TestDrugInsertRepository(unittest.TestCase):
         cls.root_dir = Path(__file__).resolve().parent.parent
         cls.repo = DrugInsertRepository(cls.root_dir)
 
-    def test_all_62_drugs_loaded(self):
-        """Verify that exactly all 62 high-frequency primary-care drug monographs are loaded."""
+    def test_all_100_drugs_loaded(self):
+        """Verify that exactly all 100 high-frequency primary-care and 2026 essential drug monographs are loaded."""
         drugs = self.repo.list_all()
-        self.assertEqual(len(drugs), 62, f"Expected 62 drug monographs, got {len(drugs)}")
+        self.assertEqual(len(drugs), 100, f"Expected 100 drug monographs, got {len(drugs)}")
 
     def test_essential_categories_represented(self):
         """Verify that all major clinical therapeutic classes are fully represented."""
@@ -189,6 +189,108 @@ class TestDrugContraindicationAuditor(unittest.TestCase):
         res_safe = self.auditor.audit_prescription(rx_safe, {"age": 50, "egfr": 90})
         self.assertTrue(res_safe["canPrescribe"])
         self.assertEqual(res_safe["level"], "PASS")
+
+    def test_sacubitril_valsartan_acei_washout_36h_ddi_block(self):
+        """ARNI + ACEI triggers fatal angioedema block (36h washout required)."""
+        patient = {
+            "age": 64,
+            "concurrent_drugs": ["马来酸依那普利片"],
+        }
+        res = self.auditor.audit("沙库巴曲缬沙坦钠片", patient)
+        self.assertFalse(res["canPrescribe"])
+        self.assertEqual(res["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "DDI_ARNI_ACEI_WASHOUT_36H" for a in res["alerts"]))
+
+        # Reverse audit
+        patient_rev = {
+            "age": 64,
+            "concurrent_drugs": ["沙库巴曲缬沙坦钠片"],
+        }
+        res_rev = self.auditor.audit("马来酸依那普利片", patient_rev)
+        self.assertFalse(res_rev["canPrescribe"])
+        self.assertEqual(res_rev["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "DDI_ACEI_ARNI_WASHOUT_36H" for a in res_rev["alerts"]))
+
+    def test_febuxostat_azathioprine_ddi_block(self):
+        """Febuxostat + Azathioprine triggers fatal bone marrow suppression block."""
+        patient = {
+            "age": 45,
+            "concurrent_drugs": ["硫唑嘌呤片"],
+        }
+        res = self.auditor.audit("非布司他片", patient)
+        self.assertFalse(res["canPrescribe"])
+        self.assertEqual(res["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "DDI_FEBUXOSTAT_AZATHIOPRINE" for a in res["alerts"]))
+
+    def test_rivaroxaban_severe_renal_block_and_adjust(self):
+        """Rivaroxaban: eGFR < 15 triggers BLOCK; 15~49 triggers 15mg dose reduction warning."""
+        # eGFR = 12 -> BLOCK
+        patient_severe = {"age": 72, "egfr": 12}
+        res_severe = self.auditor.audit("利伐沙班片", patient_severe)
+        self.assertFalse(res_severe["canPrescribe"])
+        self.assertEqual(res_severe["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "RENAL_RIVAROXABAN_LT_15" for a in res_severe["alerts"]))
+
+        # eGFR = 35 -> WARNING for 15mg qd
+        patient_mod = {"age": 72, "egfr": 35}
+        res_mod = self.auditor.audit("利伐沙班片", patient_mod)
+        self.assertTrue(res_mod["canPrescribe"])
+        self.assertEqual(res_mod["level"], "WARNING")
+        self.assertTrue(any(a["rule"] == "RENAL_RIVAROXABAN_15_49_ADJUST" for a in res_mod["alerts"]))
+
+    def test_dabigatran_severe_renal_and_valve_block(self):
+        """Dabigatran: eGFR < 30 mL/min triggers BLOCK; Mechanical heart valve triggers BLOCK."""
+        # eGFR = 25 -> BLOCK
+        patient_renal = {"age": 70, "egfr": 25}
+        res_renal = self.auditor.audit("甲磺酸达比加群酯胶囊", patient_renal)
+        self.assertFalse(res_renal["canPrescribe"])
+        self.assertEqual(res_renal["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "RENAL_DABIGATRAN_LT_30" for a in res_renal["alerts"]))
+
+        # Mechanical heart valve -> BLOCK
+        patient_valve = {"age": 60, "egfr": 80, "conditions": ["人工机械瓣膜置换术后"]}
+        res_valve = self.auditor.audit("甲磺酸达比加群酯胶囊", patient_valve)
+        self.assertFalse(res_valve["canPrescribe"])
+        self.assertEqual(res_valve["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "CONDITION_DABIGATRAN_MECHANICAL_VALVE" for a in res_valve["alerts"]))
+
+    def test_semaglutide_mtc_block(self):
+        """Semaglutide: Personal/family history of MTC / MEN 2 triggers black box BLOCK."""
+        patient_mtc = {"age": 42, "conditions": ["甲状腺髓样癌家族史"]}
+        res_mtc = self.auditor.audit("司美格鲁肽注射液", patient_mtc)
+        self.assertFalse(res_mtc["canPrescribe"])
+        self.assertEqual(res_mtc["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "CONDITION_SEMAGLUTIDE_MTC" for a in res_mtc["alerts"]))
+
+    def test_spironolactone_severe_renal_block(self):
+        """Spironolactone: eGFR < 30 triggers fatal hyperkalemia BLOCK."""
+        patient = {"age": 68, "egfr": 22}
+        res = self.auditor.audit("螺内酯片", patient)
+        self.assertFalse(res["canPrescribe"])
+        self.assertEqual(res["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "RENAL_SPIRONOLACTONE_LT_30" for a in res["alerts"]))
+
+    def test_reserpine_depression_block(self):
+        """Compound Reserpine / Triamterene: Active depression triggers suicide BLOCK."""
+        patient = {"age": 58, "conditions": ["重度抑郁症"]}
+        res = self.auditor.audit("复方利血平氨苯蝶啶片", patient)
+        self.assertFalse(res["canPrescribe"])
+        self.assertEqual(res["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "CONDITION_RESERPINE_DEPRESSION" for a in res["alerts"]))
+
+    def test_tramadol_pediatric_and_epilepsy_block(self):
+        """Tramadol: Age < 12 triggers pediatric respiratory depression BLOCK; Epilepsy triggers BLOCK."""
+        # Age 9 -> BLOCK
+        res_child = self.auditor.audit("盐酸曲马多缓释片", {"age": 9})
+        self.assertFalse(res_child["canPrescribe"])
+        self.assertEqual(res_child["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "PEDIATRIC_TRAMADOL_LT_12" for a in res_child["alerts"]))
+
+        # Epilepsy -> BLOCK
+        res_epi = self.auditor.audit("盐酸曲马多缓释片", {"age": 35, "conditions": ["继发性癫痫病史"]})
+        self.assertFalse(res_epi["canPrescribe"])
+        self.assertEqual(res_epi["level"], "BLOCK")
+        self.assertTrue(any(a["rule"] == "CONDITION_TRAMADOL_EPILEPSY" for a in res_epi["alerts"]))
 
 
 class TestDrugSearchIntegration(unittest.TestCase):
