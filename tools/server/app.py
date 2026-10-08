@@ -11,7 +11,7 @@ import json
 import re
 import time
 import urllib.parse
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from tools.compiler.compiler import WikiGraph
@@ -980,14 +980,30 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
                 patient_profile["allergies"] = " ".join([
                     a.get("substanceDisplay", "") for a in allergies if isinstance(a, dict)
                 ])
+            # 1. Protocol-level prescription audit
             audit_res = self.cdss.audit_prescription(medications_to_audit, patient_profile)
             safety_alerts = []
+            seen_alert_titles = set()
             for a in audit_res.get("alerts", []):
                 safety_alerts.append({
-                    "level": "CRITICAL" if a["severity"] == "RED" else "WARNING",
-                    "title": a["title"],
-                    "detail": a["message"],
+                    "level": "CRITICAL" if a.get("severity") == "RED" else "WARNING",
+                    "title": a.get("title", "处方安全预警"),
+                    "detail": a.get("message", ""),
                 })
+                seen_alert_titles.add(a.get("title"))
+
+            # 2. Monograph-level CDSS contraindication & DDI audit (covering 100 essential drugs)
+            if medications_to_audit:
+                drug_audit = self.drug_auditor.audit_prescription(medications_to_audit, patient_profile)
+                for da in drug_audit.get("alerts", []):
+                    title = da.get("title", "药品说明书安全阻断")
+                    if title not in seen_alert_titles:
+                        safety_alerts.append({
+                            "level": "CRITICAL" if da.get("level") == "BLOCK" else "WARNING",
+                            "title": title,
+                            "detail": f"{da.get('reason', '')} (依据：{da.get('evidence', '')})",
+                        })
+                        seen_alert_titles.add(title)
 
             if prot:
                 rec_draft = {
@@ -1215,8 +1231,8 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
 
 def run_server(port: int = 8080) -> None:
     server_address = ("127.0.0.1", port)
-    httpd = HTTPServer(server_address, WikiHTTPHandler)
-    print(f"🚀 Medical LLM Wiki Web Server is running on http://127.0.0.1:{port}")
+    httpd = ThreadingHTTPServer(server_address, WikiHTTPHandler)
+    print(f"🚀 Medical LLM Wiki Web Server is running on http://127.0.0.1:{port} (Multi-threaded)")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

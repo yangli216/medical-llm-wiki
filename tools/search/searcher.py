@@ -65,8 +65,10 @@ class WikiSearcher:
         self._init_fts()
 
     def _init_fts(self) -> None:
-        """Initializes SQLite FTS5 table."""
+        """Initializes SQLite FTS5 table with WAL mode for enhanced read concurrency."""
         cursor = self.conn.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA synchronous=NORMAL")
         cursor.execute("CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT)")
         cursor.execute("""
             CREATE VIRTUAL TABLE IF NOT EXISTS wiki_fts USING fts5(
