@@ -18,6 +18,7 @@ from typing import Any, Dict, List, Optional
 from tools.compiler.compiler import WikiGraph
 from tools.search.searcher import WikiSearcher
 from tools.collector.collector import SourceCollector
+from tools.collector.pdf_parser import ClinicalPdfParser
 from tools.cdss.engine import CdssEngine
 from tools.cdss.drug_checker import DrugInsertRepository, DrugContraindicationAuditor
 from tools.cdss.evidence_chain import EvidenceChainEngine
@@ -362,6 +363,26 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             margin-right: 6px;
         }
 
+        /* PDF Upload Dropzone */
+        .dropzone {
+            border: 2px dashed #0284c7;
+            background: rgba(2, 132, 199, 0.05);
+            border-radius: 8px;
+            padding: 16px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+        .dropzone:hover, .dropzone.dragover {
+            background: rgba(2, 132, 199, 0.15);
+            border-color: #38bdf8;
+            transform: translateY(-1px);
+        }
+        .dropzone-icon { font-size: 1.8rem; margin-bottom: 4px; }
+        .dropzone-text { font-size: 0.88rem; font-weight: 600; color: #38bdf8; }
+        .dropzone-sub { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
+
         /* Source Import Modal & Topbar Badges */
         .btn-import-source {
             width: 100%;
@@ -610,6 +631,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 renderNavTree();
                 await loadPage('index');
                 setupCanvas();
+                setupPdfDropzone();
             } catch (err) {
                 console.error('Initialization error:', err);
                 document.getElementById('docBody').innerHTML = `
@@ -1049,6 +1071,93 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         }
 
 
+                let uploadedPdfBase64 = null;
+
+        function setupPdfDropzone() {
+            const dropzone = document.getElementById('pdfDropzone');
+            if (!dropzone) return;
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.add('dragover');
+                }, false);
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.remove('dragover');
+                }, false);
+            });
+            dropzone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length > 0) {
+                    handlePdfFileSelected(files);
+                }
+            }, false);
+        }
+
+        async function handlePdfFileSelected(files) {
+            if (!files || files.length === 0) return;
+            const file = files[0];
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                alert('请上传标准 PDF 格式文件！');
+                return;
+            }
+
+            const statusEl = document.getElementById('pdfParseStatus');
+            statusEl.style.display = 'block';
+            statusEl.style.background = 'rgba(2, 132, 199, 0.15)';
+            statusEl.style.border = '1px solid #0284c7';
+            statusEl.style.color = '#38bdf8';
+            statusEl.innerHTML = `⏳ 正在深度解析 <strong>${file.name}</strong> (${(file.size / 1024).toFixed(1)} KB)...`;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const dataUrl = e.target.result;
+                uploadedPdfBase64 = dataUrl;
+
+                try {
+                    const resp = await fetch('/api/knowledge/parse-pdf', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            filename: file.name,
+                            pdf_base64: dataUrl
+                        })
+                    });
+                    const res = await resp.json();
+                    if (res.success) {
+                        statusEl.style.background = 'rgba(16, 185, 129, 0.15)';
+                        statusEl.style.border = '1px solid #10b981';
+                        statusEl.style.color = '#34d399';
+                        statusEl.innerHTML = `✅ PDF 解析成功！共 ${res.total_pages} 页，已自动为您回填下方元数据、摘要与正文，您可按需微调后提交。`;
+
+                        if (res.title) document.getElementById('inpTitle').value = res.title;
+                        if (res.authority) document.getElementById('inpAuthority').value = res.authority;
+                        if (res.category) document.getElementById('inpCategory').value = res.category;
+                        if (res.year) document.getElementById('inpYear').value = res.year;
+                        if (res.summary) document.getElementById('inpSummary').value = res.summary;
+                        if (res.related_diseases) document.getElementById('inpRelated').value = res.related_diseases;
+                        if (res.content) document.getElementById('inpContent').value = res.content;
+                    } else {
+                        statusEl.style.background = 'rgba(239, 68, 68, 0.15)';
+                        statusEl.style.border = '1px solid #ef4444';
+                        statusEl.style.color = '#f87171';
+                        statusEl.innerHTML = `❌ PDF 解析失败: ${res.error || '未知错误'}`;
+                    }
+                } catch (err) {
+                    statusEl.style.background = 'rgba(239, 68, 68, 0.15)';
+                    statusEl.style.border = '1px solid #ef4444';
+                    statusEl.style.color = '#f87171';
+                    statusEl.innerHTML = `❌ 解析请求异常: ${err.message}`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
         function openImportModal() {
             document.getElementById('importModal').classList.add('active');
         }
@@ -1093,7 +1202,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 year: parseInt(document.getElementById('inpYear').value) || 2024,
                 summary: document.getElementById('inpSummary').value.trim(),
                 related_diseases: document.getElementById('inpRelated').value.trim(),
-                content: document.getElementById('inpContent').value.trim()
+                content: document.getElementById('inpContent').value.trim(),
+                pdf_base64: uploadedPdfBase64
             };
 
             try {
@@ -1137,6 +1247,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 <span>向知识库追加尚未收录的行业权威标准，系统将自动编译知识图谱与全文索引。</span>
                 <button type="button" class="btn-demo" onclick="fillExampleImportData()">✨ 填入示例数据</button>
             </div>
+                        <!-- PDF Drag-and-Drop & Auto-Extract Zone -->
+            <div class="dropzone" id="pdfDropzone" onclick="document.getElementById('pdfFileInput').click()">
+                <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;" onchange="handlePdfFileSelected(this.files)">
+                <div class="dropzone-icon">📄</div>
+                <div class="dropzone-text">点击或拖拽上传官方 PDF 指南 / 标准文件</div>
+                <div class="dropzone-sub">系统将自动深度提取全文、推荐条款并智能预填下方所有元数据</div>
+            </div>
+            <div id="pdfParseStatus" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:6px;font-size:0.82rem;"></div>
+
             <form id="importSourceForm" onsubmit="submitImportSource(event)">
                 <div class="form-group">
                     <label>标准 / 指南官方全称 *</label>
@@ -1198,6 +1317,7 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
     drug_repo: DrugInsertRepository = DrugInsertRepository(root_dir)
     drug_auditor: DrugContraindicationAuditor = DrugContraindicationAuditor(drug_repo)
     evidence_engine: EvidenceChainEngine = EvidenceChainEngine(root_dir)
+    pdf_parser: Optional[ClinicalPdfParser] = None
 
     def do_OPTIONS(self) -> None:
         self.send_response(204)
@@ -1429,6 +1549,8 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             patient = payload.get("patient") or payload.get("patientContext") or payload.get("profile") or {}
             res = self.cdss.audit_preflight_safety(meds, patient)
             self._send_json(res)
+        elif path == "/api/knowledge/parse-pdf":
+            self._handle_parse_pdf(payload)
         elif path in ("/api/knowledge/import-source", "/api/sources/import"):
             self._handle_import_source(payload)
         elif path == "/api/drugs/check-contraindications":
@@ -1447,6 +1569,38 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
         else:
             self.send_response(404)
             self.end_headers()
+
+    def _handle_parse_pdf(self, payload: Dict[str, Any]) -> None:
+        """
+        Receives base64-encoded PDF or file bytes, parses clinical text,
+        and automatically infers title, authority, year, category, summary,
+        and linked disease entities.
+        """
+        b64_data = payload.get("pdf_base64") or payload.get("data") or ""
+        filename = payload.get("filename") or "document.pdf"
+        if not b64_data:
+            self._send_json({"success": False, "error": "缺少 PDF 文件数据 (pdf_base64)"}, status=400)
+            return
+
+        if "," in b64_data:
+            b64_data = b64_data.split(",", 1)[1]
+
+        import base64
+        try:
+            pdf_bytes = base64.b64decode(b64_data)
+        except Exception as e:
+            self._send_json({"success": False, "error": f"Base64 解码异常: {e}"}, status=400)
+            return
+
+        if not self.pdf_parser:
+            known_diseases = [p.title for p in self.graph.pages.values() if p.page_type == "disease"]
+            self.pdf_parser = ClinicalPdfParser(known_diseases=known_diseases)
+
+        try:
+            res = self.pdf_parser.parse_pdf_bytes(pdf_bytes, filename=filename)
+            self._send_json(res)
+        except Exception as e:
+            self._send_json({"success": False, "error": f"PDF 解析失败: {e}"}, status=500)
 
     def _handle_import_source(self, payload: Dict[str, Any]) -> None:
         """
@@ -1503,6 +1657,21 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
         if not content:
             content = f"# 《{title}》原始文献归档\n\n- **制定机构**: {authority}\n- **发布年份**: {year}年\n- **专科分类**: {category}\n\n## 核心内容与指引摘要\n{summary}\n"
         raw_doc_path.write_text(content.strip().replace("~", "～") + "\n", encoding="utf-8")
+
+        # Save original PDF artifact if uploaded
+        pdf_rel = None
+        pdf_b64 = payload.get("pdf_base64") or ""
+        if pdf_b64:
+            if "," in pdf_b64:
+                pdf_b64 = pdf_b64.split(",", 1)[1]
+            try:
+                import base64
+                pdf_raw = base64.b64decode(pdf_b64)
+                pdf_rel = f"raw/docs/{source_id}.pdf"
+                (self.root_dir / pdf_rel).write_bytes(pdf_raw)
+            except Exception as e:
+                print(f"Warning saving raw PDF: {e}")
+
 
         # 3. Resolve related disease links safely (only [[link]] if page exists)
         related_links_list = []

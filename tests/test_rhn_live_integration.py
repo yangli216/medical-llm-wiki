@@ -365,6 +365,30 @@ class TestRhnLiveIntegration(unittest.TestCase):
         log_lines = [l for l in log_file.read_text(encoding="utf-8").splitlines(keepends=True) if "SRC-TEST-CLIN-2026-99" not in l]
         log_file.write_text("".join(log_lines), encoding="utf-8")
 
+    def test_parse_pdf_api(self):
+        import base64
+        import io
+        from pypdf import PdfWriter
+
+        writer = PdfWriter()
+        writer.add_blank_page(width=595, height=842)
+        writer.add_metadata({
+            "/Title": "《中国心血管病一级预防指南（2024）》",
+            "/Author": "中华医学会心血管病学分会",
+        })
+        stream = io.BytesIO()
+        writer.write(stream)
+        pdf_b64 = base64.b64encode(stream.getvalue()).decode("utf-8")
+
+        res = self._post_json("/api/knowledge/parse-pdf", {
+            "filename": "心血管一级预防指南.pdf",
+            "pdf_base64": pdf_b64
+        })
+        self.assertTrue(res.get("success"))
+        self.assertIn("心血管", res.get("title", ""))
+        self.assertEqual(res.get("total_pages"), 1)
+        self.assertIn("心血管", res.get("category", ""))
+
 
 if __name__ == "__main__":
     unittest.main()
