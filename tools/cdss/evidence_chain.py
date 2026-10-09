@@ -63,6 +63,11 @@ class EvidenceChainEngine:
 
         # 4. Resolve authoritative guideline citations
         guidelines = self._resolve_guidelines(protocol)
+        verified_text = "\n".join("\n".join(g.get("keyExcerpts") or []) for g in guidelines)
+        for checkpoint in checkpoints:
+            quote = checkpoint.get("sourceQuote")
+            if quote and quote not in verified_text:
+                checkpoint.pop("sourceQuote", None)
 
         summary = self._build_summary(protocol, diag_name, diag_code, patient_data, checkpoints)
 
@@ -471,101 +476,33 @@ class EvidenceChainEngine:
         return gap_orders
 
     def _resolve_guidelines(self, protocol: ClinicalProtocol) -> List[Dict[str, Any]]:
-        """Resolves source guideline citations, official authorities, and chapters."""
+        """Use maintained source metadata and literal document text only; never invent citations."""
         sources_map = self._get_sources_map()
         guidelines: List[Dict[str, Any]] = []
-
-        is_uri_protocol = (
-            "PROT-URI" in protocol.protocol_id
-            or "PROT-TONSIL" in protocol.protocol_id
-            or any(k in protocol.title for k in ("上呼吸道", "感冒", "咽", "扁桃体"))
-        )
-
-        sources_to_resolve = list(protocol.sources)
-        if is_uri_protocol:
-            # Filter out non-ENT/non-respiratory guidelines that might have crept into sources
-            sources_to_resolve = [
-                s for s in sources_to_resolve
-                if "SYMP-2020-01" not in s and "CARD" not in s and "NEUR" not in s
-            ]
-            if "SRC-CMA-ENT-2020-02" not in sources_to_resolve:
-                sources_to_resolve.insert(0, "SRC-CMA-ENT-2020-02")
-            if "SRC-NHC-PHAR-2015-01" not in sources_to_resolve:
-                sources_to_resolve.append("SRC-NHC-PHAR-2015-01")
-
-        for src_id in sources_to_resolve:
+        for src_id in dict.fromkeys(protocol.sources):
             src_info = sources_map.get(src_id)
-            title = src_info.get("title") if src_info else src_id
-            authority = src_info.get("authority", "中华医学会") if src_info else "中华医学会"
-            pub_year = str(src_info.get("year", "2024")) if src_info else "2024"
-            doc_path = f"sources/{src_id}.md"
-
-            # Check if source doc exists in wiki/sources/
-            wiki_source_file = self.root_dir / "wiki" / "sources" / f"{src_id}.md"
-            chapter = "第4章 诊断与规范化治疗原则"
+            source_file = self.root_dir / "wiki" / "sources" / f"{src_id}.md"
+            if not src_info or not source_file.is_file():
+                continue
+            try:
+                body = WikiPage(source_file, self.root_dir / "wiki").body
+            except Exception:
+                continue
             excerpts: List[str] = []
-
-            if wiki_source_file.exists():
-                try:
-                    wp = WikiPage(wiki_source_file, self.root_dir / "wiki")
-                    body = wp.body
-                    if "中国高血压防治指南" in title or "SRC-CMA-CARD-2024-01" in src_id:
-                        chapter = "第4章 血压测量与高血压诊断分级标准"
-                        excerpts = [
-                            "非同日3次测量诊室血压，收缩压≥140 mmHg和/或舒张压≥90 mmHg即可确立诊断。",
-                            "收缩压160～179 mmHg和/或舒张压100～109 mmHg界定为2级高血压，推荐起始两药联合治疗。",
-                            "初始评估必须完善12导联心电图、血生化、尿微量白蛋白以明确靶器官损害程度。",
-                        ]
-                    elif "糖尿病" in title:
-                        chapter = "第3章 2型糖尿病诊断与综合控制目标"
-                        excerpts = [
-                            "空腹血浆葡萄糖≥7.0 mmol/L或随机血浆葡萄糖≥11.1 mmol/L为诊断标准。",
-                            "初诊患者必须评估糖化血红蛋白(HbA1c)并筛查眼底与肾脏靶器官损害。",
-                        ]
-                    elif "SRC-CMA-ENT-2020-02" in src_id or "急性咽峡炎" in title or "扁桃体" in title:
-                        title = "急性咽峡炎/扁桃体炎基层诊疗指南（2020年）"
-                        authority = "中华医学会全科医学分会 / 中华医学会耳鼻咽喉头颈外科学分会"
-                        chapter = "第4章 临床表现、Centor评分与规范化治疗原则"
-                        pub_year = "2020"
-                        excerpts = [
-                            "起病急，主要症状为咽痛、咽部干燥不适，查体见咽部黏膜充血水肿、扁桃体充血肿大。",
-                            "普通病毒性感染以局部对症、多饮水为主；严禁缺乏细菌证据时无指征常规经验性使用抗菌药物。",
-                            "疑似或确诊溶血性链球菌细菌性感染（如Centor评分较高、血常规中性粒及CRP明显升高）方具备抗感染指征。",
-                        ]
-                    elif "SRC-NHC-PHAR-2015-01" in src_id or "抗菌药物" in title:
-                        title = "抗菌药物临床应用指导原则（国家卫健委最新规范）"
-                        authority = "国家卫生健康委 / 国家中医药管理局 / 中央军委后勤保障部"
-                        chapter = "第4章 常见门急诊感染性疾病经验用药与限抗原则"
-                        pub_year = "2024"
-                        excerpts = [
-                            "缺乏细菌真菌感染证据者（如病毒性感冒、无并发症的上呼吸道感染）严禁使用抗菌药物。",
-                            "必须结合局部体征与实验室血象检查（血常规、CRP等）严格评估指征后闭环开立抗菌药物。",
-                            "严格执行非限制、限制、特殊使用级三级处方权限与临床合理用药监控制度。",
-                        ]
-                    else:
-                        m_rec = re.search(r"## 三、 核心推荐条款.*?\n(.*?)(?=\n##|\Z)", body, re.DOTALL)
-                        if m_rec:
-                            for line in m_rec.group(1).splitlines():
-                                if "|" in line and "REC-" in line:
-                                    parts = [p.strip() for p in line.split("|")]
-                                    if len(parts) >= 3:
-                                        excerpts.append(parts[2])
-                except Exception:
-                    pass
-
-            if not excerpts:
-                excerpts = ["严格遵循国家卫生健康委员会与专科医学会循证临床指南推荐意见。"]
-
+            for line in body.splitlines():
+                if "|" in line and "REC-" in line:
+                    parts = [p.strip() for p in line.split("|")]
+                    if len(parts) >= 4 and parts[2]:
+                        excerpts.append(parts[2])
             guidelines.append({
                 "id": src_id,
-                "title": title,
-                "chapter": chapter,
-                "authority": authority,
-                "publishYear": pub_year,
-                "docPath": doc_path,
-                "keyExcerpts": excerpts,
+                "title": src_info.get("title") or src_id,
+                "chapter": None,
+                "authority": src_info.get("authority"),
+                "publishYear": str(src_info["year"]) if src_info.get("year") else None,
+                "docPath": f"sources/{src_id}.md",
+                "keyExcerpts": excerpts[:8],
             })
-
         return guidelines
 
     def _build_summary(
@@ -621,60 +558,20 @@ class EvidenceChainEngine:
         return f"依据国家临床诊疗规范，患者当前拟诊与《{protocol.title}》临床路径相符，推导证据链确凿。"
 
     def _build_generic_evidence(
-        self,
-        diag_name: str,
-        diag_code: str,
-        patient: Dict[str, Any],
+        self, diag_name: str, diag_code: str, patient: Dict[str, Any],
     ) -> Dict[str, Any]:
-        """Fallback evidence structure when no specific protocol is loaded."""
+        """Missing protocol is an evidence gap, not a diagnosis proof or a default test order."""
         return {
             "success": True,
             "protocolId": "PROT-GENERIC-001",
-            "protocolTitle": f"{diag_name or '临床通用'}诊疗指引",
-            "diagnosis": {
-                "code": diag_code or "R69",
-                "name": diag_name or "未特指临床诊断",
-            },
-            "summary": f"根据临床专科诊疗规范，患者主诉与临床表现支持{diag_name or '当前拟诊'}，建议结合专科辅助检查综合核验。",
-            "checkpoints": [
-                {
-                    "status": "MET",
-                    "type": "SYMPTOM",
-                    "label": f"主诉表现与{diag_name or '拟诊'}专科指征相符",
-                    "detail": "患者门诊主诉表现与对应疾病系统特征具有临床一致性",
-                    "sourceQuote": "依据疾病分类学标准与临床常规",
-                },
-                {
-                    "status": "SUGGESTED",
-                    "type": "GAP_EXAM",
-                    "label": "建议完善血常规与基础理化指标筛查",
-                    "detail": "排查继发性病因及合并感染或代谢异常状态",
-                    "sourceQuote": "门诊就诊应结合必要辅助检查形成完整诊断闭环",
-                },
-            ],
-            "gapOrders": [
-                {
-                    "id": "gap-lab-0",
-                    "name": "血常规五分类+超敏CRP",
-                    "category": "LABORATORY",
-                    "orderType": "LABORATORY",
-                    "dept": "检验科",
-                    "spec": "静脉采血",
-                    "indication": "评估全身炎症与基础造血状态",
-                    "defaultChecked": True,
-                }
-            ],
-            "guidelines": [
-                {
-                    "id": "SRC-NHC-GENERAL-2024",
-                    "title": "国家卫生健康委员会临床诊疗指南与规范",
-                    "chapter": "门诊常见疾病规范化接诊与鉴别诊断流程",
-                    "authority": "国家卫生健康委员会",
-                    "publishYear": "2024",
-                    "docPath": "wiki/index.md",
-                    "keyExcerpts": [
-                        "门诊临床诊断应以病史与体格检查为依据，结合必要的检验检查明确诊断。",
-                    ],
-                }
-            ],
+            "protocolTitle": "暂无匹配的诊疗方案",
+            "diagnosis": {"code": diag_code, "name": diag_name},
+            "summary": "知识库尚未匹配到该诊断的诊疗方案，无法提供对应的推荐依据，请结合实际病史、查体及可信指南核对。",
+            "checkpoints": [{
+                "status": "SUGGESTED", "type": "EVIDENCE_GAP",
+                "label": "诊疗依据待补充",
+                "detail": "当前没有匹配方案，不能据此判断诊断已满足，也不自动推荐检验检查。",
+            }],
+            "gapOrders": [],
+            "guidelines": [],
         }

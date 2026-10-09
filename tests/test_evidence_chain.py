@@ -142,7 +142,27 @@ class TestEvidenceChainEngine(unittest.TestCase):
         res = self.engine.evaluate("某种罕见未归类疾病", "R69", {"age": 30, "chiefComplaint": "胸闷不适3天"})
         self.assertTrue(res["success"])
         self.assertGreaterEqual(len(res["checkpoints"]), 1)
-        self.assertGreaterEqual(len(res["gapOrders"]), 1)
+        self.assertEqual(res["gapOrders"], [])
+        self.assertEqual(res["guidelines"], [])
+        self.assertFalse(any(item["status"] == "MET" for item in res["checkpoints"]))
+    def test_citations_use_source_metadata_and_literal_excerpts(self):
+        res = self.engine.evaluate("急性上呼吸道感染", "J06.9", {})
+        from tools.compiler.compiler import WikiPage
+        sources = self.engine._get_sources_map()
+        for guideline in res["guidelines"]:
+            metadata = sources[guideline["id"]]
+            self.assertEqual(guideline["title"], metadata["title"])
+            self.assertEqual(guideline["publishYear"], str(metadata["year"]))
+            body = WikiPage(self.root_dir / "wiki" / guideline["docPath"], self.root_dir / "wiki").body
+            for excerpt in guideline["keyExcerpts"]:
+                self.assertIn(excerpt, body)
+
+    def test_pharyngitis_without_protocol_does_not_invent_a_combined_test(self):
+        res = self.engine.evaluate("急性咽炎，未特指", "J02.9", {"physicalExam": "扁桃体红肿"})
+        if res["protocolId"] == "PROT-GENERIC-001":
+            self.assertEqual(res["gapOrders"], [])
+            self.assertEqual(res["guidelines"], [])
+
     def test_paracetamol_insert_resolution(self):
         """Tests that paracetamol drug monograph is accurately retrieved by name, dose, or brand."""
         from tools.cdss.drug_checker import DrugInsertRepository
