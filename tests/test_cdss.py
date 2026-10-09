@@ -169,6 +169,26 @@ class TestCdssEngine(unittest.TestCase):
         self.assertGreater(len(matches_rabies), 0)
         self.assertEqual(matches_rabies[0]["protocolId"], "PROT-RABIES-035")
 
+        # 22. Search by Atrial Fibrillation (P2-B)
+        matches_af = self.engine.search_protocols("心房颤动", limit=1)
+        self.assertGreater(len(matches_af), 0)
+        self.assertEqual(matches_af[0]["protocolId"], "PROT-AF-039")
+
+        # 23. Search by PHN (P2-B)
+        matches_phn = self.engine.search_protocols("带状疱疹后神经痛", limit=1)
+        self.assertGreater(len(matches_phn), 0)
+        self.assertEqual(matches_phn[0]["protocolId"], "PROT-PHN-040")
+
+        # 24. Search by CAG (P2-B)
+        matches_cag = self.engine.search_protocols("慢性萎缩性胃炎", limit=1)
+        self.assertGreater(len(matches_cag), 0)
+        self.assertEqual(matches_cag[0]["protocolId"], "PROT-CAG-041")
+
+        # 25. Search by CKD Hyperkalemia (P2-B)
+        matches_hyperk = self.engine.search_protocols("高钾血症", limit=1)
+        self.assertGreater(len(matches_hyperk), 0)
+        self.assertEqual(matches_hyperk[0]["protocolId"], "PROT-CKD-HYPERK-042")
+
     def test_rhn_plan_intent_contract(self):
         compiled = self.engine.compile_rhn_plan("2型糖尿病")
         self.assertTrue(compiled["success"])
@@ -384,6 +404,24 @@ class TestCdssEngine(unittest.TestCase):
         # 33. Dirty wound missing Tetanus (Yellow Alert)
         res_dirty_tetanus = self.engine.audit_prescription(["双氯芬酸钠贴膏"], {"history": "生锈铁钉刺伤"})
         self.assertTrue(any(a["ruleId"] == "RULE-TETANUS-DEEP-DIRTY" for a in res_dirty_tetanus["alerts"]))
+
+        # 34. Mechanical Valve + DOAC (Red Alert, P2)
+        res_valve_doac = self.engine.audit_prescription(["利伐沙班片 20mg"], {"history": "心脏瓣膜置换术后，机械瓣"})
+        self.assertFalse(res_valve_doac["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-AF-VALVE-DOAC-BLOCK" for a in res_valve_doac["alerts"]))
+
+        # 35. Hyperkalemia + Spironolactone (Red Alert, P2)
+        res_hyperk_spiro = self.engine.audit_prescription(["螺内酯片 20mg"], {"diagnoses": ["高钾血症"]})
+        self.assertFalse(res_hyperk_spiro["is_safe"])
+        self.assertTrue(any(a["ruleId"] == "RULE-HYPERKALEMIA-K-SPARING-STOP" for a in res_hyperk_spiro["alerts"]))
+
+        # 36. CKD + Gabapentin (Yellow Alert, P2)
+        res_ckd_gaba = self.engine.audit_prescription(["加巴喷丁胶囊 0.3g"], {"history": "慢性肾脏病 G3b期"})
+        self.assertTrue(any(a["ruleId"] == "RULE-NEUROPATHIC-GABAPENTIN-CKD-REDUCE" for a in res_ckd_gaba["alerts"]))
+
+        # 37. Lokelma administration interval (Yellow Alert, P2)
+        res_lokelma = self.engine.audit_prescription(["环硅酸锆钠散 5g"], {})
+        self.assertTrue(any(a["ruleId"] == "RULE-LOKELMA-INTERVAL-WARNING" for a in res_lokelma["alerts"]))
 
     def test_http_api_endpoints(self):
         server_thread = threading.Thread(target=run_server, kwargs={"port": 8789}, daemon=True)

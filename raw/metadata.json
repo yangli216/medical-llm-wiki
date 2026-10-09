@@ -1,5 +1,5 @@
 {
-  "version": "1.9.0",
+  "version": "2.3.0",
   "last_updated": "2026-10-09",
   "sources": [
     {
@@ -576,6 +576,42 @@
       "level": "国家权威专科专家共识",
       "file_path": "raw/docs/SRC-CMA-PED-2021-01.md",
       "key_scope": "小儿热性惊厥 (FS) 临床分型（单纯性 vs 复杂性），急诊急性发作期处置流程（侧卧位防窒息、地西泮终止抽搐），中枢感染红旗征排查与退热剂合理使用，严禁滥用长期抗癫痫药",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-CARD-2021-02",
+      "title": "心房颤动：目前的认识和治疗建议（2021）",
+      "authority": "中华医学会心电生理和起搏分会 / 中国医师协会心律学专业委员会",
+      "publication": "中华心律失常学杂志",
+      "year": 2021,
+      "category": "心血管系统",
+      "level": "国家权威临床专科建议",
+      "file_path": "raw/docs/SRC-CMA-CARD-2021-02.md",
+      "key_scope": "非瓣膜性房颤抗凝评估（CHA2DS2-VASc 男≥2/女≥3分推荐DOACs）、HAS-BLED出血评估、心室率控制（β受体阻滞剂/非二氢吡啶CCB）、节律控制策略与转诊指征",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-PAIN-2020-01",
+      "title": "带状疱疹后神经痛诊疗中国专家共识（2020）",
+      "authority": "中华医学会疼痛学分会",
+      "publication": "中国疼痛医学杂志",
+      "year": 2020,
+      "category": "疼痛医学与神经病学",
+      "level": "国家权威临床专家共识",
+      "file_path": "raw/docs/SRC-CMA-PAIN-2020-01.md",
+      "key_scope": "带状疱疹后神经痛 (PHN) 定义（皮疹愈合后持续≥1个月神经痛）、阶梯镇痛药物（一线钙通道调节剂加巴喷丁/普瑞巴林，三环类阿米替林，二线阿片类）、剂量个体化阶梯滴定与微创介入",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-GAST-2020-03",
+      "title": "中国慢性胃炎共识意见（2020年，上海）",
+      "authority": "中华医学会消化病学分会",
+      "publication": "中华消化杂志",
+      "year": 2020,
+      "category": "消化系统",
+      "level": "国家权威临床共识",
+      "file_path": "raw/docs/SRC-CMA-GAST-2020-03.md",
+      "key_scope": "慢性萎缩性胃炎 (CAG) 内镜与病理活检评估（OLGA/OLGIM系统分期）、肠化生与异型增生胃癌风险分层、幽门螺杆菌根除、胃黏膜保护剂及高危人群定期胃镜精查监测",
       "status": "active"
     }
   ]

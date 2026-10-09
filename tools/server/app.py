@@ -1083,7 +1083,7 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             patient = payload.get("patient", {})
             audit_res = self.cdss.audit_prescription(meds, patient)
             self._send_json(audit_res)
-        elif path in ("/api/cdss/preflight-safety", "/api/cdss/preflight", "/api/preflight-safety"):
+        elif path in ("/api/cdss/preflight-safety", "/api/cdss/preflight", "/api/preflight-safety", "/api/knowledge/preflight-safety"):
             meds = payload.get("medications") or payload.get("meds") or payload.get("items") or []
             patient = payload.get("patient") or payload.get("patientContext") or payload.get("profile") or {}
             res = self.cdss.audit_preflight_safety(meds, patient)

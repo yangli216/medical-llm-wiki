@@ -71,11 +71,18 @@ class RuleEvaluator:
         is_pregnant = bool(profile.get("is_pregnant") or profile.get("pregnancy"))
         is_lactating = bool(profile.get("is_lactating") or profile.get("lactation"))
 
+        diagnoses_list = profile.get("diagnoses", [])
+        if isinstance(diagnoses_list, list):
+            diagnoses_str = " ".join([str(x) for x in diagnoses_list])
+        else:
+            diagnoses_str = str(diagnoses_list)
+
         history_text = " ".join([
             str(profile.get("history", "")),
             str(profile.get("disease", "")),
             str(profile.get("diagnosis", "")),
             str(profile.get("conditions", "")),
+            diagnoses_str,
         ]).lower()
 
         allergy_text = " ".join([
@@ -228,7 +235,8 @@ class RuleEvaluator:
 
         # 6 & 7. DDI pairs or History conditions
         has_ddi_cfg = "ddi_pairs" in cond
-        has_hist_cfg = "history_any" in cond
+        has_hist_cfg = ("history_any" in cond) or ("diagnoses_any" in cond)
+        hist_keywords = cond.get("history_any", []) + cond.get("diagnoses_any", [])
 
         if has_ddi_cfg and has_hist_cfg and cond.get("ddi_or_history"):
             pair_matched = False
@@ -241,7 +249,7 @@ class RuleEvaluator:
                     pair_matched = True
                     break
             flag_hit = any(bool(profile.get(flg)) for flg in cond.get("profile_flags", []))
-            text_hit = any(k in history_text for k in cond["history_any"])
+            text_hit = any(k in history_text for k in hist_keywords)
             if not (pair_matched or flag_hit or text_hit):
                 return False
         else:
@@ -260,7 +268,7 @@ class RuleEvaluator:
 
             if has_hist_cfg:
                 flag_hit = any(bool(profile.get(flg)) for flg in cond.get("profile_flags", []))
-                text_hit = any(k in history_text for k in cond["history_any"])
+                text_hit = any(k in history_text for k in hist_keywords)
                 if not (flag_hit or text_hit):
                     return False
 
