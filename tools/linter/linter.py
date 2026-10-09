@@ -70,6 +70,23 @@ class WikiLinter:
             if len(bl) == 0 and pid not in ("index", "log"):
                 orphans.append(pid)
 
+        # 3. Check Typography (Markdown strikethrough conflict via ASCII ~)
+        typography_issues: List[Dict[str, Any]] = []
+        for pid, page in self.graph.pages.items():
+            in_code = False
+            for line_no, line in enumerate(page.body.splitlines(), 1):
+                if line.strip().startswith("```"):
+                    in_code = not in_code
+                    continue
+                if in_code:
+                    continue
+                if "~" in line:
+                    typography_issues.append({
+                        "file": str(page.rel_path),
+                        "line": line_no,
+                        "text": line.strip()[:60],
+                    })
+
         stats = self.graph.get_stats()
         is_healthy = (len(broken_links) == 0 and len(invalid_source_refs) == 0 and len(orphans) == 0)
 
@@ -84,6 +101,8 @@ class WikiLinter:
             "schema_issue_count": len(schema_issues),
             "invalid_source_refs": invalid_source_refs,
             "invalid_source_count": len(invalid_source_refs),
+            "typography_issues": typography_issues,
+            "typography_issue_count": len(typography_issues),
         }
 
     def format_report(self, results: Dict[str, Any]) -> str:
@@ -132,6 +151,14 @@ class WikiLinter:
             lines.append(f"⚠️ 发现 {results['schema_issue_count']} 处元数据格式问题:")
             for item in results["schema_issues"]:
                 lines.append(f"   - [{item['file']}]: {item['issue']}")
+
+        # Typography / Markdown syntax safety
+        if results.get("typography_issue_count", 0) == 0:
+            lines.append("✅ 排版与格式安全: 完美通过 (0 处半角波浪号 ~ 导致 Markdown 删除线冲突)")
+        else:
+            lines.append(f"⚠️ 发现 {results['typography_issue_count']} 处半角 ~ 排版安全隐患 (建议使用全角 ～):")
+            for item in results["typography_issues"][:5]:
+                lines.append(f"   - [{item['file']}:L{item['line']}]: {item['text']}")
 
         lines.append("=" * 60)
         status_text = "🎉 结论: 知识库极其健康，完全符合 LLM Wiki 编译标准！" if results["is_healthy"] else "⚠️ 结论: 发现部分待优化项目，请按提示排查修复。"

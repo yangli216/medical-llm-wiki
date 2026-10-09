@@ -61,7 +61,7 @@ class ClinicalCalculatorRegistry:
             details.append("年龄 ≥ 75岁 (+2)")
         elif age >= 65:
             score += 1
-            details.append("年龄 65~74岁 (+1)")
+            details.append("年龄 65～74岁 (+1)")
         if has_dm:
             score += 1
             details.append("糖尿病史 (+1)")
@@ -210,7 +210,7 @@ class ClinicalCalculatorRegistry:
         else:
             severity = "HIGH"
             disposition = "立即收住院 / 评估ICU收治指征"
-            recommendation = "重症高危肺炎，死亡率 15%~40%。必须收住院，若合并感染性休克或需机械通气应直接入住 ICU！"
+            recommendation = "重症高危肺炎，死亡率 15%～40%。必须收住院，若合并感染性休克或需机械通气应直接入住 ICU！"
 
         return {
             "calculator": "CURB-65",
@@ -252,7 +252,7 @@ class ClinicalCalculatorRegistry:
         # McIsaac age adjustment
         if 3 <= age <= 14:
             score += 1
-            details.append("年龄 3~14岁 (链球菌高发年龄段) (+1)")
+            details.append("年龄 3～14岁 (链球菌高发年龄段) (+1)")
         elif age >= 45:
             score -= 1
             details.append("年龄 ≥ 45岁 (链球菌低发年龄段) (-1)")
@@ -262,7 +262,7 @@ class ClinicalCalculatorRegistry:
             gas_risk = "< 10%"
             recommendation = "A族链球菌感染概率低，病毒性自限可能大。对症支持治疗，严禁盲目开具抗生素！"
         elif score in (2, 3):
-            gas_risk = "15% ~ 30%"
+            gas_risk = "15%～30%"
             recommendation = "链球菌中度可疑。强烈建议咽拭子抗原快检 (RADT) 或咽拭子培养；阳性者给予阿莫西林连服满10天。"
         else:
             gas_risk = "> 50%"
@@ -333,7 +333,7 @@ class ClinicalCalculatorRegistry:
             adjustments.append("大多数口服NSAIDs (布洛芬/双氯芬酸) 绝对禁用")
             adjustments.append("直接口服抗凝药 (利伐沙班/达比加群) 禁用或极端谨慎减量")
         elif egfr < 45:
-            adjustments.append("二甲双胍每日最大剂量严格限制在 500~1000mg 以内")
+            adjustments.append("二甲双胍每日最大剂量严格限制在 500～1000mg 以内")
             adjustments.append("利伐沙班减量至 15mg qd")
         elif egfr < 60:
             adjustments.append("避免长期大剂量使用肾毒性药物与含造影剂检查")
@@ -419,7 +419,7 @@ class ClinicalCalculatorRegistry:
             details.append(f"总胆红素={bili} < 34 μmol/L (+1)")
         elif bili <= 51.0:
             score += 2
-            details.append(f"总胆红素={bili} 在 34~51 μmol/L (+2)")
+            details.append(f"总胆红素={bili} 在 34～51 μmol/L (+2)")
         else:
             score += 3
             details.append(f"总胆红素={bili} > 51 μmol/L (+3)")
@@ -430,7 +430,7 @@ class ClinicalCalculatorRegistry:
             details.append(f"白蛋白={alb} > 35 g/L (+1)")
         elif alb >= 28.0:
             score += 2
-            details.append(f"白蛋白={alb} 在 28~35 g/L (+2)")
+            details.append(f"白蛋白={alb} 在 28～35 g/L (+2)")
         else:
             score += 3
             details.append(f"白蛋白={alb} < 28 g/L (+3)")
@@ -441,7 +441,7 @@ class ClinicalCalculatorRegistry:
             details.append(f"INR={inr} < 1.7 (+1)")
         elif inr <= 2.3:
             score += 2
-            details.append(f"INR={inr} 在 1.7~2.3 (+2)")
+            details.append(f"INR={inr} 在 1.7～2.3 (+2)")
         else:
             score += 3
             details.append(f"INR={inr} > 2.3 (+3)")
@@ -463,10 +463,10 @@ class ClinicalCalculatorRegistry:
             details.append("无肝性脑病 (+1)")
         elif enc in ("grade_1_2", "1-2级", "轻度", "1", "2"):
             score += 2
-            details.append("1~2级肝性脑病 (+2)")
+            details.append("1～2级肝性脑病 (+2)")
         else:
             score += 3
-            details.append("3~4级严重肝性脑病 (+3)")
+            details.append("3～4级严重肝性脑病 (+3)")
 
         # Classification
         if score <= 6:
@@ -497,7 +497,7 @@ class ClinicalCalculatorRegistry:
         Estimates pediatric dehydration fluid deficit and Holliday-Segar maintenance.
         Parameters:
         - weight_kg: Child weight in kg
-        - dehydration: "mild" (3~5%) / "moderate" (6~9%) / "severe" (≥10%)
+        - dehydration: "mild" (3～5%) / "moderate" (6～9%) / "severe" (≥10%)
         """
         wt = float(p.get("weight_kg", 0.0) or p.get("weight", 0.0))
         if wt <= 0:
@@ -516,16 +516,16 @@ class ClinicalCalculatorRegistry:
         # Deficit calculation
         if dehydration in ("mild", "轻度"):
             deficit_rate = 50.0  # ml/kg
-            degree = "轻度脱水 (丢失体重大约 3%~5%)"
+            degree = "轻度脱水 (丢失体重大约 3%～5%)"
             ors_rate = "首选低渗口服补液盐 (ORS-III)，前4小时按 50 mL/kg 少量多次口服"
         elif dehydration in ("moderate", "中度"):
             deficit_rate = 80.0  # ml/kg
-            degree = "中度脱水 (丢失体重大约 6%~9%)"
-            ors_rate = "首选 ORS-III 补液，前4小时按 80~100 mL/kg 口服；若频繁剧吐则转静脉补液"
+            degree = "中度脱水 (丢失体重大约 6%～9%)"
+            ors_rate = "首选 ORS-III 补液，前4小时按 80～100 mL/kg 口服；若频繁剧吐则转静脉补液"
         else:
             deficit_rate = 110.0  # ml/kg
             degree = "重度脱水 (丢失体重 ≥ 10%)"
-            ors_rate = "【急危重症警告】：重度脱水常伴低血容量休克，绝对禁止单纯口服！立即建立静脉通路，首剂生理盐水 20 mL/kg 在 30~60 分钟内快速扩容！"
+            ors_rate = "【急危重症警告】：重度脱水常伴低血容量休克，绝对禁止单纯口服！立即建立静脉通路，首剂生理盐水 20 mL/kg 在 30～60 分钟内快速扩容！"
 
         total_deficit = round(wt * deficit_rate, 0)
         daily_total = round(maint + total_deficit, 0)

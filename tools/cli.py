@@ -115,30 +115,55 @@ def cmd_cdss(args):
             print(f"【可采纳医嘱草稿数 (Treatment Recommendations)】: {len(compiled['treatmentRecommendations'])} 项")
         else:
             print(f"❌ 编译失败: {compiled.get('error')}")
-    elif args.audit:
+    elif args.audit or args.preflight:
         profile = {}
         if args.egfr:
             profile["egfr"] = float(args.egfr)
+        if args.scr:
+            profile["scr"] = float(args.scr)
         if args.age:
             profile["age"] = int(args.age)
+        if args.gender:
+            profile["gender"] = args.gender
+        if args.weight:
+            profile["weight"] = float(args.weight)
         if args.pregnant:
             profile["is_pregnant"] = True
 
-        res = engine.audit_prescription(args.meds, profile)
-        print(f"\n🛡️  CDSS 处方前置安全核查报告 (审查药品: {', '.join(args.meds)}):")
-        print("=" * 65)
-        if res["is_safe"] and res["total_alerts"] == 0:
-            print("✅ 处方安全核查通过：未检出绝对禁忌证或高危处方瀑布。")
+        if args.preflight:
+            res = engine.audit_preflight_safety(args.meds, profile)
+            print(f"\n🚀 【生产级 RHN 门诊预检综合评估报告】 (审查药品: {', '.join(args.meds)}):")
+            print("=" * 65)
+            status_icon = "🛑 状态: 强行阻断 (BLOCKED)" if not res["canPrescribe"] else ("⚠️ 状态: 预警通过 (WARNING)" if res["level"] == "WARNING" else "✅ 状态: 全部通过 (READY)")
+            print(f"{status_icon} | 阻断项: {res['blockingCount']} | 预警项: {res['warningCount']}")
+            print(f"综述: {res['summary']}")
+            if res.get("inferredPatientParameters"):
+                print(f"🔬 动态生理推导指标: {res['inferredPatientParameters']}")
+            print("-" * 65)
+            print("📋 【RHN 评估边界矩阵 (Evaluation Boundaries)】:")
+            for b_key, b_val in res["evaluationBoundaries"].items():
+                b_icon = "🛑" if b_val["evaluationCode"] == "BLOCKED" else ("⚠️" if b_val["evaluationCode"] == "WARNING" else "✅")
+                print(f"  {b_icon} [{b_key.upper()}]: {b_val['status']} ({b_val['evaluationCode']}) - {b_val['message']}")
+                for al in b_val.get("alerts", []):
+                    al_icon = "🛑" if al.get("severity") == "RED" else "⚠️"
+                    print(f"      {al_icon} 【{al.get('title')}】: {al.get('message')}")
+            print("=" * 65)
         else:
-            status_text = "❌ 存在高危严重禁忌，必须强行阻断！" if not res["is_safe"] else "⚠️  存在用药警戒，建议核对。"
-            print(status_text)
-            print(f"告警统计: 红色阻断 {res['red_count']} 条，黄色预警 {res['yellow_count']} 条\n")
-            for idx, a in enumerate(res["alerts"], 1):
-                icon = "🛑" if a["severity"] == "RED" else "⚠️"
-                print(f"{icon} [{idx}] 【{a['title']}】 ({a['severity']})")
-                print(f"    说明: {a['message']}")
-                print(f"    依据: {a.get('guideline', '')}")
-                print("-" * 65)
+            res = engine.audit_prescription(args.meds, profile)
+            print(f"\n🛡️  CDSS 处方前置安全核查报告 (审查药品: {', '.join(args.meds)}):")
+            print("=" * 65)
+            if res["is_safe"] and res["total_alerts"] == 0:
+                print("✅ 处方安全核查通过：未检出绝对禁忌证或高危处方瀑布。")
+            else:
+                status_text = "❌ 存在高危严重禁忌，必须强行阻断！" if not res["is_safe"] else "⚠️  存在用药警戒，建议核对。"
+                print(status_text)
+                print(f"告警统计: 红色阻断 {res['red_count']} 条，黄色预警 {res['yellow_count']} 条\n")
+                for idx, a in enumerate(res["alerts"], 1):
+                    icon = "🛑" if a["severity"] == "RED" else "⚠️"
+                    print(f"{icon} [{idx}] 【{a['title']}】 ({a['severity']})")
+                    print(f"    说明: {a['message']}")
+                    print(f"    依据: {a.get('guideline', '')}")
+                    print("-" * 65)
     else:
         # Default list all protocols
         protocols = engine.repo.list_all()
@@ -250,9 +275,13 @@ def main():
     p_cdss.add_argument("--recommend", help="根据主诉或诊断推荐门诊治疗方案协议")
     p_cdss.add_argument("--compile", help="编译为 RHN 门诊医生站 PlanIntent 格式 JSON")
     p_cdss.add_argument("--audit", action="store_true", help="对拟开处方进行前置安全审查")
+    p_cdss.add_argument("--preflight", action="store_true", help="执行对齐 RHN PlanPreflight 生产级三维度安全审查")
     p_cdss.add_argument("--meds", nargs="+", default=[], help="拟开药品清单")
     p_cdss.add_argument("--egfr", type=float, help="患者 eGFR 估算肾小球滤过率")
+    p_cdss.add_argument("--scr", type=float, help="患者血肌酐 (μmol/L 或 mg/dL，自动动态计算 eGFR/CrCl)")
     p_cdss.add_argument("--age", type=int, help="患者年龄")
+    p_cdss.add_argument("--gender", choices=["男", "女", "male", "female"], help="患者性别")
+    p_cdss.add_argument("--weight", type=float, help="患者体重 (kg)")
     p_cdss.add_argument("--pregnant", action="store_true", help="是否妊娠期")
     p_cdss.add_argument("-n", "--limit", type=int, default=5, help="最多推荐方案数")
 

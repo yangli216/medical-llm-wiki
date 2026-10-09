@@ -1083,6 +1083,11 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             patient = payload.get("patient", {})
             audit_res = self.cdss.audit_prescription(meds, patient)
             self._send_json(audit_res)
+        elif path in ("/api/cdss/preflight-safety", "/api/cdss/preflight", "/api/preflight-safety"):
+            meds = payload.get("medications") or payload.get("meds") or payload.get("items") or []
+            patient = payload.get("patient") or payload.get("patientContext") or payload.get("profile") or {}
+            res = self.cdss.audit_preflight_safety(meds, patient)
+            self._send_json(res)
         elif path == "/api/drugs/check-contraindications":
             meds = payload.get("medications") or []
             if isinstance(meds, str):
@@ -1625,8 +1630,9 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             elif line.strip() == "---":
                 lines.append("<hr>")
             elif line.strip():
-                # Bold
+                # Bold & standard GFM strikethrough (double-tilde)
                 l = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", line)
+                l = re.sub(r"~~([^~]+)~~", r"<del>\1</del>", l)
                 lines.append(f"<p>{l}</p>")
 
         if in_table:

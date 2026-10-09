@@ -11,6 +11,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from tools.cdss.protocol_loader import ProtocolRepository, ClinicalProtocol
 from tools.cdss.rule_evaluator import RuleEvaluator
+from tools.cdss.parameter_normalizer import ClinicalParameterNormalizer
+from tools.cdss.safety_auditor import ComprehensiveSafetyAuditor
 
 
 class CdssEngine:
@@ -18,6 +20,7 @@ class CdssEngine:
         self.root_dir = root_dir or Path(__file__).resolve().parent.parent.parent
         self.repo = ProtocolRepository(self.root_dir)
         self.evaluator = RuleEvaluator(self.root_dir / "rules")
+        self.safety_auditor = ComprehensiveSafetyAuditor(self.root_dir)
 
     def search_protocols(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
         """Searches protocols by natural query or diagnosis name."""
@@ -165,7 +168,8 @@ class CdssEngine:
         - Prescribing cascades
         - Dosage and duration boundaries
         """
-        profile = dict(patient_profile or {})
+        norm_profile = ClinicalParameterNormalizer.normalize_patient(patient_profile)
+        profile = dict(norm_profile)
         meds_text = " ".join(medications).lower()
 
         # Clinical parameter normalization
@@ -199,7 +203,7 @@ class CdssEngine:
                 if a.get("ruleId") == "RULE-SAFETY-METFORMIN-RENAL":
                     a["message"] = f"患者 eGFR = {egfr} ml/min/1.73m² (< 30)，二甲双胍蓄积导致致死性乳酸酸中毒风险极高，绝对禁用！"
                 elif a.get("ruleId") == "RULE-SAFETY-METFORMIN-WARN":
-                    a["message"] = f"患者 eGFR = {egfr} ml/min/1.73m² (30~44)，二甲双胍每日最大剂量不得超过 1000mg，并每 3 个月复查肾功能。"
+                    a["message"] = f"患者 eGFR = {egfr} ml/min/1.73m² (30～44)，二甲双胍每日最大剂量不得超过 1000mg，并每 3 个月复查肾功能。"
                 elif a.get("ruleId") == "RULE-OSTEO-BISPHOSPHONATE-RENAL":
                     a["message"] = f"患者 eGFR = {egfr} ml/min/1.73m² (< 35)，双膦酸盐完全经肾小球滤过与肾小管排泄，重度肾损伤蓄积可诱发急性肾小管坏死及不可逆肾衰竭！绝对禁用，推荐换用地舒单抗或活性维生素D。"
                 elif a.get("ruleId") == "RULE-UTI-NITROFURANTOIN-RENAL":
@@ -225,3 +229,15 @@ class CdssEngine:
             "yellow_count": len([a for a in alerts if a["severity"] == "YELLOW"]),
             "alerts": alerts,
         }
+
+    def audit_preflight_safety(
+        self,
+        medications: List[Any],
+        patient_profile: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Performs exhaustive, production-grade clinical preflight safety evaluation.
+        Outputs structured evaluation boundaries and preflight checks aligned with RHN contract.
+        """
+        return self.safety_auditor.audit_preflight_safety(medications, patient_profile)
+

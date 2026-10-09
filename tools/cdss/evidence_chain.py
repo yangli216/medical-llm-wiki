@@ -169,7 +169,7 @@ class EvidenceChainEngine:
                             "type": "VITAL",
                             "label": f"诊室血压 {int(s_val)}/{int(d_val)} mmHg ≥ 160/100 mmHg",
                             "detail": f"实测收缩压 {int(s_val)} mmHg / 舒张压 {int(d_val)} mmHg，达到 2 级高血压门槛",
-                            "sourceQuote": "非同日3次诊室收缩压160~179和/或舒张压100~109 mmHg界定为2级高血压",
+                            "sourceQuote": "非同日3次诊室收缩压160～179和/或舒张压100～109 mmHg界定为2级高血压",
                         })
                     elif s_val >= 140 or d_val >= 90:
                         checkpoints.append({
@@ -301,7 +301,7 @@ class EvidenceChainEngine:
                 "status": "SUGGESTED",
                 "type": "GAP_EXAM",
                 "label": "建议完善糖化血红蛋白(HbA1c)与尿白蛋白/肌酐比值",
-                "detail": "需评估近2~3个月平均血糖控制水平及早期糖尿病肾损伤标志",
+                "detail": "需评估近2～3个月平均血糖控制水平及早期糖尿病肾损伤标志",
                 "sourceQuote": "初始治疗须完善HbA1c基线筛查，并常规行UACR与眼底检查",
             })
 
@@ -513,7 +513,7 @@ class EvidenceChainEngine:
                         chapter = "第4章 血压测量与高血压诊断分级标准"
                         excerpts = [
                             "非同日3次测量诊室血压，收缩压≥140 mmHg和/或舒张压≥90 mmHg即可确立诊断。",
-                            "收缩压160~179 mmHg和/或舒张压100~109 mmHg界定为2级高血压，推荐起始两药联合治疗。",
+                            "收缩压160～179 mmHg和/或舒张压100～109 mmHg界定为2级高血压，推荐起始两药联合治疗。",
                             "初始评估必须完善12导联心电图、血生化、尿微量白蛋白以明确靶器官损害程度。",
                         ]
                     elif "糖尿病" in title:
