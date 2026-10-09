@@ -443,3 +443,4 @@ status: verified
      - 运行 `python3 -m unittest discover tests`：64 项单元测试全部通过。
      - 运行 `python3 -m tools.cli index`：SQLite FTS5 全文检索引擎 389 篇词条全量同步。
      - 守护进程健康重启于 8788 端口，`/api/health` 实时健康，`/api/cdss/compile-rhn-plan` 正常响应。
+- **[Web在线录入]**: 新增收录权威标准《成人肥胖食养指南（2024年版）》（`SRC-NHC-NUT-2024-01`，国家卫生健康委食品安全标准与监测评估司 / 中华医学会内分泌学分会，2024年）。

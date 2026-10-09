@@ -321,6 +321,50 @@ class TestRhnLiveIntegration(unittest.TestCase):
         self.assertEqual(audit_arni["level"], "BLOCK")
         self.assertTrue(any(a["rule"] == "DDI_ARNI_ACEI_WASHOUT_36H" for a in audit_arni["alerts"]))
 
+    def test_sources_and_import_api(self):
+        # 1. Test GET /api/knowledge/sources
+        sources = self._get_json("/api/knowledge/sources")
+        self.assertIsInstance(sources, list)
+        self.assertGreaterEqual(len(sources), 50)
+        self.assertTrue(any(s["id"] == "SRC-CDS-ENDO-2024-01" for s in sources))
+
+        # 2. Test POST /api/knowledge/import-source
+        import_payload = {
+            "title": "测试临床诊疗指南2026版",
+            "authority": "国家卫生健康委员会测试司",
+            "category": "综合临床",
+            "source_id": "SRC-TEST-CLIN-2026-99",
+            "year": 2026,
+            "summary": "测试用指南导入，用于集成测试验证知识流水线稳定性。",
+            "related_diseases": "2型糖尿病, 原发性高血压",
+            "content": "# 测试临床指南正文\n\n## 核心推荐意见\n严格按照临床指南开展规范化治疗。"
+        }
+        res = self._post_json("/api/knowledge/import-source", import_payload)
+        self.assertTrue(res.get("success"))
+        self.assertEqual(res.get("source_id"), "SRC-TEST-CLIN-2026-99")
+
+        # 3. Verify doc retrieval
+        doc = self._get_json("/api/wiki/doc?id=SRC-TEST-CLIN-2026-99")
+        self.assertEqual(doc["id"], "SRC-TEST-CLIN-2026-99")
+        self.assertIn("html", doc)
+
+        # 4. Clean up test files to keep wiki pristine
+        p1 = Path(self.server.root_dir if hasattr(self.server, "root_dir") else "raw/docs/SRC-TEST-CLIN-2026-99.md")
+        if not p1.exists(): p1 = Path("raw/docs/SRC-TEST-CLIN-2026-99.md")
+        if p1.exists(): p1.unlink()
+        p2 = Path("wiki/sources/SRC-TEST-CLIN-2026-99.md")
+        if p2.exists(): p2.unlink()
+        meta_file = Path("raw/metadata.json")
+        mdata = json.loads(meta_file.read_text(encoding="utf-8"))
+        mdata["sources"] = [s for s in mdata["sources"] if s.get("id") != "SRC-TEST-CLIN-2026-99"]
+        meta_file.write_text(json.dumps(mdata, ensure_ascii=False, indent=2), encoding="utf-8")
+        idx_file = Path("wiki/index.md")
+        idx_lines = [l for l in idx_file.read_text(encoding="utf-8").splitlines(keepends=True) if "SRC-TEST-CLIN-2026-99" not in l]
+        idx_file.write_text("".join(idx_lines), encoding="utf-8")
+        log_file = Path("wiki/log.md")
+        log_lines = [l for l in log_file.read_text(encoding="utf-8").splitlines(keepends=True) if "SRC-TEST-CLIN-2026-99" not in l]
+        log_file.write_text("".join(log_lines), encoding="utf-8")
+
 
 if __name__ == "__main__":
     unittest.main()

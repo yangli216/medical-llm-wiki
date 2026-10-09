@@ -10,6 +10,7 @@ import html
 import json
 import re
 import time
+from datetime import datetime
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
 from pathlib import Path
@@ -340,6 +341,173 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             border-radius: 50%;
             margin-right: 6px;
         }
+
+        /* Source Import Modal & Topbar Badges */
+        .btn-import-source {
+            width: 100%;
+            padding: 9px 12px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #059669, #0284c7);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        .btn-import-source:hover {
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(6, 182, 212, 0.35);
+        }
+        .topbar-stats {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-left: 12px;
+        }
+        .stat-badge {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid var(--border);
+            color: #cbd5e1;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .stat-badge:hover {
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 680px;
+            max-height: 88vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.5);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+        .modal-header h2 {
+            font-size: 1.15rem;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+        .modal-close:hover { color: #f1f5f9; }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: #f8fafc;
+            font-size: 0.85rem;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #38bdf8;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+            border-top: 1px solid var(--border);
+            padding-top: 14px;
+        }
+        .btn-cancel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #059669, #0284c7);
+            border: none;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+        }
+        .btn-demo {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid #f59e0b;
+            color: #fbbf24;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .btn-demo:hover {
+            background: rgba(245, 158, 11, 0.35);
+        }
     </style>
 </head>
 <body>
@@ -347,6 +515,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div class="header">
             <h1><span>🩺</span> Medical LLM Wiki</h1>
             <p>中国医学权威指南与标准知识库</p>
+            <button class="btn-import-source" onclick="openImportModal()">➕ 录入新标准 / 指南</button>
         </div>
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="搜索临床指南、疾病、药物、分期..." oninput="onSearchInput(this.value)">
@@ -362,10 +531,18 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <div id="main">
         <div class="topbar">
-            <div class="topbar-left" id="topbarTitle">
+            <div class="topbar-left" id="topbarTitle" style="display:flex;align-items:center;">
                 <span>📚</span> <span id="currentTitleText">主索引目录</span>
+                <div class="topbar-stats" id="topbarStats">
+                    <span class="stat-badge" onclick="switchNavTab('src')" title="点击查看所有国家权威指南">🏛️ 51 指南</span>
+                    <span class="stat-badge" onclick="loadPage('index')" title="点击查看高发疾病实体">🫀 48 疾病</span>
+                    <span class="stat-badge" onclick="loadPage('index')" title="点击查看门诊方案协议">📋 42 门诊协议</span>
+                    <span class="stat-badge" onclick="loadPage('index')" title="点击查看国家法定说明书">📖 140 说明书</span>
+                    <span class="stat-badge" onclick="loadPage('index')" title="点击查看临床安全规则">🛡️ 45 CDSS规则</span>
+                </div>
             </div>
             <div class="topbar-actions">
+                <button onclick="openImportModal()" style="background:rgba(5,150,105,0.25);border:1px solid #059669;color:#34d399;">➕ 导入标准</button>
                 <button onclick="toggleView('doc')" id="btnDocView" style="background:#0284c7;color:#fff;">📄 阅读文档</button>
                 <button onclick="toggleView('graph')" id="btnGraphView">🕸️ 知识图谱</button>
             </div>
@@ -839,8 +1016,129 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             });
         }
 
+
+        function openImportModal() {
+            document.getElementById('importModal').classList.add('active');
+        }
+
+        function closeImportModal() {
+            document.getElementById('importModal').classList.remove('active');
+        }
+
+        function fillExampleImportData() {
+            document.getElementById('inpTitle').value = '成人肥胖食养指南（2024年版）';
+            document.getElementById('inpAuthority').value = '国家卫生健康委食品司 / 中华医学会内分泌学分会';
+            document.getElementById('inpCategory').value = '内分泌代谢与医学营养';
+            document.getElementById('inpSourceId').value = 'SRC-NHC-NUT-2024-01';
+            document.getElementById('inpYear').value = 2024;
+            document.getElementById('inpSummary').value = '1. 诊断切点：成人 BMI ≥ 24 kg/m² 为超重，≥ 28 kg/m² 为肥胖；男性腰围 ≥ 90cm、女性 ≥ 85cm 为中心型肥胖。\n2. 饮食干预：控制总能量摄入，推荐每日能量摄入减少 500～1000 kcal；优质蛋白质占比达 50% 以上。\n3. 减重靶标：以 6 个月内体重减轻 5%～10% 为适宜目标，严禁剧烈极低能量禁食。';
+            document.getElementById('inpRelated').value = '2型糖尿病, 原发性高血压, 动脉粥样硬化性心血管疾病';
+            document.getElementById('inpContent').value = '# 《成人肥胖食养指南（2024年版）》核心条款归档\n\n## 一、 流行病学与危害\n我国成人超重肥胖率已达 50.7%，肥胖是高血压、2型糖尿病、心血管疾病与部分恶性肿瘤的独立高危危险因素。\n\n## 二、 食养原则与建议\n1. 控制总能量摄入，循序渐进减重；\n2. 宏量营养素配比合理，多全谷物、少精制糖；\n3. 充足微量营养素与膳食纤维摄入；\n4. 戒烟限酒，规律睡眠与抗阻有氧运动结合。';
+        }
+
+        async function submitImportSource(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitImport');
+            btn.disabled = true;
+            btn.innerText = '⏳ 正在编译并建立索引...';
+
+            const payload = {
+                title: document.getElementById('inpTitle').value.trim(),
+                authority: document.getElementById('inpAuthority').value.trim(),
+                category: document.getElementById('inpCategory').value.trim(),
+                source_id: document.getElementById('inpSourceId').value.trim(),
+                year: parseInt(document.getElementById('inpYear').value) || 2024,
+                summary: document.getElementById('inpSummary').value.trim(),
+                related_diseases: document.getElementById('inpRelated').value.trim(),
+                content: document.getElementById('inpContent').value.trim()
+            };
+
+            try {
+                const resp = await fetch('/api/knowledge/import-source', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const res = await resp.json();
+                if (res.success) {
+                    alert('🎉 ' + res.message);
+                    closeImportModal();
+                    // Reload graph & re-render tree
+                    const graphResp = await fetch('/api/graph');
+                    graphData = await graphResp.json();
+                    renderNavTree();
+                    // Load the newly imported page directly
+                    loadPage(res.source_id);
+                } else {
+                    alert('❌ 导入失败: ' + (res.error || '未知错误'));
+                }
+            } catch (err) {
+                alert('❌ 请求异常: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '🚀 编译并导入本知识库';
+            }
+        }
+
         window.onload = init;
     </script>
+
+    <!-- Modal for importing new clinical guidelines / standards -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2><span>🏛️</span> 录入新临床诊疗指南与国家标准</h2>
+                <button class="modal-close" onclick="closeImportModal()">&times;</button>
+            </div>
+            <div style="font-size:0.78rem;color:#94a3b8;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+                <span>向知识库追加尚未收录的行业权威标准，系统将自动编译知识图谱与全文索引。</span>
+                <button type="button" class="btn-demo" onclick="fillExampleImportData()">✨ 填入示例数据</button>
+            </div>
+            <form id="importSourceForm" onsubmit="submitImportSource(event)">
+                <div class="form-group">
+                    <label>标准 / 指南官方全称 *</label>
+                    <input type="text" id="inpTitle" placeholder="例如：《成人肥胖食养指南（2024年版）》" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>制定 / 发布权威机构 *</label>
+                        <input type="text" id="inpAuthority" placeholder="国家卫生健康委食品司 / 中华医学会" required>
+                    </div>
+                    <div class="form-group">
+                        <label>专科领域分类 *</label>
+                        <input type="text" id="inpCategory" placeholder="例如：内分泌代谢、心血管、儿科、全科医学" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>文献来源标识代码 (ID)</label>
+                        <input type="text" id="inpSourceId" placeholder="例如：SRC-NHC-NUT-2024-01 (选填，自动建议)">
+                    </div>
+                    <div class="form-group">
+                        <label>发布年份 *</label>
+                        <input type="number" id="inpYear" value="2024" min="2000" max="2030" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>核心临床导读与要点提炼 (支持多行) *</label>
+                    <textarea id="inpSummary" rows="3" placeholder="提炼 2～4 条核心诊疗要点、控制靶标或推荐意见..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>关联高发疾病实体 / 规范概念 (逗号分隔)</label>
+                    <input type="text" id="inpRelated" placeholder="例如：2型糖尿病, 原发性高血压, 骨质疏松症">
+                </div>
+                <div class="form-group">
+                    <label>原始文献正文 / 核心章节 Markdown (可选，支持长文粘贴)</label>
+                    <textarea id="inpContent" rows="4" placeholder="在此粘贴文献官方原文、章节条款或诊断标准..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeImportModal()">取消</button>
+                    <button type="submit" class="btn-submit" id="btnSubmitImport">🚀 编译并导入本知识库</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>
 """
@@ -938,7 +1236,7 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
                 })
             else:
                 self._send_json({"error": "Page not found", "id": pid}, status=404)
-        elif path == "/api/sources":
+        elif path in ("/api/sources", "/api/knowledge/sources"):
             sources = self.collector.list_sources()
             self._send_json(sources)
         elif path == "/api/cdss/protocols":
@@ -1088,6 +1386,8 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             patient = payload.get("patient") or payload.get("patientContext") or payload.get("profile") or {}
             res = self.cdss.audit_preflight_safety(meds, patient)
             self._send_json(res)
+        elif path in ("/api/knowledge/import-source", "/api/sources/import"):
+            self._handle_import_source(payload)
         elif path == "/api/drugs/check-contraindications":
             meds = payload.get("medications") or []
             if isinstance(meds, str):
@@ -1104,6 +1404,179 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
         else:
             self.send_response(404)
             self.end_headers()
+
+    def _handle_import_source(self, payload: Dict[str, Any]) -> None:
+        """
+        Imports and compiles a newly discovered clinical guideline or medical standard:
+        1. Validates and generates metadata in raw/metadata.json
+        2. Archives raw document markdown in raw/docs/{source_id}.md
+        3. Compiles structured wiki study guide in wiki/sources/{source_id}.md
+        4. Updates master index wiki/index.md and audit log wiki/log.md
+        5. Updates SQLite FTS5 search index and in-memory WikiGraph
+        """
+        title = (payload.get("title") or "").strip()
+        if not title:
+            self._send_json({"success": False, "error": "指南/标准官方全称 (title) 不能为空"}, status=400)
+            return
+
+        authority = (payload.get("authority") or "国家卫生健康委员会 / 中华医学会").strip()
+        category = (payload.get("category") or "临床医学综合").strip()
+        year = int(payload.get("year") or 2024)
+        summary = (payload.get("summary") or f"收录《{title}》，规范临床诊疗路径与合理用药。").strip()
+        content = (payload.get("content") or "").strip()
+        source_id = (payload.get("source_id") or "").strip().upper()
+        raw_related = payload.get("related_diseases") or []
+        if isinstance(raw_related, str):
+            related_items = [d.strip() for d in re.split(r"[,，、;；]", raw_related) if d.strip()]
+        else:
+            related_items = list(raw_related)
+
+        # Generate source_id if not given
+        if not source_id:
+            abbr = re.sub(r"[^A-Za-z0-9]", "", category)[:4].upper() or "CLIN"
+            existing_ids = {s["id"] for s in self.collector.list_sources()}
+            counter = 1
+            source_id = f"SRC-USER-{abbr}-{year}-{counter:02d}"
+            while source_id in existing_ids:
+                counter += 1
+                source_id = f"SRC-USER-{abbr}-{year}-{counter:02d}"
+
+        # 1. Register in raw/metadata.json
+        file_rel = f"raw/docs/{source_id}.md"
+        self.collector.register_source(
+            source_id=source_id,
+            title=title,
+            authority=authority,
+            year=year,
+            category=category,
+            file_path=file_rel,
+            key_scope=summary,
+            level="国家级临床诊疗指南与行业标准",
+        )
+
+        # 2. Write raw document in raw/docs/{source_id}.md
+        raw_doc_path = self.root_dir / file_rel
+        raw_doc_path.parent.mkdir(parents=True, exist_ok=True)
+        if not content:
+            content = f"# 《{title}》原始文献归档\n\n- **制定机构**: {authority}\n- **发布年份**: {year}年\n- **专科分类**: {category}\n\n## 核心内容与指引摘要\n{summary}\n"
+        raw_doc_path.write_text(content.strip().replace("~", "～") + "\n", encoding="utf-8")
+
+        # 3. Resolve related disease links safely (only [[link]] if page exists)
+        related_links_list = []
+        for item in related_items:
+            resolved = self.graph.resolve_link(item)
+            if resolved and resolved in self.graph.pages:
+                related_links_list.append(f"- [[{item}]]")
+            else:
+                related_links_list.append(f"- {item}")
+
+        if not related_links_list:
+            related_links_list = ["- [[index]] (医学知识库主索引)"]
+        else:
+            related_links_list.append("- [[index]] (医学知识库主索引)")
+
+        related_links_text = "\n".join(related_links_list)
+
+        core_points_lines = [p.strip() for p in summary.split("\n") if p.strip()]
+        core_points_text = "\n".join([f"- {p}" for p in core_points_lines]) if core_points_lines else f"- {summary}"
+
+        clean_title = title.replace("《", "").replace("》", "")
+        today_str = datetime.now().strftime("%Y-%m-%d")
+
+        wiki_source_content = f"""---
+title: 《{clean_title}》研读导读
+type: source
+tags:
+  - 医学指南/{category}
+  - 权威指南/动态录入
+aliases:
+  - 《{clean_title}》
+  - {clean_title}
+sources:
+  - {source_id}
+last_updated: "{today_str}"
+status: verified
+---
+
+# 《{clean_title}》研读导读
+
+> [!NOTE] 权威来源元数据
+> - **来源标识代码 (ID)**: `{source_id}`
+> - **制定发布机构**: {authority}
+> - **发布年份**: {year} 年
+> - **专科分类**: {category}
+> - **原始文献归档**: [`{file_rel}`](file:///{file_rel})
+
+---
+
+## 一、 指南/规范核心要点提炼
+{core_points_text}
+
+---
+
+## 二、 临床诊疗路径指引
+1. **诊断与风险分层**：严格参照本规范推荐的诊断切点与分层评估流程。
+2. **规范化干预方案**：优先选择一线推荐治疗与药物方案，注意禁忌证与特殊人群监护。
+3. **随访与健康宣教**：实施连续性健康管理，指导患者规律复诊与危险因素干预。
+
+---
+
+## 三、 知识网络关联与适用疾病
+{related_links_text}
+"""
+        wiki_source_content = wiki_source_content.replace("~", "～")
+        wiki_source_path = self.root_dir / "wiki" / "sources" / f"{source_id}.md"
+        wiki_source_path.parent.mkdir(parents=True, exist_ok=True)
+        wiki_source_path.write_text(wiki_source_content.strip() + "\n", encoding="utf-8")
+
+        # 4. Update wiki/index.md (add to sources table)
+        index_path = self.root_dir / "wiki" / "index.md"
+        if index_path.exists():
+            idx_text = index_path.read_text(encoding="utf-8")
+            clean_summary = summary.replace("\n", " ")[:60].replace("~", "～")
+            new_row = f"| [[{source_id}]] | 《{clean_title}》 | {authority} | {category} | {clean_summary}... |\n"
+
+            section_marker = "### J. 临床在线动态录入权威标准 (动态扩充)"
+            if section_marker in idx_text:
+                header = section_marker + "\n| 来源 ID | 官方指南全称 | 发布机构 | 专科领域 | 核心导读 |\n| :--- | :--- | :--- | :--- | :--- |\n"
+                idx_text = idx_text.replace(header, header + new_row)
+            else:
+                table_block = f"{section_marker}\n| 来源 ID | 官方指南全称 | 发布机构 | 专科领域 | 核心导读 |\n| :--- | :--- | :--- | :--- | :--- |\n{new_row}\n---\n\n"
+                insert_target = "## 2. 疾病与健康主诉实体库 (Diseases & Conditions)"
+                if insert_target in idx_text:
+                    idx_text = idx_text.replace(insert_target, table_block + insert_target)
+                else:
+                    idx_text = idx_text.replace("## 2. 疾病与健康主诉实体库", table_block + "## 2. 疾病与健康主诉实体库")
+
+            # Bump count in overview block if present
+            current_count = len(self.collector.list_sources())
+            idx_text = re.sub(r"├── 1\. 权威来源层 \(wiki/sources/\)\s+->\s+\d+\s+部",
+                              f"├── 1. 权威来源层 (wiki/sources/)           -> {current_count} 部", idx_text)
+            index_path.write_text(idx_text, encoding="utf-8")
+
+        # 5. Append to wiki/log.md
+        log_path = self.root_dir / "wiki" / "log.md"
+        if log_path.exists():
+            log_text = log_path.read_text(encoding="utf-8")
+            log_entry = f"\n- **[Web在线录入]**: 新增收录权威标准《{clean_title}》（`{source_id}`，{authority}，{year}年）。\n"
+            log_path.write_text(log_text.rstrip() + log_entry, encoding="utf-8")
+
+        # 6. Re-index SQLite FTS5 incrementally
+        try:
+            self.searcher.index_wiki(incremental=True)
+        except Exception as e:
+            print(f"Index update warning: {e}")
+
+        # 7. Reload in-memory graph
+        self.graph.load_graph()
+
+        self._send_json({
+            "success": True,
+            "source_id": source_id,
+            "page_id": source_id,
+            "title": f"《{clean_title}》",
+            "message": f"权威标准《{clean_title}》已成功收录至知识库！已自动生成导读、挂接主索引并完成全文检索索引建立。"
+        })
 
     def _handle_knowledge_search(self, payload: Dict[str, Any]) -> None:
         """Adapts to RHN PmphaiClinicalKnowledgeGateway ProviderResult[] protocol."""
