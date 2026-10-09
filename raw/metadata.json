@@ -1,6 +1,6 @@
 {
   "version": "1.9.0",
-  "last_updated": "2026-10-07",
+  "last_updated": "2026-10-09",
   "sources": [
     {
       "id": "SRC-CMA-CARD-2024-01",
@@ -540,6 +540,42 @@
       "level": "国家法定药典临床指导技术标准",
       "file_path": "raw/docs/SRC-NMPA-FORMULARY-2024.md",
       "key_scope": "国家基本药物及基层门诊高频常用药物的标准规格、日最大极量、肾功能衰竭剂量滴定、特殊人群禁忌与黑框警告",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-GYN-2020-02",
+      "title": "妊娠期高血压疾病诊治指南（2020）",
+      "authority": "中华医学会妇产科学分会妊娠期高血压疾病学组",
+      "publication": "中华妇产科杂志",
+      "year": 2020,
+      "category": "妇产科学与母胎医学",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-GYN-2020-02.md",
+      "key_scope": "妊娠期高血压、子痫前期（轻/重度）、子痫诊断标准与重症监护，降压目标130-140/80-90mmHg，拉贝洛尔/硝苯地平首选，ACEI/ARB/ARNI禁忌黑框，硫酸镁解痉防抽搐规范",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-GYN-2022-01",
+      "title": "妊娠期高血糖诊治指南（2022）[第一部分与第二部分]",
+      "authority": "中华医学会妇产科学分会产科学组 / 中华医学会围产医学分会",
+      "publication": "中华妇产科杂志",
+      "year": 2022,
+      "category": "妇产科学与母胎医学",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CMA-GYN-2022-01.md",
+      "key_scope": "妊娠期糖尿病 (GDM) 75g OGTT 5.1/10.0/8.5 单项切点诊断，孕期血糖控制目标（空腹≤5.3、餐后2h≤6.7mmol/L），医学营养治疗 (MNT) 与运动，胰岛素首选启动规范与胎儿生长监测",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-PED-2021-01",
+      "title": "热性惊厥诊断与治疗专家共识（2021年实用版）",
+      "authority": "中华医学会儿科学分会神经学组",
+      "publication": "中华实用儿科临床杂志",
+      "year": 2021,
+      "category": "儿科学与神经急症",
+      "level": "国家权威专科专家共识",
+      "file_path": "raw/docs/SRC-CMA-PED-2021-01.md",
+      "key_scope": "小儿热性惊厥 (FS) 临床分型（单纯性 vs 复杂性），急诊急性发作期处置流程（侧卧位防窒息、地西泮终止抽搐），中枢感染红旗征排查与退热剂合理使用，严禁滥用长期抗癫痫药",
       "status": "active"
     }
   ]

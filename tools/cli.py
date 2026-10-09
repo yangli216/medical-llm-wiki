@@ -149,6 +149,36 @@ def cmd_cdss(args):
         print("-" * 65)
 
 
+def cmd_calc(args):
+    import json
+    from tools.cdss.calculators import ClinicalCalculatorRegistry
+    try:
+        params = json.loads(args.params) if args.params else {}
+    except Exception as e:
+        print(f"❌ 参数 JSON 解析失败: {e}")
+        sys.exit(1)
+    try:
+        res = ClinicalCalculatorRegistry.calculate(args.calculator, params)
+        print("=" * 65)
+        print(f"  🧮 临床量化评估计算报告: {res.get('calculator')}")
+        print("=" * 65)
+        for k, v in res.items():
+            if k == "details" and isinstance(v, list):
+                print("得分要点细则:")
+                for d in v:
+                    print(f"  • {d}")
+            elif k == "drugAdjustments" and isinstance(v, list):
+                print("用药剂量调整指引:")
+                for da in v:
+                    print(f"  ⚠️ {da}")
+            else:
+                print(f"{k}: {v}")
+        print("=" * 65)
+    except Exception as e:
+        print(f"❌ 计算执行失败: {e}")
+        sys.exit(1)
+
+
 def cmd_rename_page(args):
     graph = WikiGraph(ROOT_DIR)
     graph.load_graph()
@@ -226,6 +256,11 @@ def main():
     p_cdss.add_argument("--pregnant", action="store_true", help="是否妊娠期")
     p_cdss.add_argument("-n", "--limit", type=int, default=5, help="最多推荐方案数")
 
+    # calc
+    p_calc = subparsers.add_parser("calc", help="执行临床量化评分与实验室清除率计算 (CHA2DS2-VASc, CURB-65, eGFR等)")
+    p_calc.add_argument("calculator", help="计算器名称 (cha2ds2_vasc, has_bled, curb_65, centor, renal_clearance, child_pugh, pediatric_fluid)")
+    p_calc.add_argument("params", nargs="?", default="{}", help="入参 JSON 字符串，例如 '{\"age\": 68, \"gender\": \"男\", \"htn\": true}'")
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
@@ -240,6 +275,7 @@ def main():
         "ask": cmd_ask,
         "serve": cmd_serve,
         "cdss": cmd_cdss,
+        "calc": cmd_calc,
     }
 
     dispatch[args.command](args)

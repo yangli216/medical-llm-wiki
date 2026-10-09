@@ -20,6 +20,7 @@ from tools.collector.collector import SourceCollector
 from tools.cdss.engine import CdssEngine
 from tools.cdss.drug_checker import DrugInsertRepository, DrugContraindicationAuditor
 from tools.cdss.evidence_chain import EvidenceChainEngine
+from tools.cdss.calculators import ClinicalCalculatorRegistry
 
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -897,6 +898,18 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
                     }
                 ]
             })
+        elif path == "/api/cdss/calculators":
+            self._send_json({
+                "calculators": [
+                    {"name": "cha2ds2_vasc", "title": "CHA2DS2-VASc 房颤卒中风险评估与抗凝决策", "params": ["age", "gender", "chf", "htn", "dm", "stroke", "vascular"]},
+                    {"name": "has_bled", "title": "HAS-BLED 房颤抗凝出血风险评估", "params": ["age", "sbp_gt_160", "renal_disease", "liver_disease", "stroke_history", "bleeding_history", "labile_inr", "antiplatelet", "alcohol_abuse"]},
+                    {"name": "curb_65", "title": "CURB-65 社区获得性肺炎严重度与收治场所", "params": ["age", "confusion", "bun", "rr", "sbp", "dbp"]},
+                    {"name": "centor", "title": "Centor-McIsaac 急性咽扁桃体炎链球菌概率与抗菌决策", "params": ["age", "tonsil_exudate", "tender_cervical_nodes", "temp", "no_cough"]},
+                    {"name": "renal_clearance", "title": "eGFR (2021 CKD-EPI) 与 Cockcroft-Gault 肾清除率", "params": ["age", "gender", "scr", "weight"]},
+                    {"name": "child_pugh", "title": "Child-Pugh 肝硬化肝功能储备评分与分级", "params": ["bili", "alb", "inr", "ascites", "encephalopathy"]},
+                    {"name": "pediatric_fluid", "title": "儿童急性腹泻脱水补液量估算 (Holliday-Segar + ORS-III)", "params": ["weight_kg", "dehydration"]},
+                ]
+            })
         elif path == "/api/graph":
             self.graph.load_graph()
             data = self.graph.to_json_graph()
@@ -1047,6 +1060,14 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             self._handle_knowledge_search(payload)
         elif path in ("/api/cdss/evidence-chain", "/api/knowledge/evidence-chain"):
             self._handle_evidence_chain(payload)
+        elif path in ("/api/cdss/calculate", "/api/calculator"):
+            calc_name = payload.get("calculator") or payload.get("name") or ""
+            params = payload.get("params") or payload.get("parameters") or payload
+            try:
+                res = ClinicalCalculatorRegistry.calculate(calc_name, params)
+                self._send_json({"success": True, "data": res})
+            except Exception as e:
+                self._send_json({"success": False, "error": str(e)}, status=400)
         elif path == "/api/cdss/compile-rhn-plan":
             query = payload.get("input") or payload.get("naturalInput") or payload.get("protocolId") or ""
             res = self.cdss.compile_rhn_plan(query)

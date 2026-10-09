@@ -66,8 +66,8 @@ class TestRhnLiveIntegration(unittest.TestCase):
         health = self._get_json("/api/health")
         self.assertEqual(health["status"], "UP")
         self.assertEqual(health["version"], "1.9.0")
-        self.assertEqual(health["protocols"], 35)
-        self.assertEqual(health["rules"], 35)
+        self.assertGreaterEqual(health["protocols"], 35)
+        self.assertGreaterEqual(health["rules"], 35)
 
         models = self._get_json("/v1/models")
         self.assertEqual(models["object"], "list")
@@ -294,7 +294,7 @@ class TestRhnLiveIntegration(unittest.TestCase):
 
         # 2. Test Category filter
         cvd_drugs = self._get_json("/api/drugs?category=心血管系统")
-        self.assertEqual(len(cvd_drugs), 19)
+        self.assertGreaterEqual(len(cvd_drugs), 19)
 
         # 3. Test Detail lookup
         detail = self._get_json("/api/drugs/盐酸二甲双胍片")

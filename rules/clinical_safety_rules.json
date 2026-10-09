@@ -916,6 +916,48 @@
           "病毒性肝炎"
         ]
       }
+    },
+    {
+      "id": "RULE-GDM-SULFONYLUREA-BLOCK",
+      "domain": "clinical",
+      "title": "妊娠期禁用口服磺脲类降糖药与SGLT2抑制剂",
+      "severity": "RED",
+      "message": "妊娠期女性禁用磺脲类促泌剂（格列美脲、格列齐特、格列本脲等）及SGLT2抑制剂（达格列净、恩格列净）！磺脲类可通过胎盘屏障诱发胎儿高胰岛素血症及新生儿严重低血糖；SGLT2抑制剂可增加正常血糖型酮症酸中毒风险。妊娠期高血糖首选医学营养治疗，药物治疗绝对首选胰岛素！",
+      "guideline": "《妊娠期高血糖诊治指南（2022）》",
+      "conditions": {
+        "pregnancy": true,
+        "profile_flags": [
+          "is_pregnant"
+        ],
+        "drugs_any": [
+          "格列美脲",
+          "格列齐特",
+          "格列本脲",
+          "达格列净",
+          "恩格列净",
+          "卡格列净",
+          "消渴丸"
+        ]
+      }
+    },
+    {
+      "id": "RULE-FEBRILE-SEIZURE-NO-PREVENTIVE-ANTIPYRETIC",
+      "domain": "clinical",
+      "title": "儿童热性惊厥严禁过度退热预防抽搐预警",
+      "severity": "YELLOW",
+      "message": "权威儿科共识指出：退热药不能预防热性惊厥发作，亦不能降低热性惊厥复发率！严禁为预防惊厥超量、超频次给药，或交替联用对乙酰氨基酚与布洛芬，以防急性肝肾损伤。退热药使用核心目的是改善患儿发热舒适度，而非预防抽搐。",
+      "guideline": "《儿童热性惊厥诊断与管理专家共识（2021）》",
+      "conditions": {
+        "diagnoses_any": [
+          "热性惊厥",
+          "高热惊厥",
+          "儿童热性惊厥"
+        ],
+        "drugs_any": [
+          "布洛芬",
+          "对乙酰氨基酚"
+        ]
+      }
     }
   ]
 }

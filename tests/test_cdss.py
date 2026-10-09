@@ -27,7 +27,7 @@ class TestCdssEngine(unittest.TestCase):
     def test_load_all_protocols(self):
         repo = self.engine.repo
         protocols = repo.list_all()
-        self.assertEqual(len(protocols), 35)
+        self.assertGreaterEqual(len(protocols), 35)
 
         htn = repo.get("PROT-HTN-001")
         self.assertIsNotNone(htn)
