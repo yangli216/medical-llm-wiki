@@ -18,9 +18,9 @@ class TestDrugInsertRepository(unittest.TestCase):
         cls.repo = DrugInsertRepository(cls.root_dir)
 
     def test_all_100_drugs_loaded(self):
-        """Verify that exactly all 100 high-frequency primary-care and 2026 essential drug monographs are loaded."""
+        """Verify that all high-frequency primary-care and TCM essential drug monographs are loaded."""
         drugs = self.repo.list_all()
-        self.assertEqual(len(drugs), 100, f"Expected 100 drug monographs, got {len(drugs)}")
+        self.assertGreaterEqual(len(drugs), 137, f"Expected at least 137 drug monographs, got {len(drugs)}")
 
     def test_essential_categories_represented(self):
         """Verify that all major clinical therapeutic classes are fully represented."""
@@ -36,12 +36,19 @@ class TestDrugInsertRepository(unittest.TestCase):
             "泌尿生殖系统",
             "感染性疾病与皮肤外用系统",
             "急症与破伤风狂犬病被动免疫系统",
+            "中成药/呼吸系统清热解毒",
         }
         for ec in expected_categories:
             self.assertIn(ec, categories, f"Category '{ec}' must be represented in monographs")
 
     def test_alias_and_trade_name_resolution(self):
-        """Verify that drugs can be resolved by generic, simplified, trade name, or ATC code."""
+        """Verify that drugs can be resolved by generic, simplified, trade name, ATC code, or clinic spec."""
+        # Lianhua Qingwen with clinic spec
+        lh = self.repo.get("连花清瘟胶囊 0.35g")
+        self.assertIsNotNone(lh)
+        self.assertEqual(lh["id"], "连花清瘟胶囊")
+        self.assertEqual(self.repo.get("连花清瘟胶囊")["id"], "连花清瘟胶囊")
+        self.assertEqual(self.repo.get("以岭连花清瘟")["id"], "连花清瘟胶囊")
         # Generic name
         d1 = self.repo.get("盐酸二甲双胍片")
         self.assertIsNotNone(d1)

@@ -19,6 +19,7 @@ from tools.search.searcher import WikiSearcher
 from tools.collector.collector import SourceCollector
 from tools.cdss.engine import CdssEngine
 from tools.cdss.drug_checker import DrugInsertRepository, DrugContraindicationAuditor
+from tools.cdss.evidence_chain import EvidenceChainEngine
 
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -854,6 +855,7 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
     cdss: CdssEngine = CdssEngine(root_dir)
     drug_repo: DrugInsertRepository = DrugInsertRepository(root_dir)
     drug_auditor: DrugContraindicationAuditor = DrugContraindicationAuditor(drug_repo)
+    evidence_engine: EvidenceChainEngine = EvidenceChainEngine(root_dir)
 
     def do_OPTIONS(self) -> None:
         self.send_response(204)
@@ -1021,6 +1023,8 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
                 })
             else:
                 self._send_json({"error": "Drug monograph not found", "query": drug_name}, status=404)
+        elif path in ("/api/wiki/doc", "/api/knowledge/doc"):
+            self._handle_wiki_doc(query_params)
         else:
             self.send_response(404)
             self.end_headers()
@@ -1041,6 +1045,8 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             self._handle_chat_completions(payload)
         elif path in ("/api/knowledge/search", "/v1/knowledge/pmphai/search"):
             self._handle_knowledge_search(payload)
+        elif path in ("/api/cdss/evidence-chain", "/api/knowledge/evidence-chain"):
+            self._handle_evidence_chain(payload)
         elif path == "/api/cdss/compile-rhn-plan":
             query = payload.get("input") or payload.get("naturalInput") or payload.get("protocolId") or ""
             res = self.cdss.compile_rhn_plan(query)
@@ -1096,6 +1102,175 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
                 "aiAbstract": h.get("snippet", ""),
             })
         self._send_json(results)
+
+    def _handle_wiki_doc(self, query_params: Dict[str, List[str]]) -> None:
+        """
+        Universal document retrieval endpoint for drug inserts, clinical guidelines,
+        disease entities, and decision protocols.
+        """
+        raw_name = query_params.get("name", [""])[0].strip()
+        raw_id = query_params.get("id", [""])[0].strip()
+        raw_path = query_params.get("path", [""])[0].strip()
+        doc_type = query_params.get("type", [""])[0].strip().lower()
+
+        target = raw_id or raw_name or raw_path
+        if not target:
+            self._send_json({"error": "Missing query parameter 'id', 'name', or 'path'"}, status=400)
+            return
+
+        # 1. Try drug monograph if type is medication/drug/insert or not specified
+        if doc_type in ("", "drug", "insert", "medication"):
+            candidates = [target]
+            token0 = target.split()[0].strip() if " " in target else ""
+            if token0 and token0 not in candidates:
+                candidates.append(token0)
+            token_paren = re.split(r'[（\(]', target)[0].strip()
+            if token_paren and token_paren not in candidates:
+                candidates.append(token_paren)
+            token_cleaned = re.sub(r'[\s0-9\.\*gmg片粒盒袋/]+$', '', target).strip()
+            if token_cleaned and token_cleaned not in candidates:
+                candidates.append(token_cleaned)
+
+            d = None
+            for cand in candidates:
+                d = self.drug_repo.get(cand)
+                if d:
+                    break
+
+            if not d:
+                for cand in candidates:
+                    drug_matches = self.drug_repo.search(cand, limit=1)
+                    if drug_matches:
+                        d = drug_matches[0]
+                        break
+
+            if d:
+                html_body = self._markdown_to_html(d["raw_body"])
+                self._send_json({
+                    "id": d["id"],
+                    "title": d["title"],
+                    "type": "MEDICATION",
+                    "category": d["category"],
+                    "genericName": d["generic_name"],
+                    "englishName": d["english_name"],
+                    "atcCode": d["atc_code"],
+                    "approvalCategory": d["approval_category"],
+                    "tradeNames": d["trade_names"],
+                    "formsAndSpecs": d["forms_and_specs"],
+                    "maxDailyDose": d["max_daily_dose"],
+                    "standardMaintenanceDose": d["standard_maintenance_dose"],
+                    "keyContraindications": d["key_contraindications"],
+                    "specialPopulations": d["special_populations"],
+                    "storage": d["storage"],
+                    "sources": d["sources"],
+                    "tags": d["tags"],
+                    "relPath": d["rel_path"],
+                    "markdown": d["raw_body"],
+                    "html": html_body,
+                })
+                return
+            elif doc_type in ("drug", "insert", "medication"):
+                # If explicitly querying a drug monograph, do not fallback to unrelated wiki documents
+                self._send_json({"error": "Drug monograph not found", "query": target}, status=404)
+                return
+
+        # 2. Try protocol repository if type is protocol or not specified
+        if doc_type in ("", "protocol"):
+            prot = self.cdss.repo.get(target)
+            if not prot and raw_name:
+                matches = self.cdss.search_protocols(raw_name, limit=1)
+                if matches:
+                    prot = self.cdss.repo.get(matches[0]["protocolId"])
+            if prot:
+                html_body = self._markdown_to_html(prot.raw_text)
+                self._send_json({
+                    "id": prot.protocol_id,
+                    "title": prot.title,
+                    "type": "protocol",
+                    "category": prot.category,
+                    "icd10": prot.icd10,
+                    "aliases": prot.aliases,
+                    "sources": prot.sources,
+                    "summary": prot.summary,
+                    "relPath": f"protocols/{prot.file_path.name}",
+                    "markdown": prot.raw_text,
+                    "html": html_body,
+                    "items": [it.to_rhn_intent_item() for it in prot.items],
+                })
+                return
+            elif doc_type == "protocol":
+                self._send_json({"error": "Clinical protocol not found", "query": target}, status=404)
+                return
+
+        # 3. Try WikiGraph (concepts, entities, sources)
+        resolved_link = self.graph.resolve_link(target) or target
+        clean_id = re.sub(r"\.md$", "", resolved_link).split("/")[-1]
+        resolved = self.graph.resolve_link(clean_id) or clean_id
+        page = self.graph.pages.get(resolved) or self.graph.pages.get(target)
+        if not page:
+            for sub in ("sources", "concepts", "entities/diseases", "entities"):
+                p_cand = self.root_dir / "wiki" / sub / f"{clean_id}.md"
+                if p_cand.exists():
+                    from tools.compiler.compiler import WikiPage
+                    page = WikiPage(p_cand, self.root_dir / "wiki")
+                    break
+
+        if page:
+            html_body = self._markdown_to_html(page.raw_text)
+            self._send_json({
+                "id": page.file_path.stem,
+                "title": page.title,
+                "type": page.frontmatter.get("type", "wiki_page"),
+                "category": page.frontmatter.get("category", ""),
+                "frontmatter": page.frontmatter,
+                "relPath": str(page.rel_path),
+                "markdown": page.raw_text,
+                "html": html_body,
+            })
+            return
+
+        # 4. Search fallback: find closest matching article (only if type is not strictly restricted)
+        if doc_type in ("", "wiki", "concept", "source", "guideline"):
+            search_hits = self.searcher.search(target, limit=1)
+            if search_hits:
+                hit = search_hits[0]
+                hit_page = self.graph.pages.get(hit["id"])
+                if hit_page:
+                    html_body = self._markdown_to_html(hit_page.raw_text)
+                    self._send_json({
+                        "id": hit_page.file_path.stem,
+                        "title": hit_page.title,
+                        "type": hit_page.frontmatter.get("type", "wiki_page"),
+                        "frontmatter": hit_page.frontmatter,
+                        "relPath": str(hit_page.rel_path),
+                        "markdown": hit_page.raw_text,
+                        "html": html_body,
+                    })
+                    return
+
+        self._send_json({"error": "Document not found", "query": target}, status=404)
+
+    def _handle_evidence_chain(self, payload: Dict[str, Any]) -> None:
+        """
+        Derives clinical evidence reasoning checklist, gap orders, and guideline citations.
+        """
+        diag_name = payload.get("diagnosis") or payload.get("diagnosisName") or payload.get("query") or ""
+        diag_code = payload.get("diagnosisCode") or payload.get("code") or ""
+        patient = payload.get("patient") or {}
+
+        if not patient and ("vitals" in payload or "chiefComplaint" in payload):
+            patient = {
+                "age": payload.get("age"),
+                "gender": payload.get("gender"),
+                "chiefComplaint": payload.get("chiefComplaint"),
+                "presentIllness": payload.get("presentIllness"),
+                "physicalExam": payload.get("physicalExam"),
+                "medicalHistory": payload.get("medicalHistory"),
+                "vitals": payload.get("vitals", {}),
+            }
+
+        res = self.evidence_engine.evaluate(diag_name, diag_code, patient)
+        self._send_json(res)
 
     def _handle_chat_completions(self, payload: Dict[str, Any]) -> None:
         """Adapts to OpenAI ChatCompletion protocol consumed by RHN OpenAiCompatibleClinicalAiModelGateway."""

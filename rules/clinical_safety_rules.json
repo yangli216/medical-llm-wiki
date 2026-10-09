@@ -856,6 +856,66 @@
           "orthostatic_hypotension"
         ]
       }
+    },
+    {
+      "id": "RULE-TCM-HUOXIANG-DISULFIRAM",
+      "domain": "clinical",
+      "title": "藿香正气水与头孢/甲硝唑合用致死性双硫仑样反应强阻断",
+      "severity": "RED",
+      "message": "严禁藿香正气水与头孢菌素类（如头孢呋辛、头孢克肟、头孢曲松等）或硝基咪唑类（甲硝唑、替硝唑）同时处方或7日内交替使用！藿香正气水辅料含40%~50%高浓度乙醇，可阻断乙醛脱氢酶导致体内乙醛极度蓄积，引发剧烈头痛、呼吸困难、恶心呕吐、休克猝死等致死性双硫仑样反应！建议改用不含乙醇的藿香正气口服液。",
+      "guideline": "《中成药临床应用指导原则与中西药联合安全规范》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "藿香正气水"
+            ],
+            "group_b": [
+              "头孢",
+              "头孢克肟",
+              "头孢呋辛",
+              "甲硝唑",
+              "替硝唑"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "RULE-TCM-POPPY-CONTRAINDICATION",
+      "domain": "clinical",
+      "title": "强力枇杷露含罂粟壳儿童孕妇绝对禁用阻断",
+      "severity": "RED",
+      "message": "强力枇杷露处方中含有罂粟壳（含吗啡、可待因等成瘾性阿片生物碱），国家药监局法定黑框明确禁止用于儿童及孕妇！儿童使用可诱发致命性中枢呼吸抑制，孕妇使用可导致胎儿畸形与药物依赖。",
+      "guideline": "《国家药品监督管理局关于修订强力枇杷露等含罂粟壳中成药说明书的公告》",
+      "conditions": {
+        "drugs_any": [
+          "强力枇杷露"
+        ],
+        "profile_flags": [
+          "is_pediatric",
+          "is_pregnant"
+        ]
+      }
+    },
+    {
+      "id": "RULE-TCM-XIANLINGGUBAO-HEPATIC",
+      "domain": "clinical",
+      "title": "仙灵骨葆胶囊肝功能损害禁用与转氨酶监测预警",
+      "severity": "YELLOW",
+      "message": "仙灵骨葆胶囊含补骨脂成分，国家药监局监测显示有严重药物性肝损伤（DILI）风险！处方前必须排查基线肝功能，转氨酶异常或既往严重肝病者禁用，用药期间指导患者定期复查肝功能，出现纳差、尿黄、乏力立即停药。",
+      "guideline": "《国家药监局关于修订仙灵骨葆制剂说明书的公告》",
+      "conditions": {
+        "drugs_any": [
+          "仙灵骨葆胶囊",
+          "仙灵骨葆"
+        ],
+        "history_any": [
+          "肝功能异常",
+          "肝硬化",
+          "病毒性肝炎"
+        ]
+      }
     }
   ]
 }

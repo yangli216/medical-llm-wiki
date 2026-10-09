@@ -63,10 +63,17 @@ class DrugInsertRepository:
             self._index[stem.lower()] = stem
             if drug_entry["generic_name"]:
                 self._index[drug_entry["generic_name"].lower()] = stem
-                # Index common simplified name (e.g. "二甲双胍" from "盐酸二甲双胍片")
-                simplified = re.sub(r"(盐酸|硫酸|富马酸|马来酸|草酸|苯磺酸|酒石酸|枸橼酸|丙酸|微粉化|肠溶|缓释|控释|片|胶囊|气雾剂|散|软膏|乳膏|分散片|滴丸|胶丸|口服溶液)", "", drug_entry["generic_name"])
+                # Index common simplified name (e.g. "二甲双胍" from "盐酸二甲双胍片", "连花清瘟" from "连花清瘟胶囊")
+                simplified = re.sub(r"(盐酸|硫酸|富马酸|马来酸|草酸|苯磺酸|酒石酸|枸橼酸|丙酸|微粉化|肠溶|缓释|控释|片|胶囊|气雾剂|散|软膏|乳膏|分散片|滴丸|胶丸|口服溶液|颗粒|口服液|糖浆|露|水|丸|膏|栓|注射液)", "", drug_entry["generic_name"])
                 if len(simplified) >= 2:
                     self._index[simplified.lower()] = stem
+
+                # Also index generic_name with known specs, e.g. "连花清瘟胶囊 0.35g"
+                for spec in drug_entry.get("forms_and_specs", []):
+                    spec_clean = spec.split("/")[0].strip()
+                    if spec_clean:
+                        self._index[f"{drug_entry['generic_name']} {spec_clean}".lower()] = stem
+                        self._index[f"{stem} {spec_clean}".lower()] = stem
 
             if drug_entry["english_name"]:
                 self._index[drug_entry["english_name"].lower()] = stem
@@ -99,18 +106,53 @@ class DrugInsertRepository:
         ]
 
     def get(self, query: str) -> Optional[Dict[str, Any]]:
-        """Resolves a drug by name, alias, trade name, or ATC code."""
+        """Resolves a drug by name, alias, trade name, ATC code, or clinic order text with specifications."""
         if not query:
             return None
-        q_clean = query.strip().lower()
+        q_raw = query.strip()
+        q_clean = q_raw.lower()
         if q_clean in self._index:
             return self._drugs.get(self._index[q_clean])
-        # Direct stem match
+
+        # Clinic input normalization candidates: e.g. "连花清瘟胶囊 0.35g", "连花清瘟胶囊 (24粒/盒)"
+        candidates: List[str] = []
+        # 1. Strip trailing spec/package (e.g. " 0.35g", " 10ml", " 24粒/盒", " 0.5g*12片")
+        cand_no_spec = re.sub(r'[\s0-9\.\*gmgml粒片盒袋/支μuiiu瓶丸包次日mgkg]+$', '', q_clean).strip()
+        if cand_no_spec and cand_no_spec != q_clean:
+            candidates.append(cand_no_spec)
+        # 2. Strip bracketed manufacturer or packaging info
+        cand_no_paren = re.sub(r'[\(（].*?[\)）]', '', q_clean).strip()
+        if cand_no_paren and cand_no_paren != q_clean:
+            candidates.append(cand_no_paren)
+            cand_paren_no_spec = re.sub(r'[\s0-9\.\*gmgml粒片盒袋/支μuiiu瓶丸包次日mgkg]+$', '', cand_no_paren).strip()
+            if cand_paren_no_spec and cand_paren_no_spec not in candidates:
+                candidates.append(cand_paren_no_spec)
+        # 3. First whitespace token
+        if " " in q_clean:
+            token0 = q_clean.split()[0].strip()
+            if token0 and token0 not in candidates:
+                candidates.append(token0)
+
+        for cand in candidates:
+            if cand in self._index:
+                return self._drugs.get(self._index[cand])
+
+        # Direct stem match with length prioritization
+        exact_matches = []
         for stem, d in self._drugs.items():
-            if q_clean in stem.lower() or stem.lower() in q_clean:
+            s_low = stem.lower()
+            g_low = d["generic_name"].lower()
+            if q_clean == s_low or q_clean == g_low:
                 return d
-            if q_clean in d["generic_name"].lower():
-                return d
+            if s_low in q_clean or q_clean in s_low or g_low in q_clean:
+                exact_matches.append((len(s_low), d))
+            elif any(c in s_low or s_low in c or c in g_low for c in candidates):
+                exact_matches.append((len(s_low), d))
+
+        if exact_matches:
+            exact_matches.sort(key=lambda x: x[0], reverse=True)
+            return exact_matches[0][1]
+
         return None
 
     def search(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:

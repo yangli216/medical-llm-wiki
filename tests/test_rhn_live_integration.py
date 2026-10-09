@@ -287,9 +287,10 @@ class TestRhnLiveIntegration(unittest.TestCase):
         """Verifies /api/drugs, /api/drugs/<name>, and /api/drugs/check-contraindications live endpoints."""
         # 1. Test List all drugs
         all_drugs = self._get_json("/api/drugs")
-        self.assertEqual(len(all_drugs), 100)
+        self.assertGreaterEqual(len(all_drugs), 137)
         self.assertTrue(any(d["genericName"] == "盐酸二甲双胍片" for d in all_drugs))
         self.assertTrue(any("沙库巴曲缬沙坦" in d["genericName"] for d in all_drugs))
+        self.assertTrue(any(d["genericName"] == "连花清瘟胶囊" for d in all_drugs))
 
         # 2. Test Category filter
         cvd_drugs = self._get_json("/api/drugs?category=心血管系统")
