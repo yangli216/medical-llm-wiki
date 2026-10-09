@@ -584,11 +584,21 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         let activeNavTab = "doc";
 
         async function init() {
-            const resp = await fetch('/api/graph');
-            graphData = await resp.json();
-            renderNavTree();
-            loadPage('index');
-            setupCanvas();
+            try {
+                const resp = await fetch('/api/graph');
+                graphData = await resp.json();
+                renderNavTree();
+                await loadPage('index');
+                setupCanvas();
+            } catch (err) {
+                console.error('Initialization error:', err);
+                document.getElementById('docBody').innerHTML = `
+                    <div style="background:rgba(239,68,68,0.15);border:1px solid #ef4444;border-radius:8px;padding:24px;margin-top:20px;">
+                        <h3 style="color:#f87171;margin-bottom:8px;">⚠️ 加载本地知识库遇到问题</h3>
+                        <p style="color:#cbd5e1;font-size:0.9rem;">错误详情: ${err.message}</p>
+                        <button onclick="location.reload()" style="margin-top:12px;padding:8px 16px;background:#0284c7;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🔄 重新加载</button>
+                    </div>`;
+            }
         }
 
         function switchNavTab(tab) {
@@ -619,10 +629,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             }
 
             const groups = {
+                'protocol': { title: '📋 门诊临床推荐方案', items: [] },
                 'synthesis': { title: '💡 综合与共病专题', items: [] },
                 'disease': { title: '🫀 疾病实体库', items: [] },
                 'drug': { title: '💊 药物与核心疗法', items: [] },
-                'concept': { title: '📐 诊断标准与量表', items: [] },
+                'drug_insert': { title: '📖 药品法定说明书速查', items: [] },
+                'concept': { title: '📐 诊断标准与临床量表', items: [] },
                 'organization': { title: '🏢 权威发布机构', items: [] }
             };
 
@@ -1031,9 +1043,20 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             document.getElementById('inpCategory').value = '内分泌代谢与医学营养';
             document.getElementById('inpSourceId').value = 'SRC-NHC-NUT-2024-01';
             document.getElementById('inpYear').value = 2024;
-            document.getElementById('inpSummary').value = '1. 诊断切点：成人 BMI ≥ 24 kg/m² 为超重，≥ 28 kg/m² 为肥胖；男性腰围 ≥ 90cm、女性 ≥ 85cm 为中心型肥胖。\n2. 饮食干预：控制总能量摄入，推荐每日能量摄入减少 500～1000 kcal；优质蛋白质占比达 50% 以上。\n3. 减重靶标：以 6 个月内体重减轻 5%～10% 为适宜目标，严禁剧烈极低能量禁食。';
+            document.getElementById('inpSummary').value = `1. 诊断切点：成人 BMI ≥ 24 kg/m² 为超重，≥ 28 kg/m² 为肥胖；男性腰围 ≥ 90cm、女性 ≥ 85cm 为中心型肥胖。
+2. 饮食干预：控制总能量摄入，推荐每日能量摄入减少 500～1000 kcal；优质蛋白质占比达 50% 以上。
+3. 减重靶标：以 6 个月内体重减轻 5%～10% 为适宜目标，严禁剧烈极低能量禁食。`;
             document.getElementById('inpRelated').value = '2型糖尿病, 原发性高血压, 动脉粥样硬化性心血管疾病';
-            document.getElementById('inpContent').value = '# 《成人肥胖食养指南（2024年版）》核心条款归档\n\n## 一、 流行病学与危害\n我国成人超重肥胖率已达 50.7%，肥胖是高血压、2型糖尿病、心血管疾病与部分恶性肿瘤的独立高危危险因素。\n\n## 二、 食养原则与建议\n1. 控制总能量摄入，循序渐进减重；\n2. 宏量营养素配比合理，多全谷物、少精制糖；\n3. 充足微量营养素与膳食纤维摄入；\n4. 戒烟限酒，规律睡眠与抗阻有氧运动结合。';
+            document.getElementById('inpContent').value = `# 《成人肥胖食养指南（2024年版）》核心条款归档
+
+## 一、 流行病学与危害
+我国成人超重肥胖率已达 50.7%，肥胖是高血压、2型糖尿病、心血管疾病与部分恶性肿瘤的独立高危危险因素。
+
+## 二、 食养原则与建议
+1. 控制总能量摄入，循序渐进减重；
+2. 宏量营养素配比合理，多全谷物、少精制糖；
+3. 充足微量营养素与膳食纤维摄入；
+4. 戒烟限酒，规律睡眠与抗阻有氧运动结合。`;
         }
 
         async function submitImportSource(e) {
