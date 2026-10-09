@@ -217,18 +217,38 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             font-size: 1rem;
             color: #e2e8f0;
         }
-        .markdown-body h1 { font-size: 1.8rem; margin-bottom: 16px; color: #38bdf8; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .markdown-body h2 { font-size: 1.35rem; margin-top: 28px; margin-bottom: 12px; color: #f1f5f9; }
-        .markdown-body h3 { font-size: 1.1rem; margin-top: 20px; margin-bottom: 8px; color: #cbd5e1; }
+        .markdown-body h1 { font-size: 1.8rem; margin-bottom: 16px; color: #38bdf8; border-bottom: 1px solid var(--border); padding-bottom: 10px; font-weight: 700; }
+        .markdown-body h2 { font-size: 1.35rem; margin-top: 28px; margin-bottom: 12px; color: #f1f5f9; font-weight: 600; border-bottom: 1px dashed rgba(71,85,105,0.5); padding-bottom: 6px; }
+        .markdown-body h3 { font-size: 1.15rem; margin-top: 22px; margin-bottom: 8px; color: #38bdf8; font-weight: 600; }
         .markdown-body p { margin-bottom: 14px; }
+        .markdown-body strong { font-weight: 700; color: #f8fafc; }
+        .markdown-body em { font-style: italic; color: #cbd5e1; }
+        .markdown-body del { text-decoration: line-through; color: #94a3b8; }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
         .markdown-body ul, .markdown-body ol { margin-left: 24px; margin-bottom: 16px; }
         .markdown-body li { margin-bottom: 6px; }
         .markdown-body table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9rem; }
         .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
-        .markdown-body th { background: var(--bg-card); color: #38bdf8; }
+        .markdown-body th { background: var(--bg-card); color: #38bdf8; font-weight: 600; }
         .markdown-body blockquote { border-left: 4px solid var(--accent-cyan); padding-left: 16px; color: #94a3b8; margin: 16px 0; }
-        .markdown-body code { background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
-        .markdown-body pre { background: var(--bg-card); padding: 14px; border-radius: 8px; overflow-x: auto; margin: 16px 0; }
+        .markdown-body code { background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #e2e8f0; }
+        .markdown-body pre { background: var(--bg-card); padding: 14px; border-radius: 8px; overflow-x: auto; margin: 16px 0; border: 1px solid var(--border); }
+        /* Obsidian / GitHub Callouts */
+        .callout {
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin: 18px 0;
+            border-left: 4px solid var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.08);
+            font-size: 0.95rem;
+        }
+        .callout.callout-note { border-left-color: #38bdf8; background: rgba(56, 189, 248, 0.08); }
+        .callout.callout-warning { border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.08); }
+        .callout.callout-caution { border-left-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+        .callout.callout-important { border-left-color: #8b5cf6; background: rgba(139, 92, 246, 0.08); }
+        .callout.callout-tip { border-left-color: #10b981; background: rgba(16, 185, 129, 0.08); }
+        .callout-title { font-weight: 700; margin-bottom: 6px; color: #f8fafc; display: flex; align-items: center; gap: 6px; }
+        .callout-body { color: #cbd5e1; line-height: 1.6; }
         .wikilink {
             color: #38bdf8;
             text-decoration: none;
@@ -2060,83 +2080,195 @@ status: verified
             self._send_json(response_obj)
 
     def _markdown_to_html(self, md_text: str) -> str:
-        """Lightweight markdown to HTML converter with [[WikiLink]] resolution."""
+        """Comprehensive Markdown to HTML converter with [[WikiLink]] resolution and Obsidian callouts."""
+        if not md_text:
+            return ""
+
         # Strip frontmatter if present
         if md_text.startswith("---"):
             parts = md_text.split("---", 2)
             if len(parts) >= 3:
                 md_text = parts[2].strip()
 
-        # Convert [[WikiLink|Alias]] or [[WikiLink]]
-        def link_sub(match):
-            raw = match.group(1)
-            if "|" in raw:
-                target, label = raw.split("|", 1)
-            else:
-                target, label = raw, raw
-            return f'<a class="wikilink" onclick="loadPage(\'{target.strip()}\')">{label.strip()}</a>'
+        def parse_inline(text: str) -> str:
+            # 1. Protect code spans
+            code_spans = []
+            def save_code(m):
+                code_spans.append(html.escape(m.group(1)))
+                return f"__CODE_SPAN_{len(code_spans)-1}__"
+            text = re.sub(r"`([^`]+)`", save_code, text)
 
-        md_text = re.sub(r"\[\[([^\]]+)\]\]", link_sub, md_text)
-
-        # Basic markdown transforms
-        lines = []
-        in_table = False
-        in_code = False
-
-        for line in md_text.splitlines():
-            if line.startswith("```"):
-                if in_code:
-                    lines.append("</pre>")
-                    in_code = False
+            # 2. [[WikiLink|Alias]] or [[WikiLink]]
+            def link_sub(match):
+                raw = match.group(1)
+                if "|" in raw:
+                    target, label = raw.split("|", 1)
                 else:
-                    lines.append("<pre><code>")
-                    in_code = True
+                    target, label = raw, raw
+                return f'<a class="wikilink" onclick="loadPage(\'{target.strip()}\')">{label.strip()}</a>'
+            text = re.sub(r"\[\[([^\]]+)\]\]", link_sub, text)
+
+            # 3. Standard links [text](url)
+            text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" target="_blank" rel="noopener">\1</a>', text)
+
+            # 4. Bold: **text** or __text__
+            text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
+            text = re.sub(r"__([^_]+)__", r"<strong>\1</strong>", text)
+
+            # 5. Italic: *text* or _text_
+            text = re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"<em>\1</em>", text)
+            text = re.sub(r"(?<!_)_([^_]+)_(?!_)", r"<em>\1</em>", text)
+
+            # 6. Strikethrough: ~~text~~
+            text = re.sub(r"~~([^~]+)~~", r"<del>\1</del>", text)
+
+            # 7. Restore code spans
+            for idx, val in enumerate(code_spans):
+                text = text.replace(f"__CODE_SPAN_{idx}__", f"<code>{val}</code>")
+
+            return text
+
+        lines = md_text.splitlines()
+        out = []
+        i = 0
+        n = len(lines)
+
+        while i < n:
+            line = lines[i]
+
+            # 1. Fenced Code blocks
+            if line.strip().startswith("```"):
+                lang = line.strip()[3:].strip()
+                code_lines = []
+                i += 1
+                while i < n and not lines[i].strip().startswith("```"):
+                    code_lines.append(html.escape(lines[i]))
+                    i += 1
+                i += 1  # skip closing ```
+                cls_attr = f' class="language-{lang}"' if lang else ""
+                out.append(f'<pre><code{cls_attr}>' + "\n".join(code_lines) + "</code></pre>")
                 continue
 
-            if in_code:
-                lines.append(html.escape(line))
+            # 2. Blockquotes & Obsidian / GitHub Callouts
+            if line.strip().startswith(">"):
+                quote_lines = []
+                while i < n and lines[i].strip().startswith(">"):
+                    raw_q = lines[i].strip()
+                    q_text = raw_q[1:].lstrip() if len(raw_q) > 1 else ""
+                    quote_lines.append(q_text)
+                    i += 1
+
+                first_line = quote_lines[0] if quote_lines else ""
+                callout_match = re.match(r"^\[\!(NOTE|WARNING|CAUTION|IMPORTANT|TIP|INFO)\]\s*(.*)", first_line, re.IGNORECASE)
+                if callout_match:
+                    ctype = callout_match.group(1).lower()
+                    custom_title = callout_match.group(2).strip()
+                    title_map = {
+                        "note": "ℹ️ 来源与要点说明",
+                        "warning": "⚠️ 临床警示与用药风险",
+                        "caution": "🛑 绝对禁忌与红线",
+                        "important": "❗ 核心诊疗要点",
+                        "tip": "💡 临床实践建议",
+                        "info": "ℹ️ 指南背景信息"
+                    }
+                    c_title = custom_title or title_map.get(ctype, ctype.upper())
+                    body_content = "<br>".join(parse_inline(l) for l in quote_lines[1:] if l.strip())
+                    out.append(f'<div class="callout callout-{ctype}"><div class="callout-title">{c_title}</div><div class="callout-body">{body_content}</div></div>')
+                else:
+                    body_content = "<br>".join(parse_inline(l) for l in quote_lines if l.strip())
+                    out.append(f"<blockquote>{body_content}</blockquote>")
                 continue
 
-            # Tables
-            if line.startswith("|") and line.endswith("|"):
-                if not in_table:
-                    lines.append("<table>")
-                    in_table = True
-                cells = [c.strip() for c in line.split("|")[1:-1]]
-                if all(c.startswith("-") or c.startswith(":-") for c in cells if c):
-                    continue  # Table separator
-                row_tag = "th" if "<table>" in lines[-1] else "td"
-                cells_html = "".join(f"<{row_tag}>{c}</{row_tag}>" for c in cells)
-                lines.append(f"<tr>{cells_html}</tr>")
+            # 3. Horizontal rules
+            if re.match(r"^(?:-{3,}|\*{3,}|_{3,})$", line.strip()):
+                out.append("<hr>")
+                i += 1
                 continue
-            else:
-                if in_table:
-                    lines.append("</table>")
-                    in_table = False
 
-            # Headers
-            if line.startswith("### "):
-                lines.append(f"<h3>{line[4:]}</h3>")
-            elif line.startswith("## "):
-                lines.append(f"<h2>{line[3:]}</h2>")
-            elif line.startswith("# "):
-                lines.append(f"<h1>{line[2:]}</h1>")
-            elif line.startswith("- "):
-                lines.append(f"<li>{line[2:]}</li>")
-            elif line.strip() == "---":
-                lines.append("<hr>")
-            elif line.strip():
-                # Bold & standard GFM strikethrough (double-tilde)
-                l = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", line)
-                l = re.sub(r"~~([^~]+)~~", r"<del>\1</del>", l)
-                lines.append(f"<p>{l}</p>")
+            # 4. Headings
+            h_match = re.match(r"^(#{1,6})\s+(.*)", line)
+            if h_match:
+                level = len(h_match.group(1))
+                h_text = parse_inline(h_match.group(2).strip())
+                out.append(f"<h{level}>{h_text}</h{level}>")
+                i += 1
+                continue
 
-        if in_table:
-            lines.append("</table>")
-        if in_code:
-            lines.append("</code></pre>")
+            # 5. Tables
+            if line.strip().startswith("|") and line.strip().endswith("|"):
+                table_rows = []
+                while i < n and lines[i].strip().startswith("|") and lines[i].strip().endswith("|"):
+                    table_rows.append(lines[i].strip())
+                    i += 1
 
-        return "\n".join(lines)
+                if len(table_rows) >= 2:
+                    header_cells = [parse_inline(c.strip()) for c in table_rows[0].split("|")[1:-1]]
+                    sep_cells = [c.strip() for c in table_rows[1].split("|")[1:-1]]
+                    start_row = 1
+                    if all(re.match(r"^:?-+:?$", c) for c in sep_cells if c):
+                        start_row = 2
+
+                    t_html = ["<table><thead><tr>"]
+                    for c in header_cells:
+                        t_html.append(f"<th>{c}</th>")
+                    t_html.append("</tr></thead><tbody>")
+
+                    for r in table_rows[start_row:]:
+                        row_cells = [parse_inline(c.strip()) for c in r.split("|")[1:-1]]
+                        t_html.append("<tr>" + "".join(f"<td>{c}</td>" for c in row_cells) + "</tr>")
+                    t_html.append("</tbody></table>")
+                    out.append("".join(t_html))
+                continue
+
+            # 6. Unordered lists (with indentation support)
+            ul_match = re.match(r"^(\s*)[-*+]\s+(.*)", line)
+            if ul_match:
+                list_items = []
+                while i < n:
+                    m = re.match(r"^(\s*)[-*+]\s+(.*)", lines[i])
+                    if m:
+                        indent = len(m.group(1))
+                        item_text = parse_inline(m.group(2).strip())
+                        list_items.append((indent, item_text))
+                        i += 1
+                    elif lines[i].startswith("    ") or lines[i].startswith("\t"):
+                        if list_items:
+                            last_ind, last_txt = list_items[-1]
+                            list_items[-1] = (last_ind, last_txt + "<br>" + parse_inline(lines[i].strip()))
+                        i += 1
+                    else:
+                        break
+
+                l_html = ["<ul>"]
+                for ind, it in list_items:
+                    style = f' style="margin-left:{min(ind*10, 40)}px;"' if ind > 0 else ""
+                    l_html.append(f"<li{style}>{it}</li>")
+                l_html.append("</ul>")
+                out.append("".join(l_html))
+                continue
+
+            # 7. Ordered lists (1. , 2. )
+            ol_match = re.match(r"^\s*(\d+)\.\s+(.*)", line)
+            if ol_match:
+                ol_items = []
+                while i < n:
+                    m = re.match(r"^\s*(\d+)\.\s+(.*)", lines[i])
+                    if m:
+                        ol_items.append(parse_inline(m.group(2).strip()))
+                        i += 1
+                    else:
+                        break
+                out.append("<ol>" + "".join(f"<li>{it}</li>" for it in ol_items) + "</ol>")
+                continue
+
+            # 8. Regular non-empty paragraphs
+            if line.strip():
+                p_text = parse_inline(line.strip())
+                out.append(f"<p>{p_text}</p>")
+
+            i += 1
+
+        return "\n".join(out)
 
     def _send_html(self, html_content: str) -> None:
         encoded = html_content.encode("utf-8")
