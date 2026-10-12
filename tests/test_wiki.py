@@ -64,11 +64,11 @@ class TestMedicalWiki(unittest.TestCase):
         import os, urllib.request, threading, time
         os.environ['no_proxy'] = '*'
         from tools.server.app import run_server
-        server_thread = threading.Thread(target=run_server, kwargs={'port': 8788}, daemon=True)
+        server_thread = threading.Thread(target=run_server, kwargs={'port': 8792}, daemon=True)
         server_thread.start()
         time.sleep(0.5)
 
-        with urllib.request.urlopen('http://127.0.0.1:8788/api/graph') as res:
+        with urllib.request.urlopen('http://127.0.0.1:8792/api/graph') as res:
             self.assertEqual(res.status, 200)
             data = json.loads(res.read())
             self.assertIn('nodes', data)

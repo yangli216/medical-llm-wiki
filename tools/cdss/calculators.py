@@ -28,6 +28,10 @@ class ClinicalCalculatorRegistry:
             "renal_clearance": cls.calc_renal_clearance,
             "child_pugh": cls.calc_child_pugh,
             "pediatric_fluid": cls.calc_pediatric_fluid,
+            "alvarado": cls.calc_alvarado,
+            "alvarado_score": cls.calc_alvarado,
+            "abcd2": cls.calc_abcd2,
+            "abcd2_score": cls.calc_abcd2,
         }
         fn = dispatch.get(name)
         if not fn:
@@ -539,4 +543,146 @@ class ClinicalCalculatorRegistry:
             "estimated24hTotal_ml": daily_total,
             "rehydrationPlan": ors_rate,
             "guideline": "《中国儿童急性感染性腹泻病临床实践指南（2022）》（SRC-CMA-PED-2022-01）",
+        }
+
+    # -------------------------------------------------------------------------
+    # 11. Alvarado 评分: 急性阑尾炎临床危险评估与手术指征分层
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def calc_alvarado(p: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculates Alvarado score (MANTRELS) for acute appendicitis evaluation (0～10 points).
+        """
+        has_migratory = bool(p.get("migratory_pain") or p.get("migration") or p.get("migratory_rlq_pain"))
+        has_anorexia = bool(p.get("anorexia") or p.get("loss_of_appetite"))
+        has_nausea = bool(p.get("nausea") or p.get("vomiting") or p.get("nausea_vomiting"))
+        has_rlq_tenderness = bool(p.get("rlq_tenderness") or p.get("tenderness_rlq") or p.get("mcburney_tenderness"))
+        has_rebound = bool(p.get("rebound_tenderness") or p.get("blumberg_sign") or p.get("rebound"))
+
+        # Temperature
+        temp_val = float(p.get("temp", 0.0) or p.get("temperature", 0.0) or p.get("temp_c", 0.0))
+        has_fever = bool(p.get("fever") or (temp_val >= 37.3))
+
+        # WBC
+        wbc_val = float(p.get("wbc", 0.0) or p.get("leukocyte", 0.0))
+        has_leukocytosis = bool(p.get("leukocytosis") or (wbc_val >= 10.0))
+
+        # Neutrophil shift
+        neut_val = float(p.get("neut_pct", 0.0) or p.get("neutrophil_pct", 0.0) or p.get("neutrophil_ratio", 0.0))
+        has_shift = bool(p.get("neutrophil_shift") or p.get("shift_to_left") or (neut_val >= 75.0))
+
+        score = 0
+        details = []
+
+        if has_migratory:
+            score += 1
+            details.append("转移性右下腹痛 (+1)")
+        if has_anorexia:
+            score += 1
+            details.append("食欲减退 / 拒食 (+1)")
+        if has_nausea:
+            score += 1
+            details.append("恶心或呕吐 (+1)")
+        if has_rlq_tenderness:
+            score += 2
+            details.append("右下腹麦氏点局限压痛 (+2)")
+        if has_rebound:
+            score += 1
+            details.append("腹膜刺激反跳痛 (Blumberg征) (+1)")
+        if has_fever:
+            score += 1
+            details.append("体温升高 ≥ 37.3℃ (+1)")
+        if has_leukocytosis:
+            score += 2
+            details.append("白细胞升高 ≥ 10.0×10^9/L (+2)")
+        if has_shift:
+            score += 1
+            details.append("中性粒细胞核左移 ≥ 75% (+1)")
+
+        if score <= 4:
+            stratum = "低危 (极低概率)"
+            rec = "急性阑尾炎可能性极小；排查急性胃肠炎、泌尿系结石或肠系膜淋巴结炎；可在门诊留观动态随访。"
+        elif score <= 6:
+            stratum = "中危 (疑似阑尾炎)"
+            rec = "疑似急性阑尾炎；严禁盲目开具强效麻醉镇痛药掩盖体征；立即行全腹低剂量CT或高频彩超，留观复查。"
+        else:
+            stratum = "高危 (高度拟诊)"
+            rec = "高度拟诊急性阑尾炎；严格禁食禁水、严禁导泻灌肠；立即启动急诊普通外科急会诊，评估急诊腹腔镜手术。"
+
+        return {
+            "calculator": "Alvarado Score",
+            "score": score,
+            "maxScore": 10,
+            "riskStratum": stratum,
+            "recommendation": rec,
+            "positiveCriteria": details,
+            "guideline": "《急性阑尾炎诊治专家共识（2023）》（SRC-CSES-APP-2023-01）",
+        }
+
+    # -------------------------------------------------------------------------
+    # 12. ABCD2 评分: 短暂性脑缺血发作 (TIA) 早期卒中风险预测
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def calc_abcd2(p: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculates ABCD2 score for TIA 48-hour stroke risk prediction (0～7 points).
+        """
+        age = int(p.get("age", 0))
+        sbp = float(p.get("sbp", 0.0) or p.get("systolic_bp", 0.0))
+        dbp = float(p.get("dbp", 0.0) or p.get("diastolic_bp", 0.0))
+        has_bp_high = bool(p.get("bp_high") or p.get("hypertension") or (sbp >= 140.0) or (dbp >= 90.0))
+
+        feat = str(p.get("clinical_features", "") or p.get("features", "")).lower()
+        has_unilateral_weakness = bool("weakness" in feat or "偏瘫" in feat or "无力" in feat or p.get("unilateral_weakness"))
+        has_speech_impairment = bool("speech" in feat or "言语" in feat or "失语" in feat or p.get("speech_impairment"))
+
+        dur_min = int(p.get("duration_minutes", 0) or p.get("duration_min", 0) or p.get("duration", 0))
+        has_diabetes = bool(p.get("dm") or p.get("diabetes") or p.get("diabetes_mellitus"))
+
+        score = 0
+        details = []
+
+        if age >= 60:
+            score += 1
+            details.append("年龄 ≥ 60 岁 (+1)")
+        if has_bp_high:
+            score += 1
+            details.append("首测血压 ≥ 140/90 mmHg (+1)")
+
+        if has_unilateral_weakness:
+            score += 2
+            details.append("单侧肢体无力 (+2)")
+        elif has_speech_impairment:
+            score += 1
+            details.append("单纯言语功能障碍不伴无力 (+1)")
+
+        if dur_min >= 60:
+            score += 2
+            details.append("症状持续时间 ≥ 60 分钟 (+2)")
+        elif dur_min >= 10:
+            score += 1
+            details.append("症状持续时间 10～59 分钟 (+1)")
+
+        if has_diabetes:
+            score += 1
+            details.append("合并糖尿病史 (+1)")
+
+        if score <= 3:
+            stratum = "低危 (48小时卒中风险 约1.0%)"
+            rec = "门诊急查头颅MRI-DWI与颈动脉彩超；启动阿司匹林单抗与强化他汀降脂治疗。"
+        elif score <= 5:
+            stratum = "中危 (48小时卒中风险 约4.1%)"
+            rec = "急诊绿色通道留观；发病24小时内启动 CHANCE 双联抗血小板治疗（阿司匹林+氯吡格雷 21天疗程）。"
+        else:
+            stratum = "高危 (48小时卒中风险 约8.1%，7天达11.7%)"
+            rec = "【急危重症预警】：紧急收住神经内科卒中单元；发病24小时内立即给予阿司匹林+氯吡格雷负荷量双抗（维持21天）及强化他汀，急诊血管影像评估。"
+
+        return {
+            "calculator": "ABCD2 Score",
+            "score": score,
+            "maxScore": 7,
+            "riskStratum": stratum,
+            "recommendation": rec,
+            "positiveCriteria": details,
+            "guideline": "《中国短暂性脑缺血发作与轻型卒中诊治指南（2020）》（SRC-CMA-NEUR-TIA-2020-01）",
         }

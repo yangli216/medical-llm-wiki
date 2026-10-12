@@ -1885,9 +1885,12 @@ status: verified
                 self._send_json({"error": "Drug monograph not found", "query": target}, status=404)
                 return
 
-        # 2. Try protocol repository if type is protocol or not specified
-        if doc_type in ("", "protocol"):
-            prot = self.cdss.repo.get(target)
+        from tools.cdss.diagnosis_normalizer import ClinicalDiagnosisNormalizer
+        norm = ClinicalDiagnosisNormalizer.normalize(target)
+
+        # 2. Try protocol repository if type is protocol, guideline, or not specified
+        if doc_type in ("", "protocol", "guideline"):
+            prot = self.cdss.repo.get(target) or self.cdss.repo.get(norm.canonical_name)
             if not prot and raw_name:
                 matches = self.cdss.search_protocols(raw_name, limit=1)
                 if matches:
@@ -1910,21 +1913,36 @@ status: verified
                 })
                 return
             elif doc_type == "protocol":
-                self._send_json({"error": "Clinical protocol not found", "query": target}, status=404)
+                self._send_json({
+                    "error": "该病种暂未收录临床方案",
+                    "query": target,
+                    "canonical": norm.canonical_name,
+                    "not_found": True
+                }, status=404)
                 return
 
         # 3. Try WikiGraph (concepts, entities, sources)
-        resolved_link = self.graph.resolve_link(target) or target
-        clean_id = re.sub(r"\.md$", "", resolved_link).split("/")[-1]
-        resolved = self.graph.resolve_link(clean_id) or clean_id
-        page = self.graph.pages.get(resolved) or self.graph.pages.get(target)
-        if not page:
-            for sub in ("sources", "concepts", "entities/diseases", "entities"):
-                p_cand = self.root_dir / "wiki" / sub / f"{clean_id}.md"
-                if p_cand.exists():
-                    from tools.compiler.compiler import WikiPage
-                    page = WikiPage(p_cand, self.root_dir / "wiki")
-                    break
+        lookup_targets = [target]
+        if norm.canonical_name and norm.canonical_name not in lookup_targets:
+            lookup_targets.append(norm.canonical_name)
+        if norm.clean and norm.clean not in lookup_targets:
+            lookup_targets.append(norm.clean)
+
+        page = None
+        for cand_target in lookup_targets:
+            resolved_link = self.graph.resolve_link(cand_target) or cand_target
+            clean_id = re.sub(r"\.md$", "", resolved_link).split("/")[-1]
+            resolved = self.graph.resolve_link(clean_id) or clean_id
+            page = self.graph.pages.get(resolved) or self.graph.pages.get(cand_target)
+            if not page:
+                for sub in ("sources", "concepts", "entities/diseases", "entities"):
+                    p_cand = self.root_dir / "wiki" / sub / f"{clean_id}.md"
+                    if p_cand.exists():
+                        from tools.compiler.compiler import WikiPage
+                        page = WikiPage(p_cand, self.root_dir / "wiki")
+                        break
+            if page:
+                break
 
         if page:
             html_body = self._markdown_to_html(page.raw_text)
@@ -1940,26 +1958,43 @@ status: verified
             })
             return
 
-        # 4. Search fallback: find closest matching article (only if type is not strictly restricted)
+        # 4. Search fallback: find closest matching article with strict clinical compatibility
         if doc_type in ("", "wiki", "concept", "source", "guideline"):
-            search_hits = self.searcher.search(target, limit=1)
-            if search_hits:
-                hit = search_hits[0]
+            search_query = norm.canonical_name or target
+            search_hits = self.searcher.search(search_query, limit=3)
+            compatible_page = None
+            for hit in search_hits:
                 hit_page = self.graph.pages.get(hit["id"])
-                if hit_page:
-                    html_body = self._markdown_to_html(hit_page.raw_text)
-                    self._send_json({
-                        "id": hit_page.file_path.stem,
-                        "title": hit_page.title,
-                        "type": hit_page.frontmatter.get("type", "wiki_page"),
-                        "frontmatter": hit_page.frontmatter,
-                        "relPath": str(hit_page.rel_path),
-                        "markdown": hit_page.raw_text,
-                        "html": html_body,
-                    })
-                    return
+                if not hit_page:
+                    continue
+                aliases = hit_page.frontmatter.get("aliases", [])
+                if isinstance(aliases, str):
+                    aliases = [aliases]
+                icd = hit_page.frontmatter.get("icd10")
+                if norm.is_compatible_with(hit_page.title, aliases, icd):
+                    compatible_page = hit_page
+                    break
 
-        self._send_json({"error": "Document not found", "query": target}, status=404)
+            if compatible_page:
+                html_body = self._markdown_to_html(compatible_page.raw_text)
+                self._send_json({
+                    "id": compatible_page.file_path.stem,
+                    "title": compatible_page.title,
+                    "type": compatible_page.frontmatter.get("type", "wiki_page"),
+                    "frontmatter": compatible_page.frontmatter,
+                    "relPath": str(compatible_page.rel_path),
+                    "markdown": compatible_page.raw_text,
+                    "html": html_body,
+                })
+                return
+
+        # Explicitly return 404 with clinical 'not_found' prompt if unindexed
+        self._send_json({
+            "error": "该病种暂未收录临床指南或诊疗方案",
+            "query": target,
+            "canonical": norm.canonical_name,
+            "not_found": True
+        }, status=404)
 
     def _handle_evidence_chain(self, payload: Dict[str, Any]) -> None:
         """

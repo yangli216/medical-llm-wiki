@@ -49,6 +49,8 @@ STOP_WORDS = {
     "如何", "怎样", "怎么", "哪些", "什么", "为什么", "的", "对于", "在", "中",
     "与", "及", "或", "是否", "请问", "有何", "关于", "建议", "指南", "推荐",
     "应该", "可以", "方法", "合并", "伴", "引起", "导致",
+    "其他和未特指", "其他及未特指", "其他与未特指", "未特指", "其他", "不可归类在他处者",
+    "无并发症", "伴并发症", "特指的", "特指",
 }
 
 
@@ -57,9 +59,17 @@ def extract_search_terms(query: str, vocab: Optional[Dict[str, Any]] = None) -> 
     Extracts meaningful clinical keywords from queries or natural language questions,
     optionally expanding with clinical intent and synonym dictionaries.
     """
-    clean = re.sub(r"[？?，,。！!；;、\s]+", " ", query)
+    from tools.cdss.diagnosis_normalizer import ClinicalDiagnosisNormalizer, GENERIC_CLINICAL_MODIFIERS
+    norm = ClinicalDiagnosisNormalizer.normalize(query)
+    clean = re.sub(r"[？?，,。！!；;、\s]+", " ", norm.clean if norm.clean else query)
     raw_tokens = clean.split()
     results = []
+
+    if norm.canonical_name and len(norm.canonical_name) >= 2:
+        results.append(norm.canonical_name)
+    for stem in norm.core_stems:
+        if stem not in results:
+            results.append(stem)
 
     for t in raw_tokens:
         sub = t
@@ -71,7 +81,9 @@ def extract_search_terms(query: str, vocab: Optional[Dict[str, Any]] = None) -> 
                 results.append(piece)
                 if len(piece) > 4:
                     for i in range(len(piece) - 1):
-                        results.append(piece[i:i+2])
+                        bi = piece[i:i+2]
+                        if bi not in GENERIC_CLINICAL_MODIFIERS:
+                            results.append(bi)
             elif piece:
                 results.append(piece)
 
@@ -268,6 +280,9 @@ class WikiSearcher:
         graph = WikiGraph(self.root_dir)
         graph.load_graph()
 
+        from tools.cdss.diagnosis_normalizer import ClinicalDiagnosisNormalizer, GENERIC_CLINICAL_MODIFIERS
+        norm = ClinicalDiagnosisNormalizer.normalize(clean_q)
+
         terms = extract_search_terms(clean_q, vocab=self.vocab)
         is_asking_drug = any(w in clean_q for w in ("选药", "用药", "药", "治疗", "方案", "降压", "降糖"))
 
@@ -281,18 +296,38 @@ class WikiSearcher:
             page_obj = graph.pages.get(pid)
             title = page_obj.title if page_obj else pid
 
+            # If query contains distinct clinical disease stems (e.g. 阑尾炎) and is NOT a free-form QA query,
+            # disqualify candidate pages that do NOT match any core stem and only matched generic modifiers (e.g. 急性)
+            if norm.core_stems and not norm.is_qa_query:
+                has_core_match = (
+                    any(stem.lower() in title.lower() for stem in norm.core_stems)
+                    or any(stem.lower() in rel_path.lower() for stem in norm.core_stems)
+                    or any(stem.lower() in raw_body.lower() for stem in norm.core_stems)
+                )
+                if not has_core_match:
+                    continue
+
             # Base text score
             score = 0.0
             matched_terms = 0
+
+            # Boost canonical name in title
+            if norm.canonical_name and norm.canonical_name.lower() in title.lower():
+                score += 50.0
+            for stem in norm.core_stems:
+                if stem.lower() in title.lower():
+                    score += 30.0
 
             for t in terms:
                 in_title = t in title
                 in_body = t in raw_body
                 if in_title:
-                    score += 25.0
+                    weight = 10.0 if t in GENERIC_CLINICAL_MODIFIERS else 25.0
+                    score += weight
                     matched_terms += 1
                 elif in_body:
-                    score += 6.0
+                    weight = 2.0 if t in GENERIC_CLINICAL_MODIFIERS else 6.0
+                    score += weight
                     cnt = raw_body.count(t)
                     score += min(cnt * 0.4, 4.0)
                     matched_terms += 1

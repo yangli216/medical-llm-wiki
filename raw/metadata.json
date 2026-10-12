@@ -625,6 +625,102 @@
       "file_path": "raw/docs/SRC-NHC-NUT-2024-01.md",
       "key_scope": "1. 诊断切点：成人 BMI ≥ 24 kg/m² 为超重，≥ 28 kg/m² 为肥胖；男性腰围 ≥ 90cm、女性 ≥ 85cm 为中心型肥胖。\n2. 饮食干预：控制总能量摄入，推荐每日能量摄入减少 500～1000 kcal；优质蛋白质占比达 50% 以上。\n3. 减重靶标：以 6 个月内体重减轻 5%～10% 为适宜目标，严禁剧烈极低能量禁食。",
       "status": "active"
+    },
+    {
+      "id": "SRC-CSES-APP-2023-01",
+      "title": "急性阑尾炎诊治专家共识（2023）",
+      "authority": "中华医学会外科学分会急腹症外科学组",
+      "publication": "中华外科杂志",
+      "year": 2023,
+      "category": "普通外科急腹症",
+      "level": "国家权威临床共识",
+      "file_path": "raw/docs/SRC-CSES-APP-2023-01.md",
+      "key_scope": "转移性右下腹痛、麦氏点压痛、Alvarado评分分层、低剂量CT/彩超影像评估、急诊腹腔镜切除与抗生素保守治疗指征，禁盲目镇痛与导泻灌肠",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CSGS-CHOLE-2021-01",
+      "title": "急性胆囊炎诊治指南（2021版）",
+      "authority": "中华医学会外科学分会胆道外科学组",
+      "publication": "中华外科杂志",
+      "year": 2021,
+      "category": "肝胆外科急腹症",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CSGS-CHOLE-2021-01.md",
+      "key_scope": "右上腹绞痛向肩背放射、Murphy征、东京指南TG18分级、彩超胆囊壁双轨征、间苯三酚解痉、禁单用吗啡、发病72小时内急诊LC手术",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CSG-PANCR-2021-01",
+      "title": "中国急性胰腺炎诊治指南（2021，沈阳）",
+      "authority": "中华医学会消化病学分会胰腺疾病学组",
+      "publication": "中华消化杂志",
+      "year": 2021,
+      "category": "消化病急重症",
+      "level": "国家权威临床专科指南",
+      "file_path": "raw/docs/SRC-CSG-PANCR-2021-01.md",
+      "key_scope": "上腹剧痛向腰背束带放射、三取二确诊标准、淀粉酶/脂肪酶升高>3倍、乳酸林格液早期受控液体复苏、禁食水胃肠减压与重症早期转诊",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CSG-PU-2022-01",
+      "title": "消化性溃疡规范化诊治专家共识（2022）",
+      "authority": "中华医学会消化病学分会幽门螺杆菌学组、消化性溃疡学组",
+      "publication": "中华消化杂志",
+      "year": 2022,
+      "category": "消化系统",
+      "level": "国家权威临床共识",
+      "file_path": "raw/docs/SRC-CSG-PU-2022-01.md",
+      "key_scope": "胃溃疡与十二指肠溃疡节律性腹痛、Hp根除、PPI与P-CAB规范疗程（DU 4-6周，GU 6-8周）、铝碳酸镁保护屏障、禁活动期非选择性NSAIDs",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-URO-2022-01",
+      "title": "输尿管结石急诊肾绞痛阶梯药物治疗指南（2022）",
+      "authority": "中华医学会泌尿外科学分会尿路结石学组",
+      "publication": "中华泌尿外科杂志",
+      "year": 2022,
+      "category": "泌尿外科急症",
+      "level": "国家权威临床指南",
+      "file_path": "raw/docs/SRC-CMA-URO-2022-01.md",
+      "key_scope": "腰胁绞痛向会阴放射、肾区叩痛、NSAIDs双氯芬酸钠一线镇痛、间苯三酚解痉、坦索罗辛药物排石MET、梗阻伴发热脓尿急诊穿刺置管引流",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-NEUR-2021-01",
+      "title": "中国特发性面神经麻痹诊治指南（2021）",
+      "authority": "中华医学会神经病学分会",
+      "publication": "中华神经科杂志",
+      "year": 2021,
+      "category": "神经系统周围神经病",
+      "level": "国家权威临床指南",
+      "file_path": "raw/docs/SRC-CMA-NEUR-2021-01.md",
+      "key_scope": "单侧周围性面瘫、额纹消失与闭目不全Bell征、黄金72小时泼尼松晨起顿服阶梯减停、白天人工泪液夜间眼膏眼罩保角膜、禁急性期电刺激",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-NEUR-TIA-2020-01",
+      "title": "中国短暂性脑缺血发作与轻型卒中诊治指南（2020）",
+      "authority": "中华医学会神经病学分会脑血管病学组",
+      "publication": "中华神经科杂志",
+      "year": 2020,
+      "category": "脑血管病急症",
+      "level": "国家权威临床指南",
+      "file_path": "raw/docs/SRC-CMA-NEUR-TIA-2020-01.md",
+      "key_scope": "一过性脑缺血组织学定义、ABCD2评分量化分层、发病24小时内CHANCE双抗（氯吡格雷+阿司匹林21天）、强化他汀与急诊绿色通道",
+      "status": "active"
+    },
+    {
+      "id": "SRC-CMA-ORTH-CERV-2022-01",
+      "title": "颈椎病规范化阶梯诊疗专家共识（2022）",
+      "authority": "中华医学会骨科学分会脊柱外科学组",
+      "publication": "中华骨科杂志",
+      "year": 2022,
+      "category": "脊柱骨科",
+      "level": "国家权威临床共识",
+      "file_path": "raw/docs/SRC-CMA-ORTH-CERV-2022-01.md",
+      "key_scope": "颈椎病分型、神经根型Spurling/Eaton试验阳性、塞来昔布+乙哌立松+甲钴胺阶梯保守、脊髓型踩棉花感绝对禁粗暴旋转推拿",
+      "status": "active"
     }
   ]
 }

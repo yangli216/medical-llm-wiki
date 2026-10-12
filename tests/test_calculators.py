@@ -121,6 +121,30 @@ class TestClinicalCalculators(unittest.TestCase):
         self.assertEqual(res["estimated24hTotal_ml"], 2450.0)
         self.assertIn("ORS-III", res["rehydrationPlan"])
 
+    def test_alvarado_appendicitis_risk(self):
+        """Test Alvarado score: RLQ tenderness (2) + Leukocytosis (2) + Migration (1) -> 5 (Moderate)."""
+        res = ClinicalCalculatorRegistry.calculate("alvarado", {
+            "migratory_pain": True,
+            "rlq_tenderness": True,
+            "wbc": 11.2,
+        })
+        self.assertEqual(res["score"], 5)
+        self.assertIn("中危", res["riskStratum"])
+        self.assertIn("严禁盲目开具强效麻醉镇痛药", res["recommendation"])
+
+    def test_abcd2_tia_stroke_risk(self):
+        """Test ABCD2 score: Age 65 (1) + SBP 150 (1) + Unilateral weakness (2) + 40min (1) + DM (1) -> 6 (High)."""
+        res = ClinicalCalculatorRegistry.calculate("abcd2", {
+            "age": 65,
+            "sbp": 150,
+            "clinical_features": "unilateral_weakness",
+            "duration_minutes": 40,
+            "diabetes": True,
+        })
+        self.assertEqual(res["score"], 6)
+        self.assertIn("高危", res["riskStratum"])
+        self.assertIn("卒中单元", res["recommendation"])
+
 
 if __name__ == "__main__":
     unittest.main()

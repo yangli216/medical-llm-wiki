@@ -28,14 +28,34 @@ class CdssEngine:
         if not q:
             return []
 
+        # Clinical diagnosis normalization
+        from tools.cdss.diagnosis_normalizer import ClinicalDiagnosisNormalizer, GENERIC_CLINICAL_MODIFIERS
+        norm = ClinicalDiagnosisNormalizer.normalize(query)
+
         # Generate tokens
         tokens = [q]
-        for w in re.split(r"[\s,，、/]+", q):
-            if w and w not in tokens:
+        if norm.canonical_name and norm.canonical_name.lower() not in tokens:
+            tokens.append(norm.canonical_name.lower())
+        for stem in norm.core_stems:
+            if stem.lower() not in tokens:
+                tokens.append(stem.lower())
+        if norm.icd_code and norm.icd_code.lower() not in tokens:
+            tokens.append(norm.icd_code.lower())
+
+        for w in re.split(r"[\s,，、/]+", norm.clean.lower()):
+            if w and w not in tokens and w not in GENERIC_CLINICAL_MODIFIERS:
                 tokens.append(w)
 
         # Expand clinical synonyms
         synonyms_map = {
+            "阑尾炎": ["急性阑尾炎", "阑尾炎门诊决策", "急腹症与急性阑尾炎"],
+            "胆囊炎": ["急性胆囊炎", "胆囊结石", "胆石症"],
+            "胰腺炎": ["急性胰腺炎", "重症胰腺炎"],
+            "消化性溃疡": ["胃溃疡", "十二指肠溃疡", "胃黏膜病变"],
+            "肾绞痛": ["输尿管结石", "肾结石", "泌尿系结石"],
+            "面神经炎": ["特发性面神经麻痹", "贝尔面瘫", "bell麻痹"],
+            "脑卒中": ["短暂性脑缺血发作", "tia", "缺血性脑卒中"],
+            "颈椎病": ["神经根型颈椎病", "颈椎间盘突出"],
             "甲减": ["甲状腺功能减退", "甲状腺功能减退症"],
             "甲亢": ["甲状腺功能亢进", "甲状腺功能亢进症"],
             "上感": ["急性上呼吸道感染", "普通感冒"],
@@ -45,74 +65,91 @@ class CdssEngine:
             "反流": ["胃食管反流", "胃食管反流病"],
             "膝骨关节炎": ["骨关节炎", "退行性膝关节炎", "膝关节炎"],
             "骨关节炎": ["膝骨关节炎", "膝关节退变"],
+            "膝关节": ["膝骨关节炎", "退行性膝关节炎", "膝关节炎"],
+            "膝痛": ["膝骨关节炎", "退行性膝关节炎"],
+            "双膝": ["膝骨关节炎", "退行性膝关节炎"],
+            "右下腹痛": ["急性阑尾炎", "阑尾炎"],
+            "右上腹痛": ["急性胆囊炎", "胆囊结石"],
+            "上腹痛": ["急性胰腺炎", "消化性溃疡"],
+            "腰腹部绞痛": ["输尿管结石", "肾绞痛"],
+            "肾区绞痛": ["输尿管结石", "肾绞痛"],
+            "口角歪斜": ["特发性面神经麻痹", "贝尔面瘫"],
+            "一过性肢体无力": ["短暂性脑缺血发作", "tia"],
+            "颈肩痛": ["颈椎病", "神经根型颈椎综合征"],
             "荨麻疹": ["风疹块", "过敏性风团", "急性荨麻疹"],
             "前列腺增生": ["良性前列腺增生", "前列腺肥大", "bph"],
             "狂犬病": ["狂犬病暴露", "动物致伤", "犬伤", "动物咬伤"],
             "犬伤": ["狂犬病暴露", "动物致伤与犬伤暴露"],
         }
         for k, syn_list in synonyms_map.items():
-            if k in q:
+            if k in q or (norm.core_stems and any(k in s for s in norm.core_stems)):
                 for syn in syn_list:
                     if syn not in tokens:
                         tokens.append(syn)
 
-        # Extract 2-character n-grams for Chinese queries
-        if len(q) >= 4:
-            for i in range(len(q) - 1):
-                bi = q[i:i+2]
-                if bi not in tokens:
-                    tokens.append(bi)
-
         scored: List[tuple[float, ClinicalProtocol]] = []
         for prot in self.repo.list_all():
+            # Core disease compatibility check:
+            # If query has core disease stems, the candidate MUST be clinically compatible!
+            # Never match purely on generic qualifiers like '急性' or '门诊'.
+            diag_items = [it.name for it in prot.items if it.kind == "DIAGNOSIS"]
+            if not norm.is_compatible_with(prot.title, prot.aliases, prot.icd10, diag_items):
+                continue
+
             score = 0.0
-            # 0. Full query match in title or aliases
-            if q.lower() in prot.title.lower():
+
+            # 0. Canonical name / full query match in title or aliases
+            if norm.canonical_name and norm.canonical_name.lower() in prot.title.lower():
+                score += 80.0
+            elif q.lower() in prot.title.lower():
                 score += 60.0
+
             for alias in prot.aliases:
-                if q.lower() == alias.lower():
+                if norm.canonical_name and norm.canonical_name.lower() == alias.lower():
+                    score += 90.0
+                elif q.lower() == alias.lower():
                     score += 80.0
+                elif norm.canonical_name and norm.canonical_name.lower() in alias.lower():
+                    score += 60.0
                 elif q.lower() in alias.lower() or alias.lower() in q.lower():
-                    score += 50.0
+                    score += 40.0
 
             # 1. Exact ICD-10 match
-            if prot.icd10 and any(prot.icd10.lower() == t for t in tokens):
-                score += 50.0
+            if norm.icd_code and prot.icd10:
+                if norm.icd_code.upper() == prot.icd10.upper():
+                    score += 100.0
+                elif norm.icd_category and prot.icd10.upper().startswith(norm.icd_category.upper()):
+                    score += 60.0
 
-            # 2. Title match
-            for t in tokens:
-                if t in prot.title.lower():
-                    score += 25.0
-                if prot.title.lower() in t:
-                    score += 30.0
+            # 2. Core stem match
+            for stem in norm.core_stems:
+                if stem.lower() in prot.title.lower():
+                    score += 40.0
+                for alias in prot.aliases:
+                    if stem.lower() in alias.lower():
+                        score += 30.0
 
-            # 3. Aliases match
-            for alias in prot.aliases:
-                for t in tokens:
-                    if t in alias.lower() or alias.lower() in t:
-                        score += 20.0
-
-            # 4. Diagnoses items match
+            # 3. Diagnoses items match
             for item in prot.items:
                 if item.kind == "DIAGNOSIS":
-                    for t in tokens:
-                        if t in item.name.lower() or item.name.lower() in t:
-                            score += 20.0
+                    if norm.canonical_name and norm.canonical_name.lower() in item.name.lower():
+                        score += 35.0
+                    for stem in norm.core_stems:
+                        if stem.lower() in item.name.lower():
+                            score += 25.0
 
-            # 5. Category match
-            if prot.category:
-                for t in tokens:
-                    if t in prot.category.lower():
+            # 4. Token overlap (excluding purely generic clinical modifiers)
+            for t in tokens:
+                if t in GENERIC_CLINICAL_MODIFIERS or len(t) < 2:
+                    continue
+                if t in prot.title.lower():
+                    score += 15.0
+                for alias in prot.aliases:
+                    if t in alias.lower():
                         score += 10.0
 
-            # 6. Keyword overlap in note template
-            for text in prot.note_template.values():
-                for t in tokens:
-                    if len(t) >= 2 and t in text.lower():
-                        score += 5.0
-                        break
-
-            if score > 0:
+            # Require minimum confidence score
+            if score >= 30.0:
                 scored.append((score, prot))
 
         scored.sort(key=lambda x: x[0], reverse=True)
@@ -142,7 +179,8 @@ class CdssEngine:
         if not prot:
             return {
                 "success": False,
-                "error": f"No clinical decision protocol found matching: {query_or_id}",
+                "error": f"知识库暂未收录该病种临床诊疗方案: {query_or_id}",
+                "not_found": True,
             }
 
         plan_intent = prot.to_rhn_plan_intent()
