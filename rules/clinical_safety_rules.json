@@ -82,7 +82,9 @@
           "rationale": "《指南》推荐A+D联合方案，RASi联合噻嗪样利尿剂协同降压且抵消低血钾风险",
           "sourceGuideline": "SRC-CMA-HTN-2024-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-SAFETY-PREGNANCY-RAS",
@@ -107,7 +109,9 @@
           "沙库巴曲",
           "arni"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-SAFETY-METFORMIN-RENAL",
@@ -121,7 +125,9 @@
           "二甲双胍"
         ],
         "egfr_lt": 30
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-SAFETY-METFORMIN-WARN",
@@ -138,7 +144,9 @@
           30,
           45
         ]
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-SAFETY-NITRATE-PDE5",
@@ -164,7 +172,9 @@
             ]
           }
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-CASCADE-CCB-EDEMA",
@@ -189,7 +199,9 @@
             ]
           }
         ]
-      }
+      },
+      "grade": "2A",
+      "evidence_level": "弱推荐 (Weak recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-SAFETY-DUAL-NSAIDS",
@@ -212,7 +224,9 @@
           ],
           "min_count": 2
         }
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-SAFETY-MONTMORILLONITE-INTERVAL",
@@ -238,7 +252,9 @@
             ]
           }
         ]
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-PIM-ELDERLY-BZD",
@@ -255,7 +271,9 @@
           "氯硝西泮",
           "艾司唑仑"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-PEDIATRIC-ASPIRIN",
@@ -299,7 +317,9 @@
           "rationale": "《指南》推荐儿童退热一线药，胃肠及血小板影响小，无Reye综合征风险",
           "sourceGuideline": "SRC-CMA-PED-2023-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-PEDIATRIC-QUINOLONE",
@@ -346,7 +366,9 @@
           "rationale": "二代口服头孢菌素，覆盖常见呼吸道与敏感革兰氏菌，儿童耐受性良好",
           "sourceGuideline": "SRC-CMA-PED-2023-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-PEDIATRIC-LOPERAMIDE",
@@ -390,7 +412,9 @@
           "rationale": "预防和纠正轻中度脱水金标准，低渗配方减少粪便量和腹泻持续时间",
           "sourceGuideline": "SRC-CMA-PED-2022-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-TCM-XIAOKE-SULFONYLUREA",
@@ -414,7 +438,9 @@
             ]
           }
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-TCM-ACETAMINOPHEN-DUAL",
@@ -469,7 +495,9 @@
           "rationale": "纯中药疏风宣肺解热，不含对乙酰氨基酚，无肝坏死蓄积风险",
           "sourceGuideline": "SRC-NAT-TCM-2021-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-HERPES-VALACYCLOVIR-RENAL",
@@ -484,7 +512,9 @@
           "阿昔洛韦"
         ],
         "egfr_lt": 50
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-MIGR-TRIPTAN-CARDIOVASCULAR",
@@ -542,7 +572,9 @@
           "rationale": "选择性COX-2抑制剂按需镇痛，对冠脉血流动力学收缩影响远小于曲普坦类",
           "sourceGuideline": "SRC-CMA-NEUR-2022-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-OSTEO-BISPHOSPHONATE-RENAL",
@@ -559,7 +591,9 @@
           "依班膦酸"
         ],
         "egfr_lt": 35
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-CONSTIP-STIMULANT-LAXATIVE",
@@ -576,7 +610,9 @@
           "酚酞",
           "芦荟胶囊"
         ]
-      }
+      },
+      "grade": "2A",
+      "evidence_level": "弱推荐 (Weak recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-DRYEYE-ANTIBIOTIC-MISUSE",
@@ -596,7 +632,9 @@
           "氯霉素滴眼液",
           "加替沙星滴眼液"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-PED-MACROLIDE-QT",
@@ -641,7 +679,9 @@
           "has_long_qt"
         ],
         "ddi_or_history": true
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-PED-TETRACYCLINE-AGE",
@@ -658,7 +698,9 @@
           "四环素",
           "美他环素"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-PED-ASTHMA-ORAL-STEROID",
@@ -682,7 +724,9 @@
           "地塞米松片",
           "甲泼尼龙片"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-GERD-PPI-CLOPIDOGREL",
@@ -706,7 +750,9 @@
             ]
           }
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-LIPID-STATIN-GEMFIBROZIL",
@@ -733,7 +779,9 @@
             ]
           }
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-UTI-NITROFURANTOIN-RENAL",
@@ -748,7 +796,9 @@
           "呋喃咀啶"
         ],
         "egfr_lt": 30
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-LIPID-STATIN-HEPATIC",
@@ -777,7 +827,9 @@
           "alt_above_3x",
           "ast_above_3x"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-PREGNANCY-ORAL-FLUCONAZOLE",
@@ -792,7 +844,9 @@
           "氟康唑",
           "大扶康"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-LEVOTHYROXINE-CHELATION",
@@ -819,7 +873,9 @@
             ]
           }
         ]
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-THYROID-CAD-DOSE",
@@ -845,7 +901,9 @@
         "profile_flags": [
           "has_cad"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-ALLERGY-PENICILLIN",
@@ -870,7 +928,9 @@
         "allergy_flags": [
           "penicillin_allergy"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-KOA-SYSTEMIC-STEROID",
@@ -925,7 +985,9 @@
           "rationale": "《指南》轻中度关节疼痛一线首选局部外用透皮贴剂，全身血药暴露量极低，保护关节软骨",
           "sourceGuideline": "SRC-CMA-ORTH-2019-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-ANTIHISTAMINE-ELDERLY",
@@ -971,7 +1033,9 @@
           "rationale": "第二代外周H1受体阻滞剂，起效快，嗜睡与认知影响远低于第一代抗组胺药",
           "sourceGuideline": "SRC-CMA-DERM-2022-01"
         }
-      ]
+      ],
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-BPH-ANTICHOLINERGIC",
@@ -1014,7 +1078,9 @@
           "rationale": "《良性前列腺增生基层指南》高选择性α1A受体阻滞剂，松弛膀胱颈平滑肌，缓解排尿阻力且不诱发尿潴留",
           "sourceGuideline": "SRC-CMA-URO-2019-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-RABIES-III-PASSIVE-IMMUNITY",
@@ -1046,7 +1112,9 @@
           "hrig",
           "抗狂犬病血清"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-TETANUS-DEEP-DIRTY",
@@ -1071,7 +1139,9 @@
           "tig",
           "tat"
         ]
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-BPH-HYPOTENSION-TAMSULOSIN",
@@ -1094,7 +1164,9 @@
           "has_cad",
           "orthostatic_hypotension"
         ]
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-TCM-HUOXIANG-DISULFIRAM",
@@ -1133,7 +1205,9 @@
           "rationale": "《中成药临床应用指导原则》推荐无醇水提制剂，辅料不含乙醇，与头孢/甲硝唑合用无双硫仑反应风险",
           "sourceGuideline": "SRC-NAT-TCM-2021-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-TCM-POPPY-CONTRAINDICATION",
@@ -1165,7 +1239,9 @@
           "rationale": "纯中草药清热化痰宣肺止咳，不含罂粟壳等成瘾性阿片生物碱，儿童及孕妇安全性高",
           "sourceGuideline": "SRC-NAT-TCM-2021-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-TCM-XIANLINGGUBAO-HEPATIC",
@@ -1184,7 +1260,9 @@
           "肝硬化",
           "病毒性肝炎"
         ]
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-GDM-SULFONYLUREA-BLOCK",
@@ -1235,7 +1313,9 @@
           "rationale": "指南推荐基础中效人胰岛素，睡前皮下注射控制空腹高血糖，胎儿安全性良好",
           "sourceGuideline": "SRC-CMA-GYN-2022-01"
         }
-      ]
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-FEBRILE-SEIZURE-NO-PREVENTIVE-ANTIPYRETIC",
@@ -1254,7 +1334,9 @@
           "布洛芬",
           "对乙酰氨基酚"
         ]
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-AF-VALVE-DOAC-BLOCK",
@@ -1277,7 +1359,9 @@
           "阿哌沙班",
           "艾多沙班"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-NEUROPATHIC-GABAPENTIN-CKD-REDUCE",
@@ -1297,7 +1381,9 @@
           "肾衰竭",
           "尿毒症"
         ]
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     },
     {
       "id": "RULE-HYPERKALEMIA-K-SPARING-STOP",
@@ -1318,7 +1404,9 @@
           "阿米洛利",
           "复方利血平氨苯蝶啶片"
         ]
-      }
+      },
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
     },
     {
       "id": "RULE-LOKELMA-INTERVAL-WARNING",
@@ -1332,7 +1420,9 @@
           "环硅酸锆钠散",
           "环硅酸锆钠"
         ]
-      }
+      },
+      "grade": "1B",
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
     }
   ]
 }

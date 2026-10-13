@@ -1372,6 +1372,11 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
                     {"name": "renal_clearance", "title": "eGFR (2021 CKD-EPI) 与 Cockcroft-Gault 肾清除率", "params": ["age", "gender", "scr", "weight"]},
                     {"name": "child_pugh", "title": "Child-Pugh 肝硬化肝功能储备评分与分级", "params": ["bili", "alb", "inr", "ascites", "encephalopathy"]},
                     {"name": "pediatric_fluid", "title": "儿童急性腹泻脱水补液量估算 (Holliday-Segar + ORS-III)", "params": ["weight_kg", "dehydration"]},
+                    {"name": "alvarado", "title": "Alvarado 急性阑尾炎临床预测评分与外科探查", "params": ["migratory_pain", "anorexia", "nausea_vomiting", "rlq_tenderness", "rebound_pain", "temp_elevated", "leukocytosis", "neutrophilia_shift"]},
+                    {"name": "abcd2", "title": "ABCD2 短暂性脑缺血发作 TIA 早期卒中风险量化分层", "params": ["age", "sbp", "dbp", "unilateral_weakness", "speech_impairment", "duration_minutes", "diabetes"]},
+                    {"name": "wells_pe", "title": "Wells 肺栓塞 PE 临床预测概率评分与 CTPA 决策", "params": ["dvt_signs", "pe_most_likely", "hr", "recent_surgery", "prior_pe", "hemoptysis", "cancer"]},
+                    {"name": "mmrc", "title": "mMRC 呼吸困难评分与慢阻肺 GOLD ABE 吸入阶梯决策", "params": ["grade", "exacerbations_last_year", "hospitalizations_last_year", "eos_count"]},
+                    {"name": "crb_65", "title": "CRB-65 门诊社区获得性肺炎严重度与分诊决策 (无须BUN)", "params": ["confusion", "rr", "sbp", "dbp", "age"]},
                 ]
             })
         elif path == "/api/graph":

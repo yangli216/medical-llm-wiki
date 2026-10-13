@@ -32,6 +32,12 @@ class ClinicalCalculatorRegistry:
             "alvarado_score": cls.calc_alvarado,
             "abcd2": cls.calc_abcd2,
             "abcd2_score": cls.calc_abcd2,
+            "wells": cls.calc_wells_pe,
+            "wells_pe": cls.calc_wells_pe,
+            "wells_score": cls.calc_wells_pe,
+            "mmrc": cls.calc_mmrc,
+            "mmrc_score": cls.calc_mmrc,
+            "crb_65": cls.calc_crb_65,
         }
         fn = dispatch.get(name)
         if not fn:
@@ -685,4 +691,156 @@ class ClinicalCalculatorRegistry:
             "recommendation": rec,
             "positiveCriteria": details,
             "guideline": "《中国短暂性脑缺血发作与轻型卒中诊治指南（2020）》（SRC-CMA-NEUR-TIA-2020-01）",
+        }
+
+    # -------------------------------------------------------------------------
+    # 11. Wells PE: 肺栓塞临床预测概率评分
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def calc_wells_pe(p: Dict[str, Any]) -> Dict[str, Any]:
+        has_dvt = bool(p.get("dvt_signs") or p.get("dvt") or p.get("leg_swelling"))
+        pe_most_likely = bool(p.get("pe_most_likely") or p.get("pe_likely") or p.get("alternative_less_likely"))
+        hr = float(p.get("hr", 0) or p.get("heart_rate", 0))
+        recent_surgery = bool(p.get("recent_surgery") or p.get("immobilization") or p.get("bedridden"))
+        prior_pe = bool(p.get("prior_pe") or p.get("prior_dvt") or p.get("history_vte"))
+        hemoptysis = bool(p.get("hemoptysis") or p.get("bloody_sputum"))
+        cancer = bool(p.get("cancer") or p.get("malignancy") or p.get("active_cancer"))
+
+        score = 0.0
+        details = []
+
+        if has_dvt:
+            score += 3.0
+            details.append("深静脉血栓形成 (DVT) 临床症状与体征 (+3.0)")
+        if pe_most_likely:
+            score += 3.0
+            details.append("其他诊断的可能性小于肺栓塞 (+3.0)")
+        if hr > 100:
+            score += 1.5
+            details.append(f"心率 > 100次/分 ({hr:.0f} bpm) (+1.5)")
+        if recent_surgery:
+            score += 1.5
+            details.append("近4周内手术制动或卧床≥3天 (+1.5)")
+        if prior_pe:
+            score += 1.5
+            details.append("既往 DVT 或 PE 病史 (+1.5)")
+        if hemoptysis:
+            score += 1.0
+            details.append("咯血 (+1.0)")
+        if cancer:
+            score += 1.0
+            details.append("活动性恶性肿瘤 (+1.0)")
+
+        # 两分法 (Two-tier)
+        pe_likely = (score > 4.0)
+        if pe_likely:
+            stratum = "高度可能 (PE Likely, 栓塞发生率约 37.1%)"
+            rec = "【致死性急症警报】：立即开启急诊绿色通道，跳过单纯D-二聚体排查，紧急安排 CTPA (肺动脉造影) 确诊，并准备启动抗凝治疗！"
+            grade = "1A"
+        else:
+            stratum = "低度/中度可能 (PE Unlikely, 栓塞发生率约 12.1%)"
+            rec = "首选急查高敏 D-二聚体定量排查。若 D-二聚体阴性 (<500 μg/L 或年龄调整切点)，可 100% 安全豁免 CTPA 检查；若阳性则进一步安排 CTPA。"
+            grade = "1A"
+
+        return {
+            "calculator": "Wells PE Score",
+            "score": round(score, 1),
+            "maxScore": 12.5,
+            "peLikely": pe_likely,
+            "riskStratum": stratum,
+            "recommendation": rec,
+            "positiveCriteria": details,
+            "grade": grade,
+            "guideline": "《诊断学（第9/10版·国家卫健委规划教材）》（SRC-PMPH-DIAG-2024-01）",
+        }
+
+    # -------------------------------------------------------------------------
+    # 12. mMRC: 改良英国医学研究学会呼吸困难量表与 COPD 分组
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def calc_mmrc(p: Dict[str, Any]) -> Dict[str, Any]:
+        grade_val = int(p.get("grade", p.get("mmrc_grade", 0)))
+        exacerbations = int(p.get("exacerbations_last_year", 0))
+        hospitalizations = int(p.get("hospitalizations_last_year", 0))
+        eos = float(p.get("eos_count", 0))
+
+        grade_val = max(0, min(4, grade_val))
+        descriptions = {
+            0: "0级: 仅在剧烈运动或费力活动时感到呼吸急促",
+            1: "1级: 在平地快步行走或微上坡时感到气短",
+            2: "2级: 在平地行走比同龄人慢，或平地正常速度需停下休息 (关键分水岭)",
+            3: "3级: 在平地行走约100米或数分钟后需停下喘气",
+            4: "4级: 因严重气促不能出门，或在穿脱衣服时即出现明显呼吸困难",
+        }
+
+        # GOLD ABE 分组
+        if hospitalizations >= 1 or exacerbations >= 2:
+            gold_group = "E 组 (高加重风险组)"
+            if eos >= 300:
+                med_rec = "首选三联吸入制剂: ICS + LABA + LAMA (如布地奈德/格隆溴铵/福莫特罗)"
+            else:
+                med_rec = "首选双支扩剂联合: LABA + LAMA (如噻托溴铵/奥达特罗、乌美溴铵/维兰特罗)"
+        elif grade_val >= 2:
+            gold_group = "B 组 (高症状/低加重风险组)"
+            med_rec = "首选双联长效支扩剂: LABA + LAMA 吸入制剂；严禁单用短效茶碱缓释片"
+        else:
+            gold_group = "A 组 (低症状/低加重风险组)"
+            med_rec = "起始推荐单一长效支气管舒张剂 (LAMA 或 LABA 吸入)"
+
+        return {
+            "calculator": "mMRC Dyspnea & GOLD ABE Assessment",
+            "mmrcGrade": grade_val,
+            "description": descriptions[grade_val],
+            "goldGroup": gold_group,
+            "treatmentRecommendation": med_rec,
+            "grade": "1A",
+            "guideline": "《慢性阻塞性肺疾病诊治指南（2021年修订版）》（SRC-CMA-RESP-2021-01）",
+        }
+
+    # -------------------------------------------------------------------------
+    # 13. CRB-65: 基层门诊快速社区获得性肺炎严重度评分 (无需血生化BUN)
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def calc_crb_65(p: Dict[str, Any]) -> Dict[str, Any]:
+        has_confusion = bool(p.get("confusion") or p.get("altered_mental_status"))
+        rr = int(p.get("rr", 0) or p.get("respiratory_rate", 0))
+        sbp = int(p.get("sbp", 120))
+        dbp = int(p.get("dbp", 80))
+        age = int(p.get("age", 0))
+
+        score = 0
+        details = []
+
+        if has_confusion:
+            score += 1
+            details.append("新发意识障碍 / 精神错乱 (+1)")
+        if rr >= 30:
+            score += 1
+            details.append(f"呼吸频率 ≥ 30次/分 ({rr} bpm) (+1)")
+        if (sbp < 90 and sbp > 0) or (dbp <= 60 and dbp > 0):
+            score += 1
+            details.append(f"低血压收缩压<90或舒张压≤60 ({sbp}/{dbp} mmHg) (+1)")
+        if age >= 65:
+            score += 1
+            details.append(f"年龄 ≥ 65岁 ({age}岁) (+1)")
+
+        if score == 0:
+            stratum = "低危 (死亡率 < 1.2%)"
+            place = "门诊口服抗菌药物治疗；居家密切观察症状变化。"
+        elif score <= 2:
+            stratum = "中危 (死亡率 约 8.2%)"
+            place = "建议收住院治疗或急诊留观；密切复查胸片与血氧监测。"
+        else:
+            stratum = "高危 (死亡率高达 31.3%)"
+            place = "【危重症预警】：必须紧急急诊住院；立即评估是否转入重症监护病房 (ICU)！"
+
+        return {
+            "calculator": "CRB-65 Outpatient Pneumonia Score",
+            "score": score,
+            "maxScore": 4,
+            "riskStratum": stratum,
+            "triageRecommendation": place,
+            "positiveCriteria": details,
+            "grade": "1A",
+            "guideline": "《中国成人社区获得性肺炎诊断和治疗指南》（SRC-CMA-RESP-2016-02）",
         }

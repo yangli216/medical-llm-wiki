@@ -95,6 +95,8 @@ class ComprehensiveSafetyAuditor:
                     "title": f"{d_res.get('drugName')} 超过法定日最大极量",
                     "message": d_res.get("message", ""),
                     "guideline": d_res.get("guideline", "国家药品监督管理局法定药品说明书"),
+                    "grade": "1A",
+                    "evidenceLevel": "强推荐 (Strong recommendation)，国家法定说明书强制极量标准",
                 })
 
         # 5. Classify Alerts into Interactions vs Contraindications vs Dosage

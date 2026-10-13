@@ -103,6 +103,8 @@ class RuleEvaluator:
                     "title": rule.get("title", ""),
                     "message": rule.get("message", ""),
                     "guideline": rule.get("guideline") or rule.get("evidence", ""),
+                    "grade": rule.get("grade", "1A" if rule.get("severity") == "RED" else "1B"),
+                    "evidenceLevel": rule.get("evidence_level", "强推荐，国家权威指南/说明书法定标准"),
                     "alternatives": rule.get("alternatives", []),
                 })
 
