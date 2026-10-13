@@ -721,6 +721,18 @@
       "file_path": "raw/docs/SRC-CMA-ORTH-CERV-2022-01.md",
       "key_scope": "颈椎病分型、神经根型Spurling/Eaton试验阳性、塞来昔布+乙哌立松+甲钴胺阶梯保守、脊髓型踩棉花感绝对禁粗暴旋转推拿",
       "status": "active"
+    },
+    {
+      "id": "SRC-PMPH-DIAG-2024-01",
+      "title": "诊断学（第9/10版·国家卫生健康委员会规划教材）",
+      "authority": "人民卫生出版社 / 全国高等医药教材建设研究会 / 国家卫生健康委员会规划教材编写组",
+      "publication": "人民卫生出版社",
+      "year": 2024,
+      "category": "临床诊断学与症状学",
+      "level": "国家级统编教材与临床教学金标准",
+      "file_path": "raw/docs/SRC-PMPH-DIAG-2024-01.md",
+      "key_scope": "常见症状学问诊原则与鉴别诊断树、急腹症与胸痛等危重症红旗征识别、查体麦氏点/墨菲征等阳性体征规范",
+      "status": "active"
     }
   ]
 }

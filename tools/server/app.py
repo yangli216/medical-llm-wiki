@@ -1334,14 +1334,17 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
         if path == "/" or path == "/index.html":
             self._send_html(HTML_TEMPLATE)
         elif path == "/api/health":
+            sym_dir = self.root_dir / "wiki" / "symptoms"
+            symptoms_count = len(list(sym_dir.glob("*.md"))) if sym_dir.exists() else 0
             self._send_json({
                 "status": "UP",
                 "version": "1.9.0",
                 "service": "Medical LLM Wiki & CDSS Intelligence Gateway",
                 "protocols": len(self.cdss.repo.list_all()),
-                "rules": 35,
+                "rules": 45,
                 "drug_inserts": len(self.drug_repo.list_all()),
                 "guidelines": len(self.collector.list_sources()),
+                "symptoms": symptoms_count,
                 "articles": len(self.graph.pages),
             })
         elif path in ("/v1/models", "/models"):
@@ -1499,6 +1502,67 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": "Drug monograph not found", "query": drug_name}, status=404)
         elif path in ("/api/wiki/doc", "/api/knowledge/doc"):
             self._handle_wiki_doc(query_params)
+        elif path == "/api/symptoms":
+            q = query_params.get("q", [""])[0].strip()
+            sym_dir = self.root_dir / "wiki" / "symptoms"
+            symptoms_list = []
+            if sym_dir.exists():
+                for f in sorted(sym_dir.glob("*.md")):
+                    txt = f.read_text(encoding="utf-8")
+                    title_m = re.search(r"title:\s*(.+)", txt)
+                    id_m = re.search(r"id:\s*(.+)", txt)
+                    title = title_m.group(1).strip() if title_m else f.stem
+                    sym_id = id_m.group(1).strip() if id_m else f.stem
+                    
+                    aliases = []
+                    alias_m = re.search(r"aliases:\s*\n((?:\s*-\s*[^\n]+\n)+)", txt)
+                    if alias_m:
+                        aliases = [l.strip()[2:].strip() for l in alias_m.group(1).splitlines() if l.strip().startswith("- ")]
+                    
+                    red_flags = []
+                    rf_section = re.search(r"## 二、[^\n]*\n(.*?)(?=\n## |\Z)", txt, re.DOTALL)
+                    if rf_section:
+                        rf_lines = re.findall(r"-\s*\*\*([^*]+)\*\*", rf_section.group(1))
+                        red_flags = rf_lines if rf_lines else []
+                    
+                    if q:
+                        if (q.lower() not in title.lower() and 
+                            not any(q.lower() in a.lower() for a in aliases) and
+                            q.lower() not in txt.lower()):
+                            continue
+                            
+                    symptoms_list.append({
+                        "id": sym_id,
+                        "title": title,
+                        "aliases": aliases,
+                        "redFlags": red_flags[:5],
+                        "relPath": f"wiki/symptoms/{f.name}",
+                    })
+            self._send_json({"total": len(symptoms_list), "symptoms": symptoms_list})
+        elif path.startswith("/api/symptoms/"):
+            sym_id_or_name = urllib.parse.unquote(path[len("/api/symptoms/"):])
+            sym_dir = self.root_dir / "wiki" / "symptoms"
+            matched_file = None
+            if sym_dir.exists():
+                for f in sym_dir.glob("*.md"):
+                    if f.stem == sym_id_or_name or f.name == sym_id_or_name:
+                        matched_file = f
+                        break
+                    txt = f.read_text(encoding="utf-8")
+                    if f"id: {sym_id_or_name}" in txt or f"title: {sym_id_or_name}" in txt:
+                        matched_file = f
+                        break
+            if matched_file:
+                raw_text = matched_file.read_text(encoding="utf-8")
+                html_body = self._markdown_to_html(raw_text)
+                self._send_json({
+                    "id": matched_file.stem,
+                    "title": matched_file.stem,
+                    "rawText": raw_text,
+                    "html": html_body,
+                })
+            else:
+                self._send_json({"error": "Symptom differential tree not found", "query": sym_id_or_name}, status=404)
         else:
             self.send_response(404)
             self.end_headers()
