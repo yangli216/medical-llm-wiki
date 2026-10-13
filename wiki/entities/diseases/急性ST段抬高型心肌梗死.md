@@ -1,6 +1,7 @@
 ---
 title: 急性ST段抬高型心肌梗死
 type: disease
+icd10: I21.3
 tags:
   - 疾病/心血管系统
   - 心血管急重症

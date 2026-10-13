@@ -50,6 +50,12 @@ def cmd_lint(args):
         sys.exit(1)
 
 
+def cmd_audit_authority(args):
+    from tools.linter.authority_auditor import AuthorityAuditor
+    auditor = AuthorityAuditor(ROOT_DIR)
+    print(auditor.generate_report())
+
+
 def cmd_index(args):
     searcher = WikiSearcher(ROOT_DIR)
     count = searcher.index_wiki(force=True)
@@ -290,6 +296,9 @@ def main():
     p_calc.add_argument("calculator", help="计算器名称 (cha2ds2_vasc, has_bled, curb_65, centor, renal_clearance, child_pugh, pediatric_fluid)")
     p_calc.add_argument("params", nargs="?", default="{}", help="入参 JSON 字符串，例如 '{\"age\": 68, \"gender\": \"男\", \"htn\": true}'")
 
+    # audit-authority
+    p_auth = subparsers.add_parser("audit-authority", aliases=["authority"], help="执行知识库权威性、发布机构与循证可信度专项审计")
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
@@ -298,6 +307,8 @@ def main():
     dispatch = {
         "status": cmd_status,
         "lint": cmd_lint,
+        "audit-authority": cmd_audit_authority,
+        "authority": cmd_audit_authority,
         "index": cmd_index,
         "rename-page": cmd_rename_page,
         "search": cmd_search,
