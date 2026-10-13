@@ -622,7 +622,7 @@ class ClinicalCalculatorRegistry:
             "riskStratum": stratum,
             "recommendation": rec,
             "positiveCriteria": details,
-            "guideline": "《急性阑尾炎诊治专家共识（2023）》（SRC-CSES-APP-2023-01）",
+            "guideline": "《国家卫生健康委急性阑尾炎临床路径与中华医学会外科学诊疗规范》（SRC-CSES-APP-2023-01）",
         }
 
     # -------------------------------------------------------------------------

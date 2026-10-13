@@ -2370,7 +2370,7 @@ status: verified
             code_spans = []
             def save_code(m):
                 code_spans.append(html.escape(m.group(1)))
-                return f"__CODE_SPAN_{len(code_spans)-1}__"
+                return f"%%CODESPAN{len(code_spans)-1}%%"
             text = re.sub(r"`([^`]+)`", save_code, text)
 
             # 2. [[WikiLink|Alias]] or [[WikiLink]]
@@ -2399,7 +2399,7 @@ status: verified
 
             # 7. Restore code spans
             for idx, val in enumerate(code_spans):
-                text = text.replace(f"__CODE_SPAN_{idx}__", f"<code>{val}</code>")
+                text = text.replace(f"%%CODESPAN{idx}%%", f"<code>{val}</code>")
 
             return text
 
