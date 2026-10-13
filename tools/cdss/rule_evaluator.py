@@ -103,6 +103,7 @@ class RuleEvaluator:
                     "title": rule.get("title", ""),
                     "message": rule.get("message", ""),
                     "guideline": rule.get("guideline") or rule.get("evidence", ""),
+                    "alternatives": rule.get("alternatives", []),
                 })
 
         return alerts
@@ -168,6 +169,7 @@ class RuleEvaluator:
                     "title": rule.get("title", ""),
                     "reason": rule.get("reason") or rule.get("message", ""),
                     "evidence": rule.get("evidence", ""),
+                    "alternatives": rule.get("alternatives", []),
                 })
 
         return alerts

@@ -213,6 +213,14 @@ class TestRhnLiveIntegration(unittest.TestCase):
         self.assertTrue(any("糖皮质激素" in t for t in alert_titles))
         self.assertTrue(any("非甾体抗炎药" in t or "NSAIDs" in t for t in alert_titles))
 
+        # Verify alternatives in safetyAlerts
+        steroid_alert = next((a for a in alerts if "糖皮质激素" in a["title"]), None)
+        self.assertIsNotNone(steroid_alert)
+        self.assertIn("alternatives", steroid_alert)
+        self.assertTrue(len(steroid_alert["alternatives"]) >= 1)
+        self.assertEqual(steroid_alert["alternatives"][0]["name"], "塞来昔布胶囊")
+        self.assertIsNotNone(steroid_alert["alternatives"][0]["orderDraft"])
+
     def test_05_pmphai_knowledge_search_gateway(self):
         """Verifies PmphaiClinicalKnowledgeGateway ProviderResult[] protocol."""
         res = self._post_json("/api/knowledge/search", {"query": "高血压", "limit": 3})

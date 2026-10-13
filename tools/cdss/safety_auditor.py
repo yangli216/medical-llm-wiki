@@ -111,6 +111,7 @@ class ComprehensiveSafetyAuditor:
                 "title": ma.get("title") or "药品说明书安全预警",
                 "message": ma.get("reason") or ma.get("message", ""),
                 "guideline": ma.get("evidence") or "国家药品监督管理局法定核准说明书",
+                "alternatives": ma.get("alternatives", []),
             }
             if not any(x.get("ruleId") == unified["ruleId"] for x in all_candidate_alerts):
                 all_candidate_alerts.append(unified)
@@ -231,6 +232,11 @@ class ComprehensiveSafetyAuditor:
             "preflightChecks": preflight_checks,
             "inferredPatientParameters": inferred,
             "allAlerts": interaction_alerts + contraindication_alerts + dosage_alerts,
+            "alternatives": [
+                alt
+                for a in (interaction_alerts + contraindication_alerts + dosage_alerts)
+                for alt in a.get("alternatives", [])
+            ],
         }
 
     @staticmethod

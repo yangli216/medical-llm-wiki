@@ -152,6 +152,57 @@ class TestCdssSafetyAuditor(unittest.TestCase):
         self.assertEqual(bounds["contraindications"]["evaluationCode"], "PASS")
         self.assertEqual(bounds["dosageLimits"]["evaluationCode"], "PASS")
 
+    # -------------------------------------------------------------------------
+    # 4. Alternative Re-routing Contract Tests
+    # -------------------------------------------------------------------------
+    def test_alternatives_rerouting_contracts(self):
+        # 1. Test KOA Systemic Steroid -> Re-routing to Celecoxib / Topical Diclofenac
+        res_koa = self.safety_auditor.audit_preflight_safety(
+            medications=["地塞米松片 0.75mg qd"],
+            patient_context={"age": 65, "gender": "女", "history": "双膝骨关节炎伴疼痛", "is_koa": True}
+        )
+        self.assertFalse(res_koa["canPrescribe"])
+        koa_alert = next((a for a in res_koa["allAlerts"] if a.get("ruleId") == "RULE-KOA-SYSTEMIC-STEROID"), None)
+        self.assertIsNotNone(koa_alert)
+        self.assertTrue(len(koa_alert["alternatives"]) >= 2)
+        
+        # Verify alternative order draft structure
+        alt_cele = koa_alert["alternatives"][0]
+        self.assertEqual(alt_cele["name"], "塞来昔布胶囊")
+        self.assertIsNotNone(alt_cele["orderDraft"])
+        self.assertEqual(alt_cele["orderDraft"]["routeCode"], "PO")
+        self.assertEqual(alt_cele["orderDraft"]["frequencyCode"], "QD")
+        self.assertEqual(alt_cele["orderDraft"]["doseValue"], 200)
+        self.assertEqual(alt_cele["orderDraft"]["doseUnit"], "mg")
+        self.assertIn("膝骨关节炎", alt_cele["rationale"])
+
+        # 2. Test Pediatric Aspirin -> Re-routing to Ibuprofen / Paracetamol
+        res_ped = self.safety_auditor.audit_preflight_safety(
+            medications=["阿司匹林肠溶片 100mg qd"],
+            patient_context={"age": 6, "gender": "男", "diagnosis": "急性上呼吸道感染高热"}
+        )
+        self.assertFalse(res_ped["canPrescribe"])
+        ped_alert = next((a for a in res_ped["allAlerts"] if a.get("ruleId") == "RULE-PEDIATRIC-ASPIRIN"), None)
+        self.assertIsNotNone(ped_alert)
+        self.assertTrue(len(ped_alert["alternatives"]) >= 2)
+        alt_names = [a["name"] for a in ped_alert["alternatives"]]
+        self.assertTrue(any("布洛芬" in n for n in alt_names))
+        self.assertTrue(any("对乙酰氨基酚" in n for n in alt_names))
+
+        # 3. Test Dual RAS Blockade -> Re-routing to CCB (Amlodipine)
+        res_ras = self.safety_auditor.audit_preflight_safety(
+            medications=["马来酸依那普利片 10mg qd", "缬沙坦胶囊 80mg qd"],
+            patient_context={"age": 58, "gender": "男", "diagnosis": "原发性高血压"}
+        )
+        self.assertFalse(res_ras["canPrescribe"])
+        ras_alert = next((a for a in res_ras["allAlerts"] if a.get("ruleId") == "RULE-SAFETY-RAS-DUAL"), None)
+        self.assertIsNotNone(ras_alert)
+        self.assertTrue(len(ras_alert["alternatives"]) >= 1)
+        self.assertEqual(ras_alert["alternatives"][0]["name"], "苯磺酸氨氯地平片")
+
+        # 4. Verify top-level aggregated alternatives
+        self.assertTrue(len(res_ras["alternatives"]) >= 1)
+
 
 if __name__ == "__main__":
     unittest.main()

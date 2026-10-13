@@ -2140,6 +2140,7 @@ status: verified
                     "level": "CRITICAL" if a.get("severity") == "RED" else "WARNING",
                     "title": a.get("title", "处方安全预警"),
                     "detail": a.get("message", ""),
+                    "alternatives": a.get("alternatives", []),
                 })
                 seen_alert_titles.add(a.get("title"))
 
@@ -2153,6 +2154,7 @@ status: verified
                             "level": "CRITICAL" if da.get("level") == "BLOCK" else "WARNING",
                             "title": title,
                             "detail": f"{da.get('reason', '')} (依据：{da.get('evidence', '')})",
+                            "alternatives": da.get("alternatives", []),
                         })
                         seen_alert_titles.add(title)
 

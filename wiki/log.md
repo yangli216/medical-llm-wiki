@@ -13,6 +13,26 @@ status: verified
 
 ---
 
+## [2026-10-13] rhn-alternative-rerouting-v2.4 | 上线处方前置拦截一键平替方案推荐 (Alternative Re-routing)
+
+- **动作类型**: 知识库与 RHN 深度协同工程化升级（Top 1 核心痛点攻坚）
+- **触发背景**: 解决 CDSS 拦截后仅有冰冷警告导致医生挫败感的行业痛点，构建“权威指南平替数据库”，支持医生站前端一键采纳合规替换处方。
+- **核心完成项**:
+  1. **规则层扩展 (`rules/clinical_safety_rules.json`)**:
+     - 为膝骨关节炎激素禁用、儿童发热阿司匹林、儿童喹诺酮/洛哌丁胺、双重 RAS 阻断、老年人第一代抗组胺药、前列腺增生抗胆碱药、藿香正气水双硫仑、妊娠期磺脲类降糖药等高频阻断规则全面注入结构化 `alternatives`。
+     - 每一条平替均携带规范药品名称、品规、完整 `orderDraft`（给药途径、频次、单次剂量、疗程）、指南换药理由及溯源 sourceGuideline。
+  2. **规则评估与预检引擎打通 (`tools/cdss/rule_evaluator.py` & `tools/cdss/safety_auditor.py`)**:
+     - `evaluate_clinical_prescription` 与 `evaluate_monograph_audit` 自动携带并透传命中规则的平替方案。
+     - `ComprehensiveSafetyAuditor` 在输出 `evaluationBoundaries` 与 `preflightChecks` 时保留结构化 `alternatives`，并在顶层聚合方便前端直接读取。
+  3. **OpenAI 兼容协议与 Web 网关打通 (`tools/server/app.py`)**:
+     - `/v1/chat/completions` 的 `RECORD_DIAGNOSIS` 分支在输出 `safetyAlerts` 时完整附带 `alternatives`。
+  4. **全量自动化测试覆盖**:
+     - 扩展 `tests/test_safety_auditor.py`（新增 `test_alternatives_rerouting_contracts` 测试用例）。
+     - 扩展 `tests/test_rhn_live_integration.py`（新增对真实 OpenAI 兼容网关输出 `safetyAlerts[].alternatives` 的断言）。
+     - 全量 79 项单元与端到端测试 100% 绿色通过。
+
+---
+
 ## [2026-10-06] init | 知识库架构初始化与规范确立
 - **动作类型**: 初始化与规范发布
 - **完成项**:

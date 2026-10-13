@@ -54,7 +54,35 @@
             ]
           }
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "苯磺酸氨氯地平片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "《中国高血压防治指南》推荐保留单一RASi并联合二氢吡啶类CCB（A+C方案），协同降压且踝部水肿率低",
+          "sourceGuideline": "SRC-CMA-HTN-2024-01"
+        },
+        {
+          "name": "吲达帕胺缓释片",
+          "specification": "1.5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 1.5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "《指南》推荐A+D联合方案，RASi联合噻嗪样利尿剂协同降压且抵消低血钾风险",
+          "sourceGuideline": "SRC-CMA-HTN-2024-01"
+        }
+      ]
     },
     {
       "id": "RULE-SAFETY-PREGNANCY-RAS",
@@ -243,7 +271,35 @@
           "赖氨匹林",
           "巴米尔"
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "布洛芬口服混悬液",
+          "specification": "100ml:2g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "PRN",
+            "doseValue": 10,
+            "doseUnit": "mg/kg",
+            "durationValue": 3
+          },
+          "rationale": "《中国儿童发热指南》推荐儿童退热首选布洛芬混悬液，按体重 10mg/kg 给药，退热迅速且抗炎",
+          "sourceGuideline": "SRC-CMA-PED-2023-01"
+        },
+        {
+          "name": "对乙酰氨基酚混悬滴剂",
+          "specification": "15ml:1.5g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "PRN",
+            "doseValue": 15,
+            "doseUnit": "mg/kg",
+            "durationValue": 3
+          },
+          "rationale": "《指南》推荐儿童退热一线药，胃肠及血小板影响小，无Reye综合征风险",
+          "sourceGuideline": "SRC-CMA-PED-2023-01"
+        }
+      ]
     },
     {
       "id": "RULE-PEDIATRIC-QUINOLONE",
@@ -262,7 +318,35 @@
           "氧氟沙星",
           "氟沙星"
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "阿莫西林克拉维酸钾干混悬剂(4:1)",
+          "specification": "0.2285g/袋",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 0.2285,
+            "doseUnit": "g",
+            "durationValue": 7
+          },
+          "rationale": "《儿童呼吸道感染专家共识》推荐敏感菌感染一线广谱青霉素复方制剂，安全性好无软骨毒性",
+          "sourceGuideline": "SRC-CMA-PED-2023-01"
+        },
+        {
+          "name": "头孢克洛干混悬剂",
+          "specification": "0.125g/袋",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 0.125,
+            "doseUnit": "g",
+            "durationValue": 7
+          },
+          "rationale": "二代口服头孢菌素，覆盖常见呼吸道与敏感革兰氏菌，儿童耐受性良好",
+          "sourceGuideline": "SRC-CMA-PED-2023-01"
+        }
+      ]
     },
     {
       "id": "RULE-PEDIATRIC-LOPERAMIDE",
@@ -278,7 +362,35 @@
           "易蒙停",
           "地芬诺酯"
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "蒙脱石散",
+          "specification": "3g/袋",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 3,
+            "doseUnit": "g",
+            "durationValue": 3
+          },
+          "rationale": "《中国儿童急性感染性腹泻病指南》推荐物理吸附病原与毒素，保护肠黏膜屏障，不麻痹肠蠕动",
+          "sourceGuideline": "SRC-CMA-PED-2022-01"
+        },
+        {
+          "name": "口服补液盐散(III)",
+          "specification": "5.125g/袋",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "PRN",
+            "doseValue": 5.125,
+            "doseUnit": "g",
+            "durationValue": 3
+          },
+          "rationale": "预防和纠正轻中度脱水金标准，低渗配方减少粪便量和腹泻持续时间",
+          "sourceGuideline": "SRC-CMA-PED-2022-01"
+        }
+      ]
     },
     {
       "id": "RULE-TCM-XIAOKE-SULFONYLUREA",
@@ -329,7 +441,35 @@
             ]
           }
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "疏风解毒胶囊",
+          "specification": "0.4g*36粒",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 1.6,
+            "doseUnit": "g",
+            "durationValue": 5
+          },
+          "rationale": "纯中药抗病毒清热解毒制剂，不含西药扑热息痛成分，避免重复叠加造成肝毒性",
+          "sourceGuideline": "SRC-NAT-TCM-2021-01"
+        },
+        {
+          "name": "金花清感颗粒",
+          "specification": "5g*6袋",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 5,
+            "doseUnit": "g",
+            "durationValue": 5
+          },
+          "rationale": "纯中药疏风宣肺解热，不含对乙酰氨基酚，无肝坏死蓄积风险",
+          "sourceGuideline": "SRC-NAT-TCM-2021-01"
+        }
+      ]
     },
     {
       "id": "RULE-HERPES-VALACYCLOVIR-RENAL",
@@ -374,7 +514,35 @@
           "has_cad",
           "has_stroke"
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "对乙酰氨基酚片",
+          "specification": "0.5g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "PRN",
+            "doseValue": 0.5,
+            "doseUnit": "g",
+            "durationValue": 3
+          },
+          "rationale": "《中国偏头痛指南》推荐心血管高危患者急性期首选单纯对乙酰氨基酚，无血管痉挛收缩风险",
+          "sourceGuideline": "SRC-CMA-NEUR-2022-01"
+        },
+        {
+          "name": "塞来昔布胶囊",
+          "specification": "0.2g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "PRN",
+            "doseValue": 0.2,
+            "doseUnit": "g",
+            "durationValue": 3
+          },
+          "rationale": "选择性COX-2抑制剂按需镇痛，对冠脉血流动力学收缩影响远小于曲普坦类",
+          "sourceGuideline": "SRC-CMA-NEUR-2022-01"
+        }
+      ]
     },
     {
       "id": "RULE-OSTEO-BISPHOSPHONATE-RENAL",
@@ -729,7 +897,35 @@
           "氢化可的松注射液",
           "倍他米松注射液"
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "塞来昔布胶囊",
+          "specification": "0.2g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 200,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "《膝骨关节炎基层诊疗指南》中重度疼痛首选高选择性COX-2抑制剂口服，胃肠道耐受性显著优于传统NSAIDs且不损伤软骨",
+          "sourceGuideline": "SRC-CMA-ORTH-2019-01"
+        },
+        {
+          "name": "双氯芬酸钠凝胶贴膏",
+          "specification": "50mg/贴",
+          "orderDraft": {
+            "routeCode": "TOPICAL",
+            "frequencyCode": "BID",
+            "doseValue": 1,
+            "doseUnit": "贴",
+            "durationValue": 7
+          },
+          "rationale": "《指南》轻中度关节疼痛一线首选局部外用透皮贴剂，全身血药暴露量极低，保护关节软骨",
+          "sourceGuideline": "SRC-CMA-ORTH-2019-01"
+        }
+      ]
     },
     {
       "id": "RULE-ANTIHISTAMINE-ELDERLY",
@@ -747,7 +943,35 @@
           "异丙嗪",
           "赛庚啶"
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "氯雷他定片",
+          "specification": "10mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 10,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "《中国荨麻疹指南》老年人优先选用第二代非镇静抗组胺药，无中枢抑制与抗胆碱能副作用，防跌倒骨折",
+          "sourceGuideline": "SRC-CMA-DERM-2022-01"
+        },
+        {
+          "name": "盐酸西替利嗪片",
+          "specification": "10mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 10,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "第二代外周H1受体阻滞剂，起效快，嗜睡与认知影响远低于第一代抗组胺药",
+          "sourceGuideline": "SRC-CMA-DERM-2022-01"
+        }
+      ]
     },
     {
       "id": "RULE-BPH-ANTICHOLINERGIC",
@@ -775,7 +999,22 @@
           "颠茄",
           "奥昔布宁"
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "盐酸坦索罗辛缓释胶囊",
+          "specification": "0.2mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QN",
+            "doseValue": 0.2,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "《良性前列腺增生基层指南》高选择性α1A受体阻滞剂，松弛膀胱颈平滑肌，缓解排尿阻力且不诱发尿潴留",
+          "sourceGuideline": "SRC-CMA-URO-2019-01"
+        }
+      ]
     },
     {
       "id": "RULE-RABIES-III-PASSIVE-IMMUNITY",
@@ -879,7 +1118,22 @@
             ]
           }
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "藿香正气口服液(无醇型)",
+          "specification": "10ml*10支",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "BID",
+            "doseValue": 10,
+            "doseUnit": "ml",
+            "durationValue": 5
+          },
+          "rationale": "《中成药临床应用指导原则》推荐无醇水提制剂，辅料不含乙醇，与头孢/甲硝唑合用无双硫仑反应风险",
+          "sourceGuideline": "SRC-NAT-TCM-2021-01"
+        }
+      ]
     },
     {
       "id": "RULE-TCM-POPPY-CONTRAINDICATION",
@@ -896,7 +1150,22 @@
           "is_pediatric",
           "is_pregnant"
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "急支糖浆",
+          "specification": "100ml",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 15,
+            "doseUnit": "ml",
+            "durationValue": 5
+          },
+          "rationale": "纯中草药清热化痰宣肺止咳，不含罂粟壳等成瘾性阿片生物碱，儿童及孕妇安全性高",
+          "sourceGuideline": "SRC-NAT-TCM-2021-01"
+        }
+      ]
     },
     {
       "id": "RULE-TCM-XIANLINGGUBAO-HEPATIC",
@@ -938,7 +1207,35 @@
           "卡格列净",
           "消渴丸"
         ]
-      }
+      },
+      "alternatives": [
+        {
+          "name": "门冬胰岛素注射液",
+          "specification": "3ml:300单位(笔芯)",
+          "orderDraft": {
+            "routeCode": "IH",
+            "frequencyCode": "TID",
+            "doseValue": 4,
+            "doseUnit": "U",
+            "durationValue": 30
+          },
+          "rationale": "《妊娠期高血糖诊治指南》推荐餐时短效/速效胰岛素类似物，不通过胎盘屏障，母婴安全性最佳",
+          "sourceGuideline": "SRC-CMA-GYN-2022-01"
+        },
+        {
+          "name": "精蛋白锌重组人胰岛素注射液",
+          "specification": "3ml:300单位(笔芯)",
+          "orderDraft": {
+            "routeCode": "IH",
+            "frequencyCode": "QN",
+            "doseValue": 4,
+            "doseUnit": "U",
+            "durationValue": 30
+          },
+          "rationale": "指南推荐基础中效人胰岛素，睡前皮下注射控制空腹高血糖，胎儿安全性良好",
+          "sourceGuideline": "SRC-CMA-GYN-2022-01"
+        }
+      ]
     },
     {
       "id": "RULE-FEBRILE-SEIZURE-NO-PREVENTIVE-ANTIPYRETIC",
