@@ -16,7 +16,7 @@ sources:
   - SRC-CMA-CARD-2023-03
   - SRC-CMA-CARD-2019-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 他汀类与PCSK9抑制剂 (Lipid-Lowering Therapies)

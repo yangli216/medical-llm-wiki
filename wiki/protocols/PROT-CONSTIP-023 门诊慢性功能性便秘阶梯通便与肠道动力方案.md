@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-GAST-2020-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 门诊慢性功能性便秘阶梯通便与肠道动力方案

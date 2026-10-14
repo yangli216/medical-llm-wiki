@@ -1,12 +1,20 @@
 # RHN 门诊医生站 AI 治疗方案推荐与 CDSS 知识赋能集成指南
 
-本文档面向 **RHN 智慧门诊医生站**（`/Users/yangli/Documents/rhn`）开发团队，阐述如何通过医学权威知识库（`Medical LLM Wiki`，`/Users/yangli/Documents/llm`）的 **35 套标准化临床决策协议**、**43 部国家权威指南** 及 **35 条 CDSS 处方前置安全拦截规则** 进行真实工业级落地赋能，杜绝任何 mock 数据。
+本文档面向 RHN 门诊医生站集成，说明协议草稿、检索和规则检查接口。资产数量以 `GET /api/inventory` 和 README 自动统计为准，原文及临床审核状态以 `GET /api/quality` 为准。
+
+关键临床 REST 响应及 OpenAI 返回的 JSON 内容新增 `clinicalReview`：
+
+```json
+{"clinicalReview": {"status": "pending", "requiresClinicianReview": true}}
+```
+
+RHN 采用建议时必须同时读取审核状态。`PASS`、`canPrescribe` 或未出现告警仅代表当前配置规则的计算结果；待审核内容需要医师/药师核验，不能自动作为最终处方许可。SSE 拼接后的 JSON 使用相同字段。审核记录的完整性不认证审核人执业身份，机构身份与审批权限由下游流程负责。
 
 ---
 
 ## 1. 赋能架构总览与双模接入网关
 
-知识库服务（`http://127.0.0.1:8080`）原生提供两种集成接入路径：
+知识库服务（`http://127.0.0.1:8788`）原生提供两种集成接入路径：
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -30,14 +38,14 @@
 │                                                                        │
 │  [原生 CDSS REST API]                                                  │
 │   • POST /api/cdss/compile-rhn-plan (直接输出 PlanIntent 与 orderDraft) │
-│   • POST /api/cdss/audit (35 条国家标准处方前置安全拦截)               │
+│   • POST /api/cdss/audit (已配置规则的处方前置检查)               │
 │   • GET /api/cdss/protocols & GET /api/cdss/protocols/<id>             │
 │                                                                        │
 │  ┌───────────────────────────────────────────────────────────────────┐ │
 │  │ 核心知识基石：                                                     │ │
-│  │  - 35 套门诊标准化推荐协议 (PROT-HTN-001 ~ PROT-RABIES-035)       │ │
-│  │  - 35 条 CDSS 强行阻断与警戒规则 (Rule 01 ~ Rule 35)              │ │
-│  │  - 43 部国家权威医学指南 + 219 篇互联词条 + SQLite FTS5 引擎       │ │
+│  │  - 门诊协议整理稿（数量由 /api/inventory 提供）       │ │
+│  │  - CDSS 阻断与警戒规则（包含待审核内容）              │ │
+│  │  - 来源整理 + 互联词条 + SQLite FTS5 引擎       │ │
 │  └───────────────────────────────────────────────────────────────────┘ │
 └────────────────────────────────────────────────────────────────────────┘
 ```
@@ -56,14 +64,14 @@ rhn:
     mode: ENABLED
     provider: openai-compatible
     model: medical-cdss-wiki
-    endpoint: http://127.0.0.1:8080/v1/chat/completions
-    knowledge-endpoint: http://127.0.0.1:8080/api/knowledge/search
+    endpoint: http://127.0.0.1:8788/v1/chat/completions
+    knowledge-endpoint: http://127.0.0.1:8788/api/knowledge/search
     request-timeout: PT30S
     max-output-tokens: 3000
     suggestion-ttl: PT30M
 ```
 
-配置后，RHN 即可在以下业务链路中获得 100% 真实的权威数据赋能：
+配置后，RHN 可在以下链路中使用资料整理和规则检查结果：
 1. **方案编译器（`compilePlan` / `compilePlanStreaming`）**：
    - 输入病种关键词（如“膝骨关节炎”、“原发性高血压”、“良性前列腺增生”、“犬咬伤暴露”）；
    - 网关自动命中协议，以毫秒级返回结构化 `PlanIntent`；
@@ -71,9 +79,9 @@ rhn:
    - 包含标准 ICD-10 诊断及具备真实剂型规格的药品/检验医嘱条目。
 2. **智能接诊辅助（`analyze`）**：
    - 自动生成初步诊断候选（`diagnosisCandidates`）、6 段门诊病历草稿（`recordDraft`）及处置建议（`treatmentRecommendations`）；
-   - 同步调用 35 条 CDSS 规则进行处方安全审核，返回真实严重程度的 `safetyAlerts`。
+   - 调用当前配置的 CDSS 规则进行计算，返回规则定义的 `safetyAlerts`。
 3. **知识检索（`knowledgeSearch`）**：
-   - 医生在医生站搜索疾病或药物时，直通 219 篇权威指南图谱，返回国家指南出处与引用证据。
+   - 医生在医生站搜索疾病或药物时，检索当前 Wiki 图谱，返回登记来源与整理内容；原文及审核状态须另行核验。
 
 ---
 
@@ -88,7 +96,7 @@ rhn:
   "input": "膝骨关节炎"
 }
 ```
-- **真实响应数据（绝无 mock）**:
+- **响应结构示例**:
 ```json
 {
   "success": true,
@@ -193,9 +201,9 @@ rhn:
 
 ---
 
-## 4. 基层 35 套标准协议与 35 条 CDSS 安全规则清单
+## 4. 门诊协议与安全规则示例
 
-### A. 35 套门诊标准化诊疗协议 (Protocols)
+### A. 门诊协议示例（非完整清单，完整数据见 /api/cdss/protocols）
 | 协议编号 | 疾病/场景名称 | ICD-10 编码 | 临床科室分类 |
 | :--- | :--- | :--- | :--- |
 | `PROT-HTN-001` | 原发性高血压门诊规范诊疗方案 | `I10` | 心血管内科 |
@@ -234,7 +242,7 @@ rhn:
 | `PROT-BPH-034` | 良性前列腺增生门诊改善排尿与联合缩腺方案 | `N40` | 泌尿外科/全科 |
 | `PROT-RABIES-035`| 门诊动物致伤暴露后规范处置与免疫接种方案 | `Z20.3` | 急诊/犬伤门诊/全科 |
 
-### B. 35 条 CDSS 处方前置安全拦截规则
+### B. 处方规则示例（完整清单见 rules/）
 包含：
 - `RULE-SAFETY-RAS-DUAL`（严禁双重 RAS 轴阻断）
 - `RULE-SAFETY-PREGNANCY-RAS`（妊娠期禁用普利/沙坦类）
@@ -247,15 +255,15 @@ rhn:
 - `RULE-TETANUS-DEEP-DIRTY`（深部污染创面防范破伤风）
 - `RULE-BPH-HYPOTENSION-TAMSULOSIN`（高龄多重降压患者坦索罗辛体位性低血压警戒）
 - `RULE-ALLERGY-PENICILLIN`（青霉素过敏患者严禁处方阿莫西林）
-等 35 项权威规则。
+以上为规则示例，不代表已完成临床审核。
 
 ---
 
 ## 5. 服务启动与自动化测试
 
 ```bash
-# 启动双模知识库与网关服务（默认端口 8080）
-python3 tools/cli.py serve --port 8080
+# 启动知识库与网关服务（此处使用 8788，默认端口为 8080）
+python3 -m tools.cli serve --port 8788
 
 # 运行真实集成联调测试套件（无 mock，真实验证）
 python3 -m unittest tests/test_rhn_live_integration.py

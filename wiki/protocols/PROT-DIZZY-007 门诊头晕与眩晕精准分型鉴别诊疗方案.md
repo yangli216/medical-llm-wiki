@@ -16,7 +16,7 @@ sources:
   - SRC-CSGP-SYMP-2020-01
   - SRC-CMA-NEUR-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 门诊头晕与眩晕精准分型鉴别诊疗方案

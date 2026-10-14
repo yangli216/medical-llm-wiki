@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CMA-ORTH-CERV-2022-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 《颈椎病规范化阶梯诊疗专家共识（2022）》研读

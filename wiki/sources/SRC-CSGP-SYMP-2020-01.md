@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CSGP-SYMP-2020-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《头晕/眩晕基层诊疗指南（2020年）》研读

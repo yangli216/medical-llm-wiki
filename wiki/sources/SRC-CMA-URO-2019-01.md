@@ -1,5 +1,5 @@
 ---
-title: SRC-CMA-URO-2019-01
+title: 《良性前列腺增生基层诊疗指南（2019年）》来源解析
 type: source
 tags:
   - 来源/泌尿外科
@@ -8,7 +8,7 @@ tags:
 sources:
   - SRC-CMA-URO-2019-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《良性前列腺增生基层诊疗指南（2019年）》权威研读

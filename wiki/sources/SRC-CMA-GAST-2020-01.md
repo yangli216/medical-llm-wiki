@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-GAST-2020-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《慢性便秘基层诊疗指南（2020年）》研读

@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CSES-APP-2023-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # Alvarado 急性阑尾炎临床危险评分标准

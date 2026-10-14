@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-GYN-2022-01
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 妊娠期糖尿病门诊生活方式干预与胰岛素精准控糖方案

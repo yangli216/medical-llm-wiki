@@ -13,7 +13,7 @@ sources:
   - SRC-PMPH-DIAG-2024-01
   - SRC-CMA-CARD-2019-03
 last_updated: "2026-10-13"
-status: verified
+status: draft
 ---
 
 # Wells 肺栓塞 (PE) 临床概率预测评分规范

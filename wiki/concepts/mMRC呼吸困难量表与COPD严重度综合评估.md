@@ -13,7 +13,7 @@ sources:
   - SRC-PMPH-DIAG-2024-01
   - SRC-CMA-RESP-2021-01
 last_updated: "2026-10-13"
-status: verified
+status: draft
 ---
 
 # mMRC 呼吸困难量表与 COPD 综合评估规范

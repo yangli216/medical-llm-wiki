@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-NHC-ONC-2024-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《原发性肝癌诊疗指南（2024年版）》研读

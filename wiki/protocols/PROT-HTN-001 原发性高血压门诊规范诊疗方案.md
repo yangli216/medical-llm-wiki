@@ -16,7 +16,7 @@ sources:
   - SRC-CMA-CARD-2024-01
   - SRC-CMA-CARD-2019-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 原发性高血压门诊规范诊疗方案

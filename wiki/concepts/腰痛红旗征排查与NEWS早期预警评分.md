@@ -13,7 +13,7 @@ sources:
   - SRC-CSGP-MSK-2023-01
   - SRC-NHC-PRIM-2022-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 腰痛红旗征排查与NEWS早期预警评分

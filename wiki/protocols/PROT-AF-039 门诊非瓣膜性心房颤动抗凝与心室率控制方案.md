@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-CARD-2021-02
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 门诊非瓣膜性心房颤动抗凝与心室率控制方案

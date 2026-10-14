@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-NHC-DIS-2023-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 门诊动物致伤暴露后规范处置与免疫接种方案

@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CMA-CARD-2023-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # ASCVD危险分层与LDL-C控制靶标

@@ -14,7 +14,7 @@ sources:
   - SRC-CDS-ENDO-2024-01
   - SRC-CMA-CARD-2024-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # SGLT2抑制剂 (SGLT2 Inhibitors)

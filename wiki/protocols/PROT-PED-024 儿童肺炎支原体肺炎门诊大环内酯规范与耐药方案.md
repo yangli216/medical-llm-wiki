@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-NHC-PED-2023-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 儿童肺炎支原体肺炎门诊大环内酯规范与耐药方案

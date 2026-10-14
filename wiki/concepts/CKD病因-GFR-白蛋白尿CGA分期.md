@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CMA-NEPH-2024-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # CKD病因-GFR-白蛋白尿CGA分期

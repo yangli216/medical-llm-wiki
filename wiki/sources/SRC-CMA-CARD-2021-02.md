@@ -10,7 +10,7 @@ sources:
   - SRC-CMA-CARD-2021-02
 authority: 中华医学会心电生理和起搏分会 / 中国医师协会心律学专业委员会
 year: 2021
-status: verified
+status: draft
 last_updated: "2026-10-09"
 ---
 

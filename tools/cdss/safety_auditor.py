@@ -16,6 +16,7 @@ from tools.cdss.parameter_normalizer import ClinicalParameterNormalizer
 from tools.cdss.rule_evaluator import RuleEvaluator
 from tools.cdss.drug_checker import DrugInsertRepository, DrugContraindicationAuditor
 from tools.cdss.dosage_auditor import DosageLimitsAuditor
+from tools.quality import audit_quality
 
 
 class ComprehensiveSafetyAuditor:
@@ -158,7 +159,7 @@ class ComprehensiveSafetyAuditor:
         # Summary Generation
         if overall_blocking:
             summary = (
-                f"【处方强行阻断】处方触发了国家药品监督管理局法定说明书或国家卫健委临床指南最高级别绝对禁忌！"
+                f"【规则阻断】处方触发了当前配置的高风险规则。"
                 f"阻断项包含：{self._summarize_alerts(interaction_alerts + contraindication_alerts + dosage_alerts, 'RED')}。"
             )
         elif overall_warning:
@@ -167,7 +168,7 @@ class ComprehensiveSafetyAuditor:
                 f"{self._summarize_alerts(interaction_alerts + contraindication_alerts + dosage_alerts, 'YELLOW')}。"
             )
         else:
-            summary = "【处方预检全部通过】经国家级指南与138份法定药品说明书核查，未检索到配伍禁忌或超极量风险。"
+            summary = f"【规则检查通过】已检索 {len(self.repo.list_all())} 篇药品整理页，当前规则未检出配伍禁忌或超极量风险。"
 
         # Construct preflight check items for RHN
         preflight_checks = [
@@ -187,25 +188,28 @@ class ComprehensiveSafetyAuditor:
                 "title": "特殊人群、生理指标与疾病禁忌核查",
                 "message": (
                     f"触发 {len(contraindication_alerts)} 项人群或疾病禁忌提示"
-                    if contraindication_alerts else "患者特征与所开药品说明书适应禁忌相符"
+                    if contraindication_alerts else "当前规则未检出特殊人群或器官功能风险"
                 ),
                 "alerts": contraindication_alerts,
             },
             {
                 "code": "CLINICAL_DOSAGE_LIMITS",
                 "status": dose_status,
-                "title": "法定日最大极量与给药频次核查",
+                "title": "整理页剂量上限与给药频次核查",
                 "message": (
                     f"触发 {len(dosage_alerts)} 项超极量用药风险提示"
-                    if dosage_alerts else "给药剂量在法定说明书安全范围以内"
+                    if dosage_alerts else "给药剂量未超过当前配置上限"
                 ),
                 "alerts": dosage_alerts,
                 "items": dosage_items,
             },
         ]
 
+        quality = audit_quality(self.root_dir)
         return {
             "success": True,
+            "clinicalReview": {"status": "approved" if quality["clinicalReady"] else "pending",
+                               "requiresClinicianReview": not quality["clinicalReady"]},
             "canPrescribe": can_prescribe,
             "level": overall_level,
             "summary": summary,
@@ -215,19 +219,19 @@ class ComprehensiveSafetyAuditor:
                 "interactions": {
                     "status": "EVALUATED",
                     "evaluationCode": int_status,
-                    "message": "已依据国家卫健委及权威专科指南完成配伍相互作用前置审查。",
+                    "message": "已执行当前配置的配伍相互作用规则；临床审核状态见 clinicalReview。",
                     "alerts": interaction_alerts,
                 },
                 "contraindications": {
                     "status": "EVALUATED",
                     "evaluationCode": contra_status,
-                    "message": "已依据国家药监局138份法定说明书完成特殊人群与器官功能截断前置审查。",
+                    "message": "已执行药品整理页对应的特殊人群与器官功能规则；临床审核状态见 clinicalReview。",
                     "alerts": contraindication_alerts,
                 },
                 "dosageLimits": {
                     "status": "EVALUATED",
                     "evaluationCode": dose_status,
-                    "message": "已完成法定日最大极量与超频次计算审查。",
+                    "message": "已按当前整理页剂量上限执行剂量与频次检查。",
                     "alerts": dosage_alerts,
                 },
             },

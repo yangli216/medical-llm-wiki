@@ -1,5 +1,5 @@
 ---
-title: SRC-NHC-DIS-2023-01
+title: 《狂犬病暴露预防处置工作规范与破伤风预防规范》来源解析
 type: source
 tags:
   - 来源/急诊医学
@@ -8,7 +8,7 @@ tags:
 sources:
   - SRC-NHC-DIS-2023-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《狂犬病暴露预防处置工作规范与破伤风预防规范》权威研读

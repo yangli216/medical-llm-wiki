@@ -13,7 +13,7 @@ sources:
   - SRC-CMA-CARD-2024-01
   - SRC-CMA-CARD-2024-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 血管紧张素受体脑啡肽酶抑制剂 (ARNI)

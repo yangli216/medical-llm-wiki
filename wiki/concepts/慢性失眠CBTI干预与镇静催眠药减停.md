@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-NEUR-2023-02
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 慢性失眠CBTI干预与镇静催眠药减停

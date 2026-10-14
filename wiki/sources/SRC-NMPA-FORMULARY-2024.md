@@ -1,5 +1,5 @@
 ---
-title: SRC-NMPA-FORMULARY-2024
+title: 《药典临床用药须知与国家基本药物处方集》来源解析
 type: source
 tags:
   - 来源/临床用药须知
@@ -8,7 +8,7 @@ tags:
 sources:
   - SRC-NMPA-FORMULARY-2024
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《中华人民共和国药典临床用药须知与国家基本药物处方集》权威研读

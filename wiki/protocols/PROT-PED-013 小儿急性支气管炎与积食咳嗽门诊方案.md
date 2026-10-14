@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-PED-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 小儿急性支气管炎与积食咳嗽门诊方案

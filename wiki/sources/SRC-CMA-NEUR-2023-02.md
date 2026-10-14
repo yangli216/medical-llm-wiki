@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-NEUR-2023-02
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《中国成人失眠诊断与治疗指南（2023版）》研读

@@ -17,7 +17,7 @@ tags:
 sources:
   - SRC-CMA-NEUR-TIA-2020-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 门诊短暂性脑缺血发作ABCD2评估与双抗急诊方案

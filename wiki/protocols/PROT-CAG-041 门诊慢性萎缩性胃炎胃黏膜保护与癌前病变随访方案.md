@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-GAST-2020-03
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 门诊慢性萎缩性胃炎胃黏膜保护与癌前病变随访方案

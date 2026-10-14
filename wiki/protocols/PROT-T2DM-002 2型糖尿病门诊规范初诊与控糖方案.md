@@ -16,7 +16,7 @@ sources:
   - SRC-CDS-ENDO-2024-01
   - SRC-CMA-ENDO-2024-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 2型糖尿病门诊规范初诊与控糖方案

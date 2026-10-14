@@ -17,7 +17,7 @@ tags:
 sources:
   - SRC-CMA-ORTH-CERV-2022-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 门诊颈椎病分型阶梯镇痛与康复方案

@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-GYN-2022-01
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 《妊娠期高血糖诊治指南（2022）》研读与循证精要

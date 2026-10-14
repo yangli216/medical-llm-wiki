@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-GYN-2022-01
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 75g 葡萄糖耐量试验 (OGTT) 与 GDM 诊断切点

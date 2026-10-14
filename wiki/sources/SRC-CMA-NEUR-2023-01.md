@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-NEUR-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《中国急性缺血性脑卒中诊治指南（2023）》研读

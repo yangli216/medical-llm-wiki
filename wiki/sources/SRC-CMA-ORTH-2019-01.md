@@ -1,5 +1,5 @@
 ---
-title: SRC-CMA-ORTH-2019-01
+title: 《膝骨关节炎基层诊疗指南（2019年）》来源解析
 type: source
 tags:
   - 来源/骨科
@@ -8,7 +8,7 @@ tags:
 sources:
   - SRC-CMA-ORTH-2019-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《膝骨关节炎基层诊疗指南（2019年）》权威研读

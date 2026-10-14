@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CSG-PU-2022-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 《消化性溃疡规范化诊治专家共识（2022）》研读

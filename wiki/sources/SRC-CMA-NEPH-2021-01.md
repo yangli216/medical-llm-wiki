@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CMA-NEPH-2021-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 尿路感染基层合理用药指南（2021年）

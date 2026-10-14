@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-NEPH-2024-01
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 慢性肾脏病门诊高钾血症规范防治与心肾保护方案

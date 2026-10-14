@@ -16,7 +16,7 @@ sources:
   - SRC-CSGP-SYMP-2021-02
   - SRC-CMA-RESP-2016-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 门诊慢性咳嗽病因导向阶梯诊疗方案

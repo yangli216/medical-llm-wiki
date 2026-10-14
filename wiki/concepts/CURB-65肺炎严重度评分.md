@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-RESP-2016-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # CURB-65 社区获得性肺炎严重度评分

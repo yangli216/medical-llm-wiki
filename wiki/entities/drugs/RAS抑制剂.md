@@ -14,7 +14,7 @@ sources:
   - SRC-CMA-CARD-2024-01
   - SRC-CDS-ENDO-2024-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 肾素-血管紧张素系统抑制剂 (RAS 抑制剂)

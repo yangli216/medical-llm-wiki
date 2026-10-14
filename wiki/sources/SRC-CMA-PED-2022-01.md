@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-PED-2022-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《中国儿童急性感染性腹泻病临床实践指南（2022）》研读

@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-PMPH-DIAG-2024-01
 last_updated: "2026-10-13"
-status: verified
+status: draft
 ---
 
 # 《诊断学（第9/10版·国家卫健委规划教材）》研读

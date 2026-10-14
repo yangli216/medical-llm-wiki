@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CMA-RESP-2021-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # GOLD 气流受限分级与 ABE 综合评估系统

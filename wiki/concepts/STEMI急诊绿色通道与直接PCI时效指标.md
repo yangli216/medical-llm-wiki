@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CMA-CARD-2019-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # STEMI急诊绿色通道与直接PCI时效指标

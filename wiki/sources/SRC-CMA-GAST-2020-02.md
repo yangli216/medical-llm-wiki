@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-GAST-2020-02
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 2020年中国胃食管反流病专家共识

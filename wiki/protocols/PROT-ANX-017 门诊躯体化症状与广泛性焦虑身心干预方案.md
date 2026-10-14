@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CSGP-GP-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 门诊躯体化症状与广泛性焦虑身心干预方案

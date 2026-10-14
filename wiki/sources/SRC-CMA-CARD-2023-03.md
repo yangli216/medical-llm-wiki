@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-CARD-2023-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《中国血脂管理指南（2023年）》研读

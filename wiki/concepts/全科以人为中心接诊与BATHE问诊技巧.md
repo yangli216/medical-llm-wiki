@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CSGP-GP-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 全科以人为中心接诊与BATHE问诊技巧

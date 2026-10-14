@@ -12,6 +12,14 @@
       "evidence": "《国家药品监督管理局官方核准盐酸二甲双胍片说明书》【禁忌】及中国药典临床用药须知",
       "conditions": {
         "egfr_lt": 30
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -29,6 +37,14 @@
           30,
           45
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -43,6 +59,14 @@
       "evidence": "《阿仑膦酸钠片说明书》【禁忌】",
       "conditions": {
         "egfr_lt": 35
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -57,6 +81,14 @@
       "evidence": "《达格列净片说明书》【特殊人群用药】",
       "conditions": {
         "egfr_lt": 20
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -74,6 +106,14 @@
           20,
           45
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -88,6 +128,14 @@
       "evidence": "《恩格列净片说明书》【特殊人群用药】",
       "conditions": {
         "egfr_lt": 20
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -105,6 +153,14 @@
           20,
           45
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -119,6 +175,14 @@
       "evidence": "《利伐沙班片说明书》【禁忌】",
       "conditions": {
         "egfr_lt": 15
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -136,6 +200,14 @@
           15,
           50
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -150,6 +222,14 @@
       "evidence": "《甲磺酸达比加群酯胶囊说明书》【禁忌】",
       "conditions": {
         "egfr_lt": 30
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -167,6 +247,14 @@
           30,
           51
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -182,6 +270,14 @@
       "evidence": "《螺内酯片说明书》及《复方利血平氨苯蝶啶片说明书》【禁忌】",
       "conditions": {
         "egfr_lt": 30
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -196,6 +292,14 @@
       "evidence": "《盐酸度洛西汀肠溶胶囊说明书》【禁忌】",
       "conditions": {
         "egfr_lt": 30
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -211,6 +315,14 @@
       "evidence": "《中国药典临床用药须知》利尿药章节",
       "conditions": {
         "egfr_lt": 30
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -225,6 +337,14 @@
       "evidence": "《枸橼酸铋钾胶囊说明书》【禁忌】",
       "conditions": {
         "egfr_lt": 30
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -239,6 +359,14 @@
       "evidence": "《左氧氟沙星片说明书》【肾功能减退患者用法用量】",
       "conditions": {
         "egfr_lt": 20
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -256,6 +384,14 @@
           20,
           50
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -270,6 +406,14 @@
       "evidence": "《苯溴马隆片说明书》【禁忌】",
       "conditions": {
         "egfr_lt": 20
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -284,6 +428,14 @@
       "evidence": "《盐酸西替利嗪片说明书》【禁忌】",
       "conditions": {
         "egfr_lt": 10
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -299,6 +451,14 @@
       "evidence": "官方药品说明书【禁忌】及中国药典临床用药须知",
       "conditions": {
         "egfr_lt": 30
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -317,6 +477,14 @@
       "evidence": "中国临床药学专家共识《NSAIDs合理用药规范》",
       "conditions": {
         "egfr_lt": 30
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -335,6 +503,14 @@
       "evidence": "《中国高血压防治指南》及官方药品说明书【黑框警告】",
       "conditions": {
         "pregnancy": true
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -351,6 +527,14 @@
       "evidence": "官方药品说明书【禁忌】",
       "conditions": {
         "pregnancy": true
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -366,6 +550,14 @@
       "evidence": "《利伐沙班片说明书》及《甲磺酸达比加群酯胶囊说明书》【禁忌】",
       "conditions": {
         "pregnancy": true
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -382,6 +574,14 @@
       "evidence": "官方药品说明书【禁忌】",
       "conditions": {
         "pregnancy": true
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -400,6 +600,14 @@
       "evidence": "国家药监局《关于修订含NSAIDs口服制剂说明书的公告》",
       "conditions": {
         "pregnancy": true
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -416,6 +624,14 @@
       "evidence": "官方药品说明书【禁忌】",
       "conditions": {
         "pregnancy": true
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -430,6 +646,14 @@
       "evidence": "《格列美脲片说明书》【禁忌】",
       "conditions": {
         "pregnancy": true
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -446,6 +670,14 @@
       "evidence": "《中国高尿酸血症与痛风诊疗指南》",
       "conditions": {
         "pregnancy": true
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -462,6 +694,14 @@
       "evidence": "国家药监局法定说明书黑框警告及《抗菌药物临床应用指导原则》",
       "conditions": {
         "age_lt": 18
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -476,6 +716,14 @@
       "evidence": "国家药监局官方说明书【黑框警告】",
       "conditions": {
         "age_lt": 12
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -498,6 +746,14 @@
           "水痘",
           "病毒感染"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -512,6 +768,14 @@
       "evidence": "中华医学会《基层医疗卫生机构老年人多重用药与慢病共病全科安全管理指南》",
       "conditions": {
         "age_gte": 65
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -528,6 +792,14 @@
         "allergy_any": [
           "青霉素"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -545,6 +817,14 @@
         "allergy_any": [
           "头孢"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -561,6 +841,14 @@
         "allergy_any": [
           "磺胺"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -582,6 +870,14 @@
         "allergy_any": [
           "阿司匹林"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -605,6 +901,14 @@
           "卒中",
           "cabg"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -625,6 +929,14 @@
           "men2",
           "多发性内分泌腺瘤"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -644,6 +956,14 @@
           "抑郁症",
           "重性抑郁"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -663,6 +983,14 @@
           "惊厥",
           "严重呼吸衰竭"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -682,6 +1010,14 @@
           "重度前列腺增生",
           "闭角型青光眼"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -700,6 +1036,14 @@
           "机械心脏瓣膜",
           "人工瓣膜置换"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -724,6 +1068,14 @@
           "黑便",
           "呕血"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -746,6 +1098,14 @@
           "呕血",
           "黑便"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -764,6 +1124,14 @@
           "重度高血压",
           "血压>140"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -785,6 +1153,14 @@
           "房室传导阻滞",
           "病窦"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -804,6 +1180,14 @@
         "conditions_any": [
           "重症肌无力"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -822,6 +1206,14 @@
           "尿酸性肾结石",
           "尿结石"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -840,6 +1232,14 @@
           "造影剂",
           "增强ct"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -861,6 +1261,14 @@
           "雷米普利",
           "卡托普利"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -880,6 +1288,14 @@
         "concurrent_any": [
           "沙库巴曲"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -897,6 +1313,14 @@
           "硫唑嘌呤",
           "巯嘌呤"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -918,6 +1342,14 @@
           "伟哥",
           "pde5"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -938,6 +1370,14 @@
           "利托那韦",
           "伏立康唑"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -957,6 +1397,14 @@
           "司来吉兰",
           "吗氯贝胺"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -974,6 +1422,14 @@
           "奥美拉唑",
           "艾司奥美拉唑"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -990,6 +1446,14 @@
         "concurrent_any": [
           "氯吡格雷"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -1007,6 +1471,14 @@
           "辛伐他汀",
           "洛伐他汀"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -1035,6 +1507,14 @@
           "厄贝沙坦",
           "沙库巴曲"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -1053,6 +1533,14 @@
         "concurrent_any": [
           "吉非罗齐"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -1070,6 +1558,14 @@
           "消渴丸",
           "格列本脲"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     },
     {
@@ -1090,6 +1586,14 @@
           "司来吉兰",
           "吗氯贝胺"
         ]
+      },
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
       }
     }
   ]

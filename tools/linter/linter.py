@@ -88,7 +88,11 @@ class WikiLinter:
                     })
 
         stats = self.graph.get_stats()
-        is_healthy = (len(broken_links) == 0 and len(invalid_source_refs) == 0 and len(orphans) == 0)
+        from tools.quality import audit_quality
+        quality = audit_quality(self.root_dir, self.graph)
+        is_healthy = not (broken_links or invalid_source_refs or orphans or schema_issues or
+                          typography_issues or quality["invalidRuleSourceRefs"] or
+                          quality["invalidPageReviews"] or quality["invalidRuleReviews"])
 
         return {
             "is_healthy": is_healthy,
@@ -103,6 +107,7 @@ class WikiLinter:
             "invalid_source_count": len(invalid_source_refs),
             "typography_issues": typography_issues,
             "typography_issue_count": len(typography_issues),
+            "quality": quality,
         }
 
     def format_report(self, results: Dict[str, Any]) -> str:
@@ -161,7 +166,14 @@ class WikiLinter:
                 lines.append(f"   - [{item['file']}:L{item['line']}]: {item['text']}")
 
         lines.append("=" * 60)
-        status_text = "🎉 结论: 知识库极其健康，完全符合 LLM Wiki 编译标准！" if results["is_healthy"] else "⚠️ 结论: 发现部分待优化项目，请按提示排查修复。"
+        quality = results["quality"]
+        lines.append(f"规则来源引用问题: {len(quality['invalidRuleSourceRefs'])} 处")
+        for ref in quality["invalidRuleSourceRefs"]:
+            lines.append(f"   - {ref['file']} / {ref['rule']}: {ref['source_id']}")
+        lines.append(f"无有效审核记录的 verified 页面/规则: {len(quality['invalidPageReviews'])}/{len(quality['invalidRuleReviews'])}")
+        lines.append(f"原始文件已归档: {quality['originalsArchived']}/{quality['sources']}；来源核验: {quality['provenanceVerified']}/{quality['sources']}")
+        lines.append(f"临床审核完成: 内容页面 {quality['clinicallyReviewedPages']}/{quality['clinicalPages']}，规则 {quality['clinicallyReviewedRules']}/{quality['rules']}")
+        status_text = "结构检查通过；临床审核与原文完整性见上述独立指标。" if results["is_healthy"] else "结构或审核记录检查未通过，请按提示修复。"
         lines.append(status_text)
         lines.append("=" * 60)
 

@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-CARD-2024-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《中国高血压防治指南（2024年修订版）》研读

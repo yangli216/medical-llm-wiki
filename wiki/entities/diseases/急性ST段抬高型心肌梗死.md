@@ -13,7 +13,7 @@ aliases:
 sources:
   - SRC-CMA-CARD-2019-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 急性ST段抬高型心肌梗死 (STEMI)

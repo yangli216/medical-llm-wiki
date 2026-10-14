@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CSGP-MSK-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 门诊非特异性下腰痛阶梯康复与药物方案

@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-ORTH-2019-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 门诊膝骨关节炎阶梯镇痛与关节保护方案

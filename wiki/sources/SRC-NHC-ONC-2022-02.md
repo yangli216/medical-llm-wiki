@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-NHC-ONC-2022-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《原发性肺癌诊疗指南（2022/2024综合版）》研读

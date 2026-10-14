@@ -1,5 +1,5 @@
 ---
-title: SRC-NMPA-DRUG-INSERT-2024
+title: 《国家药监局官方核准药品说明书汇编》来源解析
 type: source
 tags:
   - 来源/药品说明书
@@ -8,7 +8,7 @@ tags:
 sources:
   - SRC-NMPA-DRUG-INSERT-2024
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《国家药品监督管理局 (NMPA) 官方核准药品说明书汇编》权威研读

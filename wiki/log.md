@@ -4,7 +4,7 @@ type: log
 tags:
   - 日志/维护
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 知识库操作流水日志 (LLM Wiki Log)

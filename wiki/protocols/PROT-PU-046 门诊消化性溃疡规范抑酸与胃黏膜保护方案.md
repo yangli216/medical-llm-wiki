@@ -16,7 +16,7 @@ tags:
 sources:
   - SRC-CSG-PU-2022-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 门诊消化性溃疡规范抑酸与胃黏膜保护方案

@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-RESP-2021-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 慢性阻塞性肺疾病稳定期门诊分级诊疗方案

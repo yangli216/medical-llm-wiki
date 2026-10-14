@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-NHC-PHAR-2015-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《抗菌药物临床应用指导原则》研读

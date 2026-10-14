@@ -8,7 +8,7 @@ tags:
 sources:
   - SRC-CMA-ORTH-2019-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 膝骨关节炎阶梯治疗原则与 Kellgren-Lawrence (K-L) 分级

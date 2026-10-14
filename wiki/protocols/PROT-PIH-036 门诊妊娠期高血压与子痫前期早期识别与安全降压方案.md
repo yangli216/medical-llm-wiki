@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-GYN-2020-02
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 门诊妊娠期高血压与子痫前期早期识别与安全降压方案

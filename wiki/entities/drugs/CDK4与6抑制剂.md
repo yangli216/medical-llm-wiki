@@ -13,7 +13,7 @@ aliases:
 sources:
   - SRC-NHC-ONC-2024-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # CDK4与6抑制剂 (CDK4/6 Inhibitors)

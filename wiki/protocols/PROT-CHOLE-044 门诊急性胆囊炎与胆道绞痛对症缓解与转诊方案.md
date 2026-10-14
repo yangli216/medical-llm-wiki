@@ -17,7 +17,7 @@ tags:
 sources:
   - SRC-CSGS-CHOLE-2021-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 门诊急性胆囊炎与胆道绞痛对症缓解与转诊方案

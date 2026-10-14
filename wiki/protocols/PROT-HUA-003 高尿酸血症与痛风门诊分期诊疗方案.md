@@ -18,7 +18,7 @@ tags:
 sources:
   - SRC-CMA-ENDO-2024-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 高尿酸血症与痛风门诊分期诊疗方案

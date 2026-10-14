@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-PED-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《儿童急性呼吸道感染与急性支气管炎规范化诊疗专家共识（2023）》研读

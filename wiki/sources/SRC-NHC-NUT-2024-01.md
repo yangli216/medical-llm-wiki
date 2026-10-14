@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-NHC-NUT-2024-01
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 《成人肥胖食养指南（2024年版）》研读导读

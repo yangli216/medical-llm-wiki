@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CMA-NEUR-2021-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 《中国特发性面神经麻痹诊治指南（2021）》研读

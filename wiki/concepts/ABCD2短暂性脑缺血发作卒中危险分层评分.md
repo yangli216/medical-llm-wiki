@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CMA-NEUR-TIA-2020-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # ABCD2 短暂性脑缺血发作卒中危险分层评分

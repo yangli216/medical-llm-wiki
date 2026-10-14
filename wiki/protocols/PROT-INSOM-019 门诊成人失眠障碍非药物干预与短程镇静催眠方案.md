@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-NEUR-2023-02
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 门诊成人失眠障碍非药物干预与短程镇静催眠方案

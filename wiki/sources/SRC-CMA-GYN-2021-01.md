@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CMA-GYN-2021-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《阴道炎症诊断与治疗规范（2021版）》研读

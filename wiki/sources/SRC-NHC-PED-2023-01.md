@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-NHC-PED-2023-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《儿童肺炎支原体肺炎诊疗指南（2023年版）》研读

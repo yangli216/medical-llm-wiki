@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-CARD-2024-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《中国心力衰竭诊断和治疗指南（2024）》研读

@@ -17,7 +17,7 @@ flowchart TD
 ```
 
 ### 第 1 步：来源文档注册 (Register Raw Source)
-1. 将权威官方文件、PDF转Markdown或权威全文放入 `raw/docs/<source_id>.md`。
+1. 将取得的官方原始文件保存到 `raw/originals/`；提取文本或整理摘要保存到 `raw/docs/`。摘要不能标成官方全文。
 2. 在 `raw/metadata.json` 中登记核心元数据：
    - `id`: 全局唯一源标识（例如 `SRC-CMA-CARD-2024-01`）
    - `title`: 官方正式中文名称
@@ -25,6 +25,11 @@ flowchart TD
    - `year`: 发布年份
    - `category`: 专科分类（心血管 / 内分泌 / 呼吸 / 肿瘤 / 神经 / 感染 / 公共卫生）
    - `doi_or_url`: 官方刊发位置或公开发布链接
+   - `content_kind`: `curated_summary` / `unverified_text` / `pdf_extract`
+   - `official_url`, `doi`, `retrieved_at`: 官方发布页、DOI 与采集时间，未知时留空。
+   - `original_file`, `original_sha256`: 原始文件路径与 SHA-256，不得使用摘要哈希冒充原文哈希。
+   - `content_sha256`: 整理摘要或提取文本的 SHA-256。
+   - `provenance_review`: 来源核验人、日期、决定及对应原文件哈希；上传文件默认 pending。
    - `key_scope`: 本指南主要规制的病种与临床范围
 
 ### 第 2 步：来源精编解析 (Compile Source Page)
@@ -67,4 +72,13 @@ flowchart TD
 ```bash
 python3 -m tools.cli lint
 ```
-确保全库 0 断链、0 孤立页面，元数据完全闭环。
+确保全库 0 断链、0 孤立页面，页面及规则来源 ID 均有效。结构检查通过不代表内容已经临床审核。
+
+### 第 8 步：原文核验与专业审校
+新页面保持 `status: draft`。核验发布机构及原文件版本后，由医师或药师对临床内容逐条审校，记录来源 ID、原文页码/章节、摘录、审核人、角色、日期及内容哈希。详见 `docs/KNOWLEDGE_QUALITY.md`。
+
+```bash
+python3 -m tools.cli audit-quality --strict
+python3 -m tools.cli sync-readme
+python3 -m tools.cli sync-readme --check
+```

@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-PED-2022-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 儿童急性水样腹泻病门诊补液与补锌方案

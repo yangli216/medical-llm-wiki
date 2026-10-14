@@ -8,7 +8,7 @@ tags:
 sources:
   - SRC-CMA-URO-2019-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # BPH 下尿路症状 IPSS 量表与药物联合规范

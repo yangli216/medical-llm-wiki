@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-NHC-PRIM-2022-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《基层医疗卫生机构急危重症早期识别与双向转诊规范》研读

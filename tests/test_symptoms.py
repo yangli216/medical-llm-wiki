@@ -87,7 +87,8 @@ class TestSymptomDifferentialTrees(unittest.TestCase):
         self.assertEqual(sym["pmphStandardRatio"], 1.0)
         self.assertEqual(sym["redFlagsCoverageRatio"], 1.0)
         self.assertEqual(sym["diseaseLinkedRatio"], 1.0)
-        self.assertEqual(res["grade"], "AAA (国家权威指南与循证闭环最高级)")
+        self.assertEqual(res["grade"], "未完成来源核验与临床审核")
+        self.assertFalse(res["quality"]["clinicalReady"])
 
     def test_server_api_symptoms_list_and_search(self):
         """测试 HTTP API /api/symptoms 列表与搜索"""

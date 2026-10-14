@@ -16,7 +16,7 @@ sources:
   - SRC-CSGP-GP-2023-01
   - SRC-NHC-PHAR-2015-01
 last_updated: "2026-10-08"
-status: verified
+status: draft
 ---
 
 # 成人急性腹泻门诊规范评估与治疗方案

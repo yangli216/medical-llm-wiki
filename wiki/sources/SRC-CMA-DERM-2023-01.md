@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-DERM-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《中国带状疱疹诊疗专家共识（2023版）》研读

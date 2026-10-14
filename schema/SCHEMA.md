@@ -7,8 +7,9 @@
 ## 1. 架构三层模型 (Three-Tier Architecture)
 
 ```
-raw/                  -> 不可变源文献层 (Immutable Source of Truth)
-                         存放官方指南、标准原文与结构化元数据注册表，只读不篡改。
+raw/                  -> 来源归档层
+                         originals/ 保存取得的原始文件；docs/ 保存整理摘要或提取文本。
+                         是否具备原文与是否通过来源核验必须独立记录，不由目录名称决定。
                          
 wiki/                 -> 知识图谱与互联维基层 (Compiled Knowledge Base)
                          由 LLM/编译器持续维护的 Markdown 互联知识库，面向人类与模型。
@@ -64,7 +65,7 @@ status: verified # verified | draft | deprecated
 4. **`aliases`** (可选): 别名列表，方便在 Obsidian 及检索系统快速匹配。
 5. **`sources`** (必填，除 index/log 外): 引用的原始源 ID 列表（必须在 `raw/metadata.json` 中存在）。
 6. **`last_updated`** (必填): 最后一次更新日期（YYYY-MM-DD）。
-7. **`status`** (必填): 状态，包括 `verified`（已校验）、`draft`（草稿）、`deprecated`（已废止/被新版替代）。
+7. **`status`** (必填): `draft`（待审核）、`verified`（具有有效专业审核记录）、`deprecated`（已废止）。`verified` 必须有 `reviews/clinical_reviews.json` 对应记录，包含审核人、角色、日期、当前内容哈希及原文引用；仅通过 lint 或测试不得设为 verified。审核规则和操作说明见 `docs/KNOWLEDGE_QUALITY.md`。
 
 ---
 

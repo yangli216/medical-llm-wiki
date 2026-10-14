@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-NEUR-2022-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 偏头痛急性期分级止痛与预防性治疗门诊方案

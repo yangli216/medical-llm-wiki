@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-PAIN-2020-01
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 门诊带状疱疹后神经痛阶梯镇痛与神经修复方案

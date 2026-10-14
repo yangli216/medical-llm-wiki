@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-NHC-ONC-2022-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 肺癌 TNM 分期与驱动基因谱

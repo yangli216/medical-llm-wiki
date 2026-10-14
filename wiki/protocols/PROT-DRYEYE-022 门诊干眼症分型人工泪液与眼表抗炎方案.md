@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-OPHTH-2020-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 门诊干眼症分型人工泪液与眼表抗炎方案

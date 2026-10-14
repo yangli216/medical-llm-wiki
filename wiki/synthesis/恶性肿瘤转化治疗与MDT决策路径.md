@@ -14,7 +14,7 @@ sources:
   - SRC-NHC-ONC-2025-01
   - SRC-NHC-ONC-2024-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 恶性肿瘤转化治疗与多学科综合诊疗 (MDT) 决策路径

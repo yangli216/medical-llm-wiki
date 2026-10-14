@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "migration": {
+    "date": "2026-10-13",
+    "reason": "遗留 verified 页面缺少专业审核记录，已统一转为 draft；未对临床内容作专业审核。"
+  },
+  "pages": {}
+}

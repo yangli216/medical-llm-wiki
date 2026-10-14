@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-URO-2019-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 良性前列腺增生门诊改善排尿与联合缩腺方案

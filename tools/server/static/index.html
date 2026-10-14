@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中国医学权威指南与标准 LLM Wiki 知识库</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div id="sidebar">
+        <div class="header">
+            <h1><span>🩺</span> Medical LLM Wiki</h1>
+            <p>中国医学权威指南与标准知识库</p>
+            <button class="btn-import-source" onclick="openImportModal()">➕ 录入新标准 / 指南</button>
+        </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索临床指南、疾病、药物、分期..." oninput="onSearchInput(this.value)">
+        </div>
+        <div class="nav-tabs">
+            <div class="nav-tab active" id="tabDoc" onclick="switchNavTab('doc')">📑 目录导航</div>
+            <div class="nav-tab" id="tabSrc" onclick="switchNavTab('src')">🏛️ 权威来源</div>
+        </div>
+        <div class="tree-list" id="treeList">
+            <!-- Populated via JS -->
+        </div>
+    </div>
+
+    <div id="main">
+        <div class="topbar">
+            <div class="topbar-left" id="topbarTitle" style="display:flex;align-items:center;">
+                <span>📚</span> <span id="currentTitleText">主索引目录</span>
+                <div class="topbar-stats" id="topbarStats">
+                    <span class="stat-badge">正在读取资产统计…</span>
+                </div>
+            </div>
+            <div class="topbar-actions">
+                <button onclick="openImportModal()" style="background:rgba(5,150,105,0.25);border:1px solid #059669;color:#34d399;">➕ 导入标准</button>
+                <button onclick="toggleView('doc')" id="btnDocView" style="background:#0284c7;color:#fff;">📄 阅读文档</button>
+                <button onclick="toggleView('graph')" id="btnGraphView">🕸️ 知识图谱</button>
+            </div>
+        </div>
+
+        <div id="qualityBanner" class="quality-banner">正在读取原文核验与临床审核状态…</div>
+        <div class="content-area" id="docContainer">
+            <div class="markdown-body" id="docBody">
+                <p>正在加载本地知识库...</p>
+            </div>
+        </div>
+
+        <div id="graph-container">
+            <div class="graph-controls">
+                <span style="font-size:0.75rem; color:#94a3b8; margin-right:4px;">分类筛选:</span>
+                <button class="filter-pill active" id="btnFilterAll" onclick="setGraphFilter('all')">全部</button>
+                <button class="filter-pill" id="btnFilterDisease" onclick="setGraphFilter('disease')">🔴 疾病</button>
+                <button class="filter-pill" id="btnFilterDrug" onclick="setGraphFilter('drug')">🟢 药物与说明书</button>
+                <button class="filter-pill" id="btnFilterSynthesis" onclick="setGraphFilter('synthesis')">🟣 方案协议</button>
+                <button class="filter-pill" id="btnFilterConcept" onclick="setGraphFilter('concept')">🟡 概念分期</button>
+                <button class="filter-pill" id="btnFilterSource" onclick="setGraphFilter('source')">🔵 来源</button>
+                <button class="filter-pill" onclick="resetEgoNetwork()" style="margin-left:8px; border-color:#ef4444; color:#fca5a5;">重置邻域</button>
+            </div>
+            <canvas id="graph-canvas"></canvas>
+            <div id="graph-tooltip" class="graph-tooltip"></div>
+            <div class="graph-legend">
+                <div><span class="legend-dot" style="background:#ef4444;"></span> 疾病实体 (Disease)</div>
+                <div><span class="legend-dot" style="background:#10b981;"></span> 药物与说明书 (Drug)</div>
+                <div><span class="legend-dot" style="background:#8b5cf6;"></span> 门诊方案 (Synthesis)</div>
+                <div><span class="legend-dot" style="background:#f59e0b;"></span> 概念与分期 (Concept)</div>
+                <div><span class="legend-dot" style="background:#38bdf8;"></span> 权威来源 (Source)</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js" defer></script>
+
+    <!-- Modal for importing new clinical guidelines / standards -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2><span>🏛️</span> 录入新临床诊疗指南与国家标准</h2>
+                <button class="modal-close" onclick="closeImportModal()">&times;</button>
+            </div>
+            <div style="font-size:0.78rem;color:#94a3b8;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+                <span>向知识库追加尚未收录的行业权威标准，系统将自动编译知识图谱与全文索引。</span>
+                <button type="button" class="btn-demo" onclick="fillExampleImportData()">✨ 填入示例数据</button>
+            </div>
+                        <!-- PDF Drag-and-Drop & Auto-Extract Zone -->
+            <div class="dropzone" id="pdfDropzone" onclick="document.getElementById('pdfFileInput').click()">
+                <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;" onchange="handlePdfFileSelected(this.files)">
+                <div class="dropzone-icon">📄</div>
+                <div class="dropzone-text">点击或拖拽上传官方 PDF 指南 / 标准文件</div>
+                <div class="dropzone-sub">系统将自动深度提取全文、推荐条款并智能预填下方所有元数据</div>
+            </div>
+            <div id="pdfParseStatus" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:6px;font-size:0.82rem;"></div>
+
+            <form id="importSourceForm" onsubmit="submitImportSource(event)">
+                <div class="form-group">
+                    <label>标准 / 指南官方全称 *</label>
+                    <input type="text" id="inpTitle" placeholder="例如：《成人肥胖食养指南（2024年版）》" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>制定 / 发布权威机构 *</label>
+                        <input type="text" id="inpAuthority" placeholder="国家卫生健康委食品司 / 中华医学会" required>
+                    </div>
+                    <div class="form-group">
+                        <label>专科领域分类 *</label>
+                        <input type="text" id="inpCategory" placeholder="例如：内分泌代谢、心血管、儿科、全科医学" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>文献来源标识代码 (ID)</label>
+                        <input type="text" id="inpSourceId" placeholder="例如：SRC-NHC-NUT-2024-01 (选填，自动建议)">
+                    </div>
+                    <div class="form-group">
+                        <label>发布年份 *</label>
+                        <input type="number" id="inpYear" value="2024" min="2000" max="2030" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>核心临床导读与要点提炼 (支持多行) *</label>
+                    <textarea id="inpSummary" rows="3" placeholder="提炼 2～4 条核心诊疗要点、控制靶标或推荐意见..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>关联高发疾病实体 / 规范概念 (逗号分隔)</label>
+                    <input type="text" id="inpRelated" placeholder="例如：2型糖尿病, 原发性高血压, 骨质疏松症">
+                </div>
+                <div class="form-group">
+                    <label>官方发布链接（待核验）</label>
+                    <input type="url" id="inpOfficialUrl" placeholder="https://… 官方发布页或原文下载地址">
+                </div>
+                <div class="form-group">
+                    <label>DOI（可选）</label>
+                    <input type="text" id="inpDoi" placeholder="10.…">
+                </div>
+                <div class="form-group">
+                    <label>原始文献正文 / 核心章节 Markdown (可选，支持长文粘贴)</label>
+                    <textarea id="inpContent" rows="4" placeholder="在此粘贴文献官方原文、章节条款或诊断标准..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeImportModal()">取消</button>
+                    <button type="submit" class="btn-submit" id="btnSubmitImport">🚀 编译并导入本知识库</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

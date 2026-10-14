@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CSES-APP-2023-01
 last_updated: "2026-10-13"
-status: verified
+status: draft
 ---
 
 # 《国家卫健委急性阑尾炎临床路径与外科学诊疗规范》研读

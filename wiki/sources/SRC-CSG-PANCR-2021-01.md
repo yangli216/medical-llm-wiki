@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CSG-PANCR-2021-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 《中国急性胰腺炎诊治指南（2021，沈阳）》研读

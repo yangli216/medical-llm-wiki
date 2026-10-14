@@ -114,7 +114,9 @@ class TestGradeAndClinicalCalculators(unittest.TestCase):
         self.assertEqual(res["safetyRules"]["grade_coverage_ratio"], 1.0)
         self.assertEqual(res["calculators"]["totalCalculators"], 12)
         self.assertEqual(res["calculators"]["coverage_ratio"], 1.0)
-        self.assertEqual(res["grade"], "AAA (国家权威指南与循证闭环最高级)")
+        self.assertIsNone(res["credibilityScore"])
+        self.assertFalse(res["quality"]["clinicalReady"])
+        self.assertEqual(res["grade"], "未完成来源核验与临床审核")
 
 
 if __name__ == "__main__":

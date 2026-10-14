@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CSGP-GERI-2023-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 社区老年共病多重用药处方重整与去处方干预方案

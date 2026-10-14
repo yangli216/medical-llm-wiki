@@ -1,120 +1,75 @@
-# 中国医学权威指南与标准 LLM Wiki 本地知识库 (Medical LLM Wiki & CDSS Engine)
+# Medical LLM Wiki & CDSS Engine
 
-> **基于 Andrej Karpathy 提出的 [LLM Wiki 架构理念](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 构建**  
-> 告别传统 RAG 的“碎片化单次拼接”与大模型医疗“严重幻觉风险”，通过大语言模型、知识编译器与确定性临床规则引擎，将国家卫生健康委及中华医学会权威指南编译沉淀为**持久化、相互勾连、具备确定性安全拦截与真实门诊赋能能力的医学知识底座**。
+本项目提供本地医学资料整理、Wiki 双向链接、全文检索、门诊协议编译和确定性处方规则检查。支持 OpenAI 兼容接口与 REST API，供 RHN 等系统集成。
 
----
+目前的知识内容以人工或模型整理的摘要为主。注册来源、原文归档、来源核验和医师/药师临床审核是不同状态；页面、规则与 GRADE 字段的存在不代表已经完成专业核验。药品页面为整理稿，不能凭页面标题认定它是官方核准说明书原件。
 
-## 一、 核心架构理念与项目定位
+## 当前资产统计
 
-### 1. 为什么选择 LLM Wiki + CDSS 确定性架构？
-传统基于向量切片的 RAG 模式在医疗领域存在致命弊端：**文档切块丢失上下文、无法保障跨指南逻辑因果闭环、且大模型自由生成极易出现致死性配伍禁忌幻觉**。
+下表由代码生成，可用 `python3 -m tools.cli sync-readme` 更新，用 `--check` 检查是否过期。链接数采用每页去重的出向引用口径，不代表互相回链的链接对。
 
-本项目严格遵循 Karpathy 的 LLM Wiki 架构并深度延伸至临床 CDSS 赋能：
-* **不可变原始源层 (Raw Sources Layer)**：45 部国家卫健委及中华医学会官方发布的权威指南规范作为“唯一真实数据源”，只读归档；
-* **持久编译图谱层 (The Compiled Wiki Layer)**：321 篇结构化 Markdown 页面（覆盖疾病、药物、诊疗协议、法定说明书、概念量表与综合专题），构建 2,574 条双向链接（`[[WikiLinks]]`），实现 **0 断链、0 知识孤岛、100% 来源可溯源**；
-* **临床协议与安全防火墙 (CDSS & Protocols Layer)**：收录 35 套标准门诊决策协议与 100 篇基药说明书，内置 35 条宏观处方规则与微观致死性 DDI 拦截红线；
-* **对外赋能网关层 (Integration Gateway Layer)**：原生支持 OpenAI ChatCompletion 协议（含 SSE 流式逐字推送）与标准 REST API，无缝赋能下游门诊医生工作站（如 RHN 系统）。
+<!-- inventory:start -->
+| 资产 | 当前数量 |
+| :--- | ---: |
+| 注册来源（包含指南、共识、教材及汇编） | 61 |
+| Wiki 页面（包含 index/log） | 437 |
+| 页面出向引用（每页去重） | 3186 |
+| 门诊协议 | 50 |
+| 药品说明书整理页 | 140 |
+| 疾病 / 药物 / 概念 / 综合 / 症状 | 56 / 40 / 53 / 14 / 12 |
+| 临床规则 / 说明书规则 | 45 / 63 |
+| 测试方法（静态计数，非本次通过数） | 113 |
+| 已归档原始文件 / 已核验来源 | 0 / 0 |
+| 有效临床审核：页面 / 规则 | 0 / 0 |
+<!-- inventory:end -->
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        下游业务系统 (如 RHN 门诊工作站)                 │
-│  - 门诊接诊病历书写   - 智能方案生成 (PlanIntent)   - 处方安全前置审查 │
-└───────────────────┬────────────────────────────────┬───────────────────┘
-                    │ 路径一：OpenAI 协议零侵入对接  │ 路径二：REST API 直连
-                    ▼                                ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                   Medical LLM Wiki CDSS 知识引擎网关                   │
-│                                                                        │
-│  [OpenAI 兼容层]                                                       │
-│   • POST /v1/chat/completions (支持 PlanIntent 编译及 SSE 逐字流式推流) │
-│   • GET /v1/models (标准模型清单与状态探测)                           │
-│                                                                        │
-│  [临床安全审查与 CDSS 拦截层]                                          │
-│   • POST /api/cdss/compile-rhn-plan (直接输出结构化病历范文与医嘱草稿) │
-│   • POST /api/cdss/audit (35 条国家标准处方前置安全拦截)               │
-│   • POST /api/drugs/check-contraindications (100种基药 DDI/eGFR 拦截)  │
-│                                                                        │
-│  [知识库与检索层]                                                      │
-│   • SQLite FTS5 (WAL 模式) BM25 检索 + 力导向知识图谱 Explorer         │
-│   • 45 部国家级权威指南 + 321 篇知识词条 + 2574 条双向链接             │
-│   • 35 套标准门诊协议 (PROT-001~035) + 100 篇国家基本药物结构化说明书  │
-└────────────────────────────────────────────────────────────────────────┘
-```
+## 本地启动与验证
 
----
-
-## 二、 知识库核心资产全景清点
-
-经过持续迭代，目前知识库已沉淀以下高质量核心资产：
-
-| 资产类别 | 规模 | 存储路径 | 核心覆盖范围与价值 |
-| :--- | :---: | :--- | :--- |
-| **国家权威指南规范** | **45 部** | `raw/docs/` | 国家卫健委医政司、中华医学会心血管/内分泌/呼吸/消化/神经/肿瘤等分会官方规范 |
-| **全库知识词条** | **321 篇** | `wiki/` | 覆盖 42 种疾病实体、40 类药物实体、42 个诊断概念量表、11 篇跨学科综合专题 |
-| **双向知识链接** | **2,574 条** | `wiki/` | 链接密度 0.0251，实现 **0 死链、0 孤岛、100% 原始来源可溯源** |
-| **门诊标准诊疗协议** | **35 套** | `wiki/protocols/` | 原发性高血压、2型糖尿病、慢阻肺、膝骨关节炎、胃炎幽门螺杆菌、狂犬病暴露等门诊高频病种 |
-| **基层常用药法定说明书** | **100 篇** | `wiki/inserts/` | 完整覆盖 2026 版基药目录扩容新药（ARNI、NOAC、SGLT2i、GLP-1RA、LAMA 等）十大标准章节 |
-| **处方安全拦截规则** | **35+ 条** | `tools/cdss/` | 双重 RAS 阻断、ARNI 36h 洗脱期、NOAC 出血/肾衰红线、司美格鲁肽 MTC、非布司他+硫唑嘌呤等 |
-
----
-
-## 三、 快速使用指引
-
-### 1. 启动多线程 Web 知识图谱服务
 ```bash
-python3 -m tools.cli serve --port 8080
+python3 -m pip install -r requirements.txt
+python3 -m tools.cli serve --port 8788
 ```
-在浏览器中打开 [http://127.0.0.1:8080](http://127.0.0.1:8080)：
-* 🕸️ **力导向拓扑图谱**：交互式观察 321 个节点与 2574 条连接拓扑；
-* 📄 **沉浸式阅读器**：阅读带双链高亮跳转的排版页面；
-* 🔍 **毫秒级即时检索**：输入关键词实时联想匹配。
 
-### 2. 知识库健康体检与索引重建
+访问 [http://127.0.0.1:8788](http://127.0.0.1:8788)。默认端口仍为 8080；若 RHN 已占用该端口，可使用 8788。
+
 ```bash
-# 执行静态体检（断链、孤岛、元数据检查）
-python3 -m tools.cli lint
-
-# 重建 SQLite FTS5 全文检索引擎
-python3 -m tools.cli index
+python3 -m tools.cli inventory          # 实时资产统计
+python3 -m tools.cli lint               # 链接、结构、规则来源 ID、审核记录一致性
+python3 -m tools.cli audit-quality      # 原文归档、来源核验、临床审核缺口
+python3 -m tools.cli audit-quality --strict  # 缺口未补齐时退出码为 1
+python3 -m tools.cli audit-authority    # 字段覆盖及来源/审核状态；不提供临床认证评分
+python3 -m tools.cli sync-readme
+python3 -m tools.cli sync-readme --check
+python3 -m unittest discover -s tests
 ```
 
-### 3. 运行全量自动化测试套件
-```bash
-python3 -m unittest discover tests
+测试验证软件行为和回归场景，通过数须以当次运行结果为准；不能据此推断所有内容已临床审核。
+
+## 来源与审核流程
+
+- `raw/docs/`：整理摘要或 PDF 提取文本，用 `content_kind` 区分。
+- `raw/originals/`：取得的原始文件，登记官方 URL、采集时间、文件路径及 SHA-256。
+- `raw/metadata.json`：来源登记和来源核验记录。空值表示尚未取得信息。
+- `wiki/`：编译后的 Markdown 页面；新页面默认 `draft`。
+- `reviews/clinical_reviews.json`：页面专业审核记录；规则审核存于各规则的 `clinical_review` 字段。
+
+导入 PDF 会保存原始字节并记录哈希，但不会自动宣称发布机构或临床内容已经核验。已有来源 ID 不允许覆盖；修订版使用新的 ID。已取得的原文可通过 `archive-source` 挂接到现有来源，再登记实际完成的来源核验与专业审核。
+
+操作格式见 [知识质量与审核指南](docs/KNOWLEDGE_QUALITY.md)，入库规范见 [INGEST_GUIDE](schema/INGEST_GUIDE.md)。
+
+## 服务结构与集成
+
+```text
+tools/server/app.py          HTTP 路由、静态资源与响应
+tools/server/ingestion.py    PDF 解析和来源导入
+tools/server/knowledge_api.py 知识文档、检索与证据链接口
+tools/server/chat_api.py     OpenAI 兼容协议及 SSE
+tools/server/rendering.py    CommonMark 渲染与 WikiLink/callout 扩展
+tools/server/static/         HTML、CSS、JavaScript
+tools/cdss/                  协议编译、规则判断与量表计算
+tools/quality.py             原文、引用及审核一致性检查
 ```
-*包含 40 个单元与集成测试用例，覆盖 100 种说明书装载断言、CDSS 处方拦截与 OpenAI 端到端通信，100% 通过。*
 
----
+运行态指标由 `GET /api/inventory` 提供，质量状态由 `GET /api/quality` 提供。临床 REST 响应增加 `clinicalReview.requiresClinicianReview`；`PASS` / `canPrescribe` 仅表示当前规则计算结果，下游采用时须同时处理审核状态。
 
-## 四、 核心临床安全红线沉淀 (CDSS)
-
-知识库将分散在多部指南与国家说明书中的用药禁忌提炼为不可逾越的安全红线：
-1. **ARNI 换用普利类 36 小时洗脱期**：沙库巴曲与 ACEI 严禁重叠，规避致死性喉头血管神经性水肿；
-2. **严禁双重 RAS 轴阻断**：ACEI、ARB、ARNI 严禁联合口服，规避急性肾衰与恶性高钾血症；
-3. **硝酸酯类合用 PDE-5 抑制剂绝对禁忌**：硝酸甘油/单硝酸异山梨酯联用西地那非/他达拉非，协同诱发恶性低血压休克；
-4. **非布司他合用硫唑嘌呤/巯嘌呤绝对禁忌**：强效抑制氧化代谢诱发致死性重症全血细胞骨髓衰竭；
-5. **重度肾功能不全 eGFR 硬断点**：
-   - 二甲双胍：$\text{eGFR} < 30$ 绝对禁用（乳酸酸中毒猝死）；
-   - 恩格列净：$\text{eGFR} < 20$ 禁用；
-   - 利伐沙班：$\text{eGFR} < 15$ 禁用；$\text{eGFR } 15\sim 49$ 减量至 15mg qd；
-   - 达比加群酯：$\text{eGFR} < 30$ 禁用；机械心脏瓣膜置换术后绝对禁用；
-6. **特殊人群黑框阻断**：
-   - 妊娠期女性：普利/沙坦/沙库巴曲（FDA D类致畸黑框）、他汀类（FDA X类）绝对禁用；
-   - 儿童青少年：喹诺酮类（软骨毒性）、病毒发热服用阿司匹林（Reye 综合征）、曲马多（$<12$ 岁呼吸抑制）绝对禁用。
-
----
-
-## 五、 下游系统对接指引 (如 RHN 门诊系统)
-
-详细技术对接协议请参阅 [`docs/RHN_CDSS_INTEGRATION.md`](docs/RHN_CDSS_INTEGRATION.md)。只需在下游系统 `application.yml` 配置：
-```yaml
-rhn:
-  ai:
-    mode: ENABLED
-    provider: openai-compatible
-    model: medical-cdss-wiki
-    endpoint: http://127.0.0.1:8080/v1/chat/completions
-    knowledge-endpoint: http://127.0.0.1:8080/api/knowledge/search
-```
-即可直接获得具备国家级临床指南与说明书背书的真实 AI 诊疗推荐与处方拦截能力。
+对接 OpenAI 协议时使用 `http://127.0.0.1:8788/v1/chat/completions`；检索接口为 `http://127.0.0.1:8788/api/knowledge/search`。完整协议见 [RHN 对接文档](docs/RHN_CDSS_INTEGRATION.md)。

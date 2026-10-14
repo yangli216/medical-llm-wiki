@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-PED-2020-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《儿童支气管哮喘诊断与防治指南（2020年版）》研读

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -51,9 +52,13 @@ class AuthorityAuditor:
             1
         )
 
+        from tools.quality import audit_quality
+        quality = audit_quality(self.root_dir)
         return {
-            "credibilityScore": credibility_score,
-            "grade": "AAA (国家权威指南与循证闭环最高级)" if credibility_score >= 95 else "AA (高质量)",
+            "structureScore": credibility_score,
+            "credibilityScore": None,
+            "grade": "审核记录完整" if quality["clinicalReady"] else "未完成来源核验与临床审核",
+            "quality": quality,
             "sources": source_metrics,
             "diseases": disease_metrics,
             "protocols": protocol_metrics,
@@ -82,7 +87,7 @@ class AuthorityAuditor:
             yr = str(s.get("year", ""))
             years[yr] = years.get(yr, 0) + 1
             try:
-                if int(yr) >= 2020:
+                if date.today().year - 4 <= int(yr) <= date.today().year:
                     recent_count += 1
             except ValueError:
                 pass
@@ -239,62 +244,21 @@ class AuthorityAuditor:
         }
 
     def generate_report(self) -> str:
-        """Formats an executive summary report for display."""
+        """Report metadata coverage separately from provenance and clinical review."""
         m = self.audit()
-        src = m["sources"]
-        dis = m["diseases"]
-        prot = m["protocols"]
-        ins = m["drugInserts"]
-        rul = m["safetyRules"]
-        sym = m["symptoms"]
-        calc = m["calculators"]
-
-        return f"""
-============================================================
-  🏛️  医学知识库权威性与循证可信度专项审计白皮书 (Credibility Audit)
-============================================================
-🏆 综合权威可信度评级: 【{m['grade']}】 (循证评分: {m['credibilityScore']} / 100 分)
-------------------------------------------------------------
-1. 🏛️ 指南文献发布机构层级:
-   • 收录国家级指南/规范/规划教材: {src['totalSources']} 部
-   • 国家卫健委/中华医学会/人卫社国家教材认证率: {src['national_tier_ratio']*100:.1f}% ({src['nationalTierCount']}/{src['totalSources']})
-   • 近5年现行有效指南与教材 (>=2020年) 占比: {src['recent_5yr_ratio']*100:.1f}% ({src['recent5YrCount']}/{src['totalSources']})
-
-2. 🫀 核心疾病实体标准化 (ICD-10):
-   • 核心疾病实体总数: {dis['totalDiseases']} 篇
-   • 国际疾病分类 ICD-10 编码覆盖率: {dis['icd10_coverage_ratio']*100:.1f}% ({dis['icd10Covered']}/{dis['totalDiseases']})
-   • 国家指南溯源锚定率: {dis['guideline_anchored_ratio']*100:.1f}% ({dis['guidelineAnchored']}/{dis['totalDiseases']})
-
-3. 📋 门诊临床决策协议循证闭环 (CDSS Protocols):
-   • 临床决策协议总数: {prot['totalProtocols']} 套
-   • 国家指南 100% 来源溯源率: {prot['provenance_ratio']*100:.1f}% ({prot['sourceGroundedCount']}/{prot['totalProtocols']})
-   • 标准化结构医嘱集覆盖率: {prot['structuredOrdersRatio']*100:.1f}% ({prot['structuredOrdersCount']}/{prot['totalProtocols']})
-
-4. 📖 国家法定药品说明书库 (NMPA Monographs):
-   • 官方核准说明书总数: {ins['totalDrugInserts']} 份
-   • WHO ATC 国际解剖治疗学化学编码率: {ins['atc_coverage_ratio']*100:.1f}% ({ins['atcCovered']}/{ins['totalDrugInserts']})
-   • 法定极量与禁忌证严格对齐率: 100.0% ({ins['maxDoseSpecified']}/{ins['totalDrugInserts']})
-
-5. 🛡️ CDSS 处方前置安全规则与 GRADE 循证评级 (Safety Rules & Evidence Grade):
-   • 生产级前置规则总数: {rul['totalRules']} 条
-   • 权威指南出处标注率: {rul['evidence_grounding_ratio']*100:.1f}% ({rul['evidenceGroundedCount']}/{rul['totalRules']})
-   • GRADE 循证推荐与证据质量分级覆盖率: {rul['grade_coverage_ratio']*100:.1f}% ({rul['gradeCoveredCount']}/{rul['totalRules']})
-   • 高频阻断平替方案覆盖: {rul['alternativesCount']} 项核心规则已上线一键平替
-
-6. 🩺 门诊核心症状学与鉴别诊断树 (Symptomatology & Red Flags):
-   • 核心症状鉴别树总数: {sym['totalSymptoms']} 套
-   • 人卫版《诊断学》国家统编标准覆盖率: {sym['pmphStandardRatio']*100:.1f}% ({sym['pmphStandardCount']}/{sym['totalSymptoms']})
-   • 急危重症致命“红旗征”排查覆盖率: {sym['redFlagsCoverageRatio']*100:.1f}% ({sym['redFlagsCount']}/{sym['totalSymptoms']})
-   • 门诊流向疾病实体拓扑双向打通率: {sym['diseaseLinkedRatio']*100:.1f}% ({sym['diseaseLinkedCount']}/{sym['totalSymptoms']})
-
-7. 🧮 临床多维风险综合评估量表 (Clinical Risk Assessment Calculators):
-   • 纯 Python 原生验证量表总数: {calc['totalCalculators']} 套 (含 Wells PE、mMRC、CRB-65、CHA2DS2-VASc 等)
-   • 临床量表算法覆盖率: 100.0% ({calc['totalCalculators']}/{calc['totalCalculators']})
-   • 门诊分诊与药物阶梯联动率: 100.0%
-
-============================================================
-✅ 结论: 本知识库 100% 由国家卫生健康委、中华医学会、人民卫生出版社及国家药监局法定标准驱动，
-全面对齐国际 GRADE 证据分级体系与临床多维量表，具备从“主诉鉴别/风险量表”到“CDSS决策/前置阻断/法定用药”全链路闭环，
-达到三甲医院与智慧门诊生产准入标准！
-============================================================
-""".strip()
+        q = m["quality"]
+        lines = [
+            "医学知识库结构、来源与审核状态报告",
+            f"结构字段覆盖评分: {m['structureScore']} / 100（不是临床可信度评分）",
+            f"审核状态: {m['grade']}",
+            f"注册来源: {q['sources']}；原始文件已归档: {q['originalsArchived']}；来源已核验: {q['provenanceVerified']}",
+            f"临床审核: 内容页面 {q['clinicallyReviewedPages']}/{q['clinicalPages']}，规则 {q['clinicallyReviewedRules']}/{q['rules']}",
+            f"页面审核记录异常: {len(q['invalidPageReviews'])}；规则来源引用异常: {len(q['invalidRuleSourceRefs'])}",
+            f"疾病 ICD-10 字段覆盖: {m['diseases']['icd10Covered']}/{m['diseases']['totalDiseases']}",
+            f"协议来源字段覆盖: {m['protocols']['sourceGroundedCount']}/{m['protocols']['totalProtocols']}",
+            f"说明书整理页 ATC 字段覆盖: {m['drugInserts']['atcCovered']}/{m['drugInserts']['totalDrugInserts']}",
+            f"临床规则 GRADE 字段覆盖: {m['safetyRules']['gradeCoveredCount']}/{m['safetyRules']['totalRules']}",
+            "字段存在、测试通过和结构评分不认证发布机构、证据等级或临床正确性。",
+            "专业审核记录须绑定当前内容哈希及已核验原文；内容变化后必须重新审核。",
+        ]
+        return "\n".join(lines)

@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-NHC-ONC-2025-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 结直肠癌高危筛查与直肠 MRI 评估

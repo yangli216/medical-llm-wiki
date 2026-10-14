@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CDS-ENDO-2024-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # GLP-1受体激动剂 (GLP-1 Receptor Agonists)

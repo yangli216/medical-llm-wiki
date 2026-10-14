@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-ENDO-2017-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 成人原发性甲状腺功能减退症门诊激素替代方案

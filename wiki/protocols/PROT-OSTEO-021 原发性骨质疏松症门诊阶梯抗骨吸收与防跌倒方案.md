@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-ENDO-2022-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 原发性骨质疏松症门诊阶梯抗骨吸收与防跌倒方案

@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CMA-ENDO-2017-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 甲减TSH控制目标与左甲状腺素滴定规范

@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CMA-URO-2022-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 《输尿管结石急诊肾绞痛阶梯药物治疗指南（2022）》研读

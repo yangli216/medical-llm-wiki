@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-ENT-2022-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 变应性鼻炎门诊阶梯抗过敏与鼻喷激素方案

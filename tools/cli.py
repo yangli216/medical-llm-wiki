@@ -31,14 +31,18 @@ def cmd_status(args):
     print("=" * 65)
     print(f"📁 根工作目录: {ROOT_DIR}")
     print(f"📚 原始来源层 (raw/):")
-    print(f"  • 已注册指南文献: {raw_val['total_registered']} 部")
-    print(f"  • 有效文档完整性: {raw_val['valid_count']} / {raw_val['total_registered']}")
+    print(f"  • 已登记资料来源: {raw_val['total_registered']} 项")
+    print(f"  • 整理文本存在且非空: {raw_val['valid_count']} / {raw_val['total_registered']}")
     print(f"🧠 知识图谱层 (wiki/):")
     print(f"  • 总编译页面数:   {stats['total_pages']} 篇")
     print(f"  • 双向链接引用数: {stats['total_links']} 条")
     print(f"  • 图谱连接密度:   {stats['graph_density']}")
     print(f"  • 分类分布明细:   {stats['type_counts']}")
     print(f"  • 孤岛页面数:     {stats['orphan_count']}")
+    from tools.quality import audit_quality
+    quality = audit_quality(ROOT_DIR, graph)
+    print(f"  • 原始文件已归档 / 来源已核验: {quality['originalsArchived']} / {quality['provenanceVerified']}")
+    print(f"  • 临床审核通过: {quality['clinicallyReviewedPages']}/{quality['clinicalPages']} 内容页，{quality['clinicallyReviewedRules']}/{quality['rules']} 规则")
     print("=" * 65)
 
 
@@ -54,6 +58,52 @@ def cmd_audit_authority(args):
     from tools.linter.authority_auditor import AuthorityAuditor
     auditor = AuthorityAuditor(ROOT_DIR)
     print(auditor.generate_report())
+
+
+def cmd_inventory(args):
+    import json
+    from tools.quality import inventory
+    print(json.dumps(inventory(ROOT_DIR), ensure_ascii=False, indent=2))
+
+
+def cmd_audit_quality(args):
+    import json
+    from tools.quality import audit_quality
+    report = audit_quality(ROOT_DIR)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    if args.strict and not report["clinicalReady"]:
+        sys.exit(1)
+
+
+def cmd_sync_readme(args):
+    from tools.documentation import sync_readme
+    matches = sync_readme(ROOT_DIR, check=args.check)
+    if args.check and not matches:
+        print("README 统计已过期，请运行 python3 -m tools.cli sync-readme")
+        sys.exit(1)
+    print("README 统计与当前项目一致。")
+
+
+def cmd_archive_source(args):
+    import json
+    from tools.reviews import archive_source
+    try:
+        result = archive_source(ROOT_DIR, args.source_id, Path(args.artifact), args.official_url)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+
+def cmd_record_review(args):
+    import json
+    from tools.reviews import record_review
+    try:
+        record_review(ROOT_DIR, json.loads(Path(args.record).read_text(encoding="utf-8")))
+        print("已记录审核；后续内容变化将使对应审核失效。")
+    except (ValueError, OSError) as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
 
 
 def cmd_index(args):
@@ -251,6 +301,17 @@ def main():
 
     # status
     subparsers.add_parser("status", help="查看知识库整体状态与统计指标")
+    subparsers.add_parser("inventory", help="输出实时资产统计 JSON")
+    p_quality = subparsers.add_parser("audit-quality", help="检查原文、临床审核记录及规则来源")
+    p_quality.add_argument("--strict", action="store_true", help="未完成来源核验或临床审核时返回非零退出码")
+    p_docs = subparsers.add_parser("sync-readme", help="同步 README 自动统计区块")
+    p_docs.add_argument("--check", action="store_true", help="只检查统计是否过期")
+    p_archive = subparsers.add_parser("archive-source", help="为已有来源归档原始文件（默认待核验）")
+    p_archive.add_argument("source_id")
+    p_archive.add_argument("artifact", help="本地原始文件路径")
+    p_archive.add_argument("--official-url", required=True)
+    p_review = subparsers.add_parser("record-review", help="登记已完成的来源或专业审核 JSON 记录")
+    p_review.add_argument("record", help="审核记录 JSON 文件路径")
 
     # lint
     subparsers.add_parser("lint", help="对知识库执行断链、孤岛与模式健康体检")
@@ -306,6 +367,11 @@ def main():
 
     dispatch = {
         "status": cmd_status,
+        "inventory": cmd_inventory,
+        "audit-quality": cmd_audit_quality,
+        "sync-readme": cmd_sync_readme,
+        "archive-source": cmd_archive_source,
+        "record-review": cmd_record_review,
         "lint": cmd_lint,
         "audit-authority": cmd_audit_authority,
         "authority": cmd_audit_authority,

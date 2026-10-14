@@ -10,7 +10,7 @@ sources:
   - SRC-CMA-PAIN-2020-01
 authority: 中华医学会疼痛学分会
 year: 2020
-status: verified
+status: draft
 last_updated: "2026-10-09"
 ---
 

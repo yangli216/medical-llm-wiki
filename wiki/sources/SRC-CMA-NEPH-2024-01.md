@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-NEPH-2024-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《中国慢性肾脏病早期筛查、诊断及治疗临床实践指南》研读

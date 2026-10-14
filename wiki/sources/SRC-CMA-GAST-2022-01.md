@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-GAST-2022-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《2022中国幽门螺杆菌感染治疗指南（全国共识报告）》研读

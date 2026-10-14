@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-NHC-ONC-2024-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # CNLC 中国肝癌临床分期系统

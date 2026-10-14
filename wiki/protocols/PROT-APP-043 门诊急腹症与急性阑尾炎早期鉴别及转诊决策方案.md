@@ -17,7 +17,7 @@ tags:
 sources:
   - SRC-CSES-APP-2023-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 门诊急腹症与急性阑尾炎早期鉴别及转诊决策方案

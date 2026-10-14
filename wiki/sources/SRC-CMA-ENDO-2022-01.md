@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-ENDO-2022-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《原发性骨质疏松症诊疗指南（2022）》研读

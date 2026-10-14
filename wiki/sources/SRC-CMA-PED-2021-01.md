@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-PED-2021-01
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 《热性惊厥诊断与治疗专家共识（2021）》研读与循证精要

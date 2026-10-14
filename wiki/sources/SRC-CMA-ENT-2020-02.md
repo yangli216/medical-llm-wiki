@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CMA-ENT-2020-02
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《急性咽峡炎/扁桃体炎基层诊疗指南（2020年）》研读

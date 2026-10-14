@@ -10,7 +10,7 @@ sources:
   - SRC-CMA-GAST-2020-03
 authority: 中华医学会消化病学分会
 year: 2020
-status: verified
+status: draft
 last_updated: "2026-10-09"
 ---
 

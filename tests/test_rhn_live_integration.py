@@ -9,6 +9,8 @@ Tests live HTTP endpoints (no mocking):
 """
 
 import json
+import shutil
+import tempfile
 import threading
 import time
 import unittest
@@ -17,6 +19,12 @@ import urllib.error
 from http.server import HTTPServer
 from pathlib import Path
 from tools.server.app import WikiHTTPHandler
+from tools.collector.collector import SourceCollector
+from tools.compiler.compiler import WikiGraph
+from tools.search.searcher import WikiSearcher
+from tools.cdss.engine import CdssEngine
+from tools.cdss.drug_checker import DrugInsertRepository, DrugContraindicationAuditor
+from tools.cdss.evidence_chain import EvidenceChainEngine
 
 
 TEST_PORT = 18099
@@ -29,7 +37,22 @@ class TestRhnLiveIntegration(unittest.TestCase):
         import os
         os.environ["no_proxy"] = "*"
         cls.opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
-        cls.server = HTTPServer(("127.0.0.1", TEST_PORT), WikiHTTPHandler)
+        cls.temp = tempfile.TemporaryDirectory()
+        cls.root_dir = Path(cls.temp.name)
+        project = Path(__file__).resolve().parent.parent
+        for directory in ("raw", "wiki", "rules", "reviews"):
+            shutil.copytree(project / directory, cls.root_dir / directory)
+        drug_repo = DrugInsertRepository(cls.root_dir)
+        searcher = WikiSearcher(cls.root_dir)
+        searcher.index_wiki()
+        handler = type("IsolatedWikiHTTPHandler", (WikiHTTPHandler,), {
+            "root_dir": cls.root_dir, "graph": WikiGraph(cls.root_dir),
+            "collector": SourceCollector(cls.root_dir), "searcher": searcher,
+            "cdss": CdssEngine(cls.root_dir), "drug_repo": drug_repo,
+            "drug_auditor": DrugContraindicationAuditor(drug_repo, root_dir=cls.root_dir),
+            "evidence_engine": EvidenceChainEngine(cls.root_dir),
+        })
+        cls.server = HTTPServer(("127.0.0.1", TEST_PORT), handler)
         cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
         cls.thread.start()
         time.sleep(0.3)
@@ -38,6 +61,8 @@ class TestRhnLiveIntegration(unittest.TestCase):
     def tearDownClass(cls):
         cls.server.shutdown()
         cls.server.server_close()
+        cls.thread.join(timeout=2)
+        cls.temp.cleanup()
 
     def _post_json(self, path: str, payload: dict) -> dict:
         url = f"{BASE_URL}{path}"
@@ -68,6 +93,11 @@ class TestRhnLiveIntegration(unittest.TestCase):
         self.assertEqual(health["version"], "1.9.0")
         self.assertGreaterEqual(health["protocols"], 35)
         self.assertGreaterEqual(health["rules"], 35)
+        inventory = self._get_json("/api/inventory")
+        quality = self._get_json("/api/quality")
+        self.assertEqual(inventory["rules_by_file"]["clinical_safety_rules"], health["rules"])
+        self.assertEqual(inventory["registered_sources"], quality["sources"])
+        self.assertFalse(quality["clinicalReady"])
 
         models = self._get_json("/v1/models")
         self.assertEqual(models["object"], "list")
@@ -330,6 +360,14 @@ class TestRhnLiveIntegration(unittest.TestCase):
         self.assertTrue(any(a["rule"] == "DDI_ARNI_ACEI_WASHOUT_36H" for a in audit_arni["alerts"]))
 
     def test_sources_and_import_api(self):
+        import base64
+        import io
+        from pypdf import PdfWriter
+        writer = PdfWriter()
+        writer.add_blank_page(width=595, height=842)
+        stream = io.BytesIO()
+        writer.write(stream)
+        pdf_bytes = stream.getvalue()
         # 1. Test GET /api/knowledge/sources
         sources = self._get_json("/api/knowledge/sources")
         self.assertIsInstance(sources, list)
@@ -346,30 +384,38 @@ class TestRhnLiveIntegration(unittest.TestCase):
             "summary": "测试用指南导入，用于集成测试验证知识流水线稳定性。",
             "related_diseases": "2型糖尿病, 原发性高血压",
             "content": "# 测试临床指南正文\n\n## 核心推荐意见\n严格按照临床指南开展规范化治疗。"
+            ,"pdf_base64": base64.b64encode(pdf_bytes).decode()
+            ,"official_url": "https://example.test/published"
         }
         res = self._post_json("/api/knowledge/import-source", import_payload)
         self.assertTrue(res.get("success"))
         self.assertEqual(res.get("source_id"), "SRC-TEST-CLIN-2026-99")
+        self.assertEqual(res.get("review_status"), "pending")
 
         # 3. Verify doc retrieval
         doc = self._get_json("/api/wiki/doc?id=SRC-TEST-CLIN-2026-99")
         self.assertEqual(doc["id"], "SRC-TEST-CLIN-2026-99")
         self.assertIn("html", doc)
+        source = next(s for s in self._get_json("/api/knowledge/sources") if s["id"] == import_payload["source_id"])
+        self.assertEqual(source["content_kind"], "unverified_text")
+        self.assertEqual(source["provenance_review"]["decision"], "pending")
+        with self.opener.open(BASE_URL + "/api/sources/SRC-TEST-CLIN-2026-99/original") as response:
+            self.assertEqual(response.headers["Content-Type"], "application/pdf")
+            self.assertEqual(response.read(), pdf_bytes)
 
         # 4. Clean up test files to keep wiki pristine
-        p1 = Path(self.server.root_dir if hasattr(self.server, "root_dir") else "raw/docs/SRC-TEST-CLIN-2026-99.md")
-        if not p1.exists(): p1 = Path("raw/docs/SRC-TEST-CLIN-2026-99.md")
+        p1 = self.root_dir / "raw/docs/SRC-TEST-CLIN-2026-99.md"
         if p1.exists(): p1.unlink()
-        p2 = Path("wiki/sources/SRC-TEST-CLIN-2026-99.md")
+        p2 = self.root_dir / "wiki/sources/SRC-TEST-CLIN-2026-99.md"
         if p2.exists(): p2.unlink()
-        meta_file = Path("raw/metadata.json")
+        meta_file = self.root_dir / "raw/metadata.json"
         mdata = json.loads(meta_file.read_text(encoding="utf-8"))
         mdata["sources"] = [s for s in mdata["sources"] if s.get("id") != "SRC-TEST-CLIN-2026-99"]
         meta_file.write_text(json.dumps(mdata, ensure_ascii=False, indent=2), encoding="utf-8")
-        idx_file = Path("wiki/index.md")
+        idx_file = self.root_dir / "wiki/index.md"
         idx_lines = [l for l in idx_file.read_text(encoding="utf-8").splitlines(keepends=True) if "SRC-TEST-CLIN-2026-99" not in l]
         idx_file.write_text("".join(idx_lines), encoding="utf-8")
-        log_file = Path("wiki/log.md")
+        log_file = self.root_dir / "wiki/log.md"
         log_lines = [l for l in log_file.read_text(encoding="utf-8").splitlines(keepends=True) if "SRC-TEST-CLIN-2026-99" not in l]
         log_file.write_text("".join(log_lines), encoding="utf-8")
 

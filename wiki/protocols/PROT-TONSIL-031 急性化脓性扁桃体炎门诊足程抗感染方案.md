@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-ENT-2020-02
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 急性化脓性扁桃体炎门诊足程抗感染方案

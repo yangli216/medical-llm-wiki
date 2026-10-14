@@ -16,7 +16,7 @@ sources:
   - SRC-CMA-ENT-2020-02
   - SRC-NHC-PHAR-2015-01
 last_updated: "2026-10-08"
-status: verified
+status: draft
 ---
 
 # 急性上呼吸道感染门诊对症与抗生素合理使用方案

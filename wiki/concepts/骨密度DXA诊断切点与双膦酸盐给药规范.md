@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-ENDO-2022-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 骨密度DXA诊断切点与双膦酸盐给药规范

@@ -13,7 +13,7 @@ aliases:
 sources:
   - SRC-NHC-ONC-2022-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 第三代 EGFR 酪氨酸激酶抑制剂 (第三代 EGFR-TKI)

@@ -13,7 +13,7 @@ sources:
   - SRC-PMPH-DIAG-2024-01
   - SRC-CMA-CARD-2024-01
 last_updated: "2026-10-13"
-status: verified
+status: draft
 ---
 
 # GRADE 循证证据分级与临床推荐强度规范 (Medical LLM Wiki 标准)

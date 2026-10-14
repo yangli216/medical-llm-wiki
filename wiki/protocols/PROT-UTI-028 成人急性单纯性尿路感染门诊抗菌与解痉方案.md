@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-NEPH-2021-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 成人急性单纯性尿路感染门诊抗菌与解痉方案

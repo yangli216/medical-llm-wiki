@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-GAST-2022-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 幽门螺杆菌感染与慢性胃炎四联根除门诊方案

@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-GAST-2020-02
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 门诊胃食管反流病阶梯抑酸与动力联合方案

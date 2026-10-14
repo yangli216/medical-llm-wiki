@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-RESP-2021-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《慢性阻塞性肺疾病诊治指南（2021年修订版）》研读

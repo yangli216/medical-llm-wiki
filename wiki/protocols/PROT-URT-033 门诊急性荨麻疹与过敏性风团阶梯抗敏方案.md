@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-DERM-2022-02
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 门诊急性荨麻疹与过敏性风团阶梯抗敏方案

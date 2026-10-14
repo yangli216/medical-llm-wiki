@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-NHC-ONC-2024-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《乳腺癌诊疗指南（2024年版）》研读

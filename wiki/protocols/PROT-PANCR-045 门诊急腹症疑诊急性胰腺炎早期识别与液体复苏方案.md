@@ -16,7 +16,7 @@ tags:
 sources:
   - SRC-CSG-PANCR-2021-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 门诊急腹症疑诊急性胰腺炎早期识别与液体复苏方案

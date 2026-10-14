@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-NAT-TCM-2021-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《中成药临床应用指导原则与中西药联合安全规范》研读

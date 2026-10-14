@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CSGP-SYMP-2021-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《慢性咳嗽基层诊疗指南（2021年）》研读

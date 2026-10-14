@@ -12,7 +12,7 @@ aliases:
 sources:
   - SRC-CMA-ENT-2020-02
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 急性扁桃体炎Centor评分与链球菌防控

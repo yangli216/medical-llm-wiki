@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-ENT-2022-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《变应性鼻炎诊断和治疗指南（2022年，修订版）》研读

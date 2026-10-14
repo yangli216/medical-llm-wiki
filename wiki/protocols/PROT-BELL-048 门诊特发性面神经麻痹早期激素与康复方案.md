@@ -17,7 +17,7 @@ tags:
 sources:
   - SRC-CMA-NEUR-2021-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 门诊特发性面神经麻痹早期激素与康复方案

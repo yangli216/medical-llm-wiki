@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-DERM-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 带状疱疹72小时黄金窗与PHN预防

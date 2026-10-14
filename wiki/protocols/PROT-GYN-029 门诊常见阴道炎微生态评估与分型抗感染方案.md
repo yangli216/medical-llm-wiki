@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-GYN-2021-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 门诊常见阴道炎微生态评估与分型抗感染方案

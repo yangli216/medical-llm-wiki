@@ -16,7 +16,7 @@ sources:
   - SRC-CMA-CARD-2023-03
   - SRC-CMA-CARD-2019-03
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 冠状动脉粥样硬化性心脏病稳定型心绞痛门诊方案

@@ -17,7 +17,7 @@ tags:
 sources:
   - SRC-CMA-URO-2022-01
 last_updated: "2026-10-12"
-status: verified
+status: draft
 ---
 
 # 门诊泌尿系结石与肾绞痛阶梯解痉镇痛方案

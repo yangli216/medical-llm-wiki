@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CDS-ENDO-2024-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《中国2型糖尿病防治指南（2024版）》研读

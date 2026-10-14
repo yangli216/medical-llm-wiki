@@ -8,7 +8,7 @@ tags:
 sources:
   - SRC-CMA-CARD-2021-02
   - SRC-CMA-CARD-2024-02
-status: verified
+status: draft
 last_updated: "2026-10-09"
 ---
 

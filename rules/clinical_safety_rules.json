@@ -67,7 +67,7 @@
             "durationValue": 30
           },
           "rationale": "《中国高血压防治指南》推荐保留单一RASi并联合二氢吡啶类CCB（A+C方案），协同降压且踝部水肿率低",
-          "sourceGuideline": "SRC-CMA-HTN-2024-01"
+          "sourceGuideline": "SRC-CMA-CARD-2024-01"
         },
         {
           "name": "吲达帕胺缓释片",
@@ -80,11 +80,19 @@
             "durationValue": 30
           },
           "rationale": "《指南》推荐A+D联合方案，RASi联合噻嗪样利尿剂协同降压且抵消低血钾风险",
-          "sourceGuideline": "SRC-CMA-HTN-2024-01"
+          "sourceGuideline": "SRC-CMA-CARD-2024-01"
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-SAFETY-PREGNANCY-RAS",
@@ -111,7 +119,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-SAFETY-METFORMIN-RENAL",
@@ -127,7 +143,15 @@
         "egfr_lt": 30
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-SAFETY-METFORMIN-WARN",
@@ -146,7 +170,15 @@
         ]
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-SAFETY-NITRATE-PDE5",
@@ -174,7 +206,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-CASCADE-CCB-EDEMA",
@@ -201,7 +241,15 @@
         ]
       },
       "grade": "2A",
-      "evidence_level": "弱推荐 (Weak recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "弱推荐 (Weak recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-SAFETY-DUAL-NSAIDS",
@@ -226,7 +274,15 @@
         }
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-SAFETY-MONTMORILLONITE-INTERVAL",
@@ -254,7 +310,15 @@
         ]
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-PIM-ELDERLY-BZD",
@@ -273,7 +337,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-PEDIATRIC-ASPIRIN",
@@ -319,7 +391,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-PEDIATRIC-QUINOLONE",
@@ -368,7 +448,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-PEDIATRIC-LOPERAMIDE",
@@ -414,7 +502,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-TCM-XIAOKE-SULFONYLUREA",
@@ -440,7 +536,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-TCM-ACETAMINOPHEN-DUAL",
@@ -497,7 +601,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-HERPES-VALACYCLOVIR-RENAL",
@@ -514,7 +626,15 @@
         "egfr_lt": 50
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-MIGR-TRIPTAN-CARDIOVASCULAR",
@@ -574,7 +694,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-OSTEO-BISPHOSPHONATE-RENAL",
@@ -593,7 +721,15 @@
         "egfr_lt": 35
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-CONSTIP-STIMULANT-LAXATIVE",
@@ -612,7 +748,15 @@
         ]
       },
       "grade": "2A",
-      "evidence_level": "弱推荐 (Weak recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "弱推荐 (Weak recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-DRYEYE-ANTIBIOTIC-MISUSE",
@@ -634,7 +778,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-PED-MACROLIDE-QT",
@@ -681,7 +833,15 @@
         "ddi_or_history": true
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-PED-TETRACYCLINE-AGE",
@@ -700,7 +860,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-PED-ASTHMA-ORAL-STEROID",
@@ -726,7 +894,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-GERD-PPI-CLOPIDOGREL",
@@ -752,7 +928,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-LIPID-STATIN-GEMFIBROZIL",
@@ -781,7 +965,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-UTI-NITROFURANTOIN-RENAL",
@@ -798,7 +990,15 @@
         "egfr_lt": 30
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-LIPID-STATIN-HEPATIC",
@@ -829,7 +1029,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-PREGNANCY-ORAL-FLUCONAZOLE",
@@ -846,7 +1054,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-LEVOTHYROXINE-CHELATION",
@@ -875,7 +1091,15 @@
         ]
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-THYROID-CAD-DOSE",
@@ -903,7 +1127,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-ALLERGY-PENICILLIN",
@@ -930,7 +1162,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-KOA-SYSTEMIC-STEROID",
@@ -987,7 +1227,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-ANTIHISTAMINE-ELDERLY",
@@ -1018,7 +1266,7 @@
             "durationValue": 14
           },
           "rationale": "《中国荨麻疹指南》老年人优先选用第二代非镇静抗组胺药，无中枢抑制与抗胆碱能副作用，防跌倒骨折",
-          "sourceGuideline": "SRC-CMA-DERM-2022-01"
+          "sourceGuideline": "SRC-CMA-DERM-2022-02"
         },
         {
           "name": "盐酸西替利嗪片",
@@ -1031,11 +1279,19 @@
             "durationValue": 14
           },
           "rationale": "第二代外周H1受体阻滞剂，起效快，嗜睡与认知影响远低于第一代抗组胺药",
-          "sourceGuideline": "SRC-CMA-DERM-2022-01"
+          "sourceGuideline": "SRC-CMA-DERM-2022-02"
         }
       ],
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-BPH-ANTICHOLINERGIC",
@@ -1080,7 +1336,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-RABIES-III-PASSIVE-IMMUNITY",
@@ -1114,7 +1378,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-TETANUS-DEEP-DIRTY",
@@ -1141,7 +1413,15 @@
         ]
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-BPH-HYPOTENSION-TAMSULOSIN",
@@ -1166,7 +1446,15 @@
         ]
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-TCM-HUOXIANG-DISULFIRAM",
@@ -1207,7 +1495,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-TCM-POPPY-CONTRAINDICATION",
@@ -1241,7 +1537,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-TCM-XIANLINGGUBAO-HEPATIC",
@@ -1262,7 +1566,15 @@
         ]
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-GDM-SULFONYLUREA-BLOCK",
@@ -1315,7 +1627,15 @@
         }
       ],
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-FEBRILE-SEIZURE-NO-PREVENTIVE-ANTIPYRETIC",
@@ -1336,7 +1656,15 @@
         ]
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-AF-VALVE-DOAC-BLOCK",
@@ -1361,7 +1689,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-NEUROPATHIC-GABAPENTIN-CKD-REDUCE",
@@ -1383,7 +1719,15 @@
         ]
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-HYPERKALEMIA-K-SPARING-STOP",
@@ -1406,7 +1750,15 @@
         ]
       },
       "grade": "1A",
-      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     },
     {
       "id": "RULE-LOKELMA-INTERVAL-WARNING",
@@ -1422,7 +1774,15 @@
         ]
       },
       "grade": "1B",
-      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)"
+      "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     }
   ]
 }

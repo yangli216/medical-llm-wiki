@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-PED-2020-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 儿童支气管哮喘急性发作与维持阶梯方案

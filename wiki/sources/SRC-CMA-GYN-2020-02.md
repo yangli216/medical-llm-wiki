@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-GYN-2020-02
 last_updated: "2026-10-09"
-status: verified
+status: draft
 ---
 
 # 《妊娠期高血压疾病诊治指南（2020）》研读与循证精要

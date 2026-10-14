@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CSGP-GERI-2023-02
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《基层医疗卫生机构老年人多重用药与慢病共病全科安全管理指南》研读

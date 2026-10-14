@@ -10,7 +10,7 @@ aliases:
 sources:
   - SRC-CMA-NEUR-2022-01
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 《中国偏头痛诊治指南（2022版）》研读

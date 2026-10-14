@@ -11,7 +11,7 @@ aliases:
 sources:
   - SRC-CSGP-MSK-2023-01
 last_updated: "2026-10-06"
-status: verified
+status: draft
 ---
 
 # 《非特异性腰痛基层全科诊疗与康复管理指南》研读

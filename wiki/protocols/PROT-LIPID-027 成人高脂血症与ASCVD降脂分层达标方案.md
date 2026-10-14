@@ -15,7 +15,7 @@ tags:
 sources:
   - SRC-CMA-CARD-2023-03
 last_updated: "2026-10-07"
-status: verified
+status: draft
 ---
 
 # 成人高脂血症与ASCVD降脂分层达标方案

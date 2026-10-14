@@ -87,6 +87,7 @@ class SourceCollector:
         key_scope: str,
         publication: str = "",
         level: str = "国家权威临床专科指南",
+        provenance: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """Appends or updates a source record in metadata.json."""
         metadata = self.load_metadata()
@@ -105,7 +106,18 @@ class SourceCollector:
             "file_path": file_path,
             "key_scope": key_scope,
             "status": "active",
+            "content_kind": "unverified_text",
+            "official_url": "",
+            "doi": "",
+            "retrieved_at": "",
+            "original_file": "",
+            "original_sha256": "",
+            "provenance_review": {"decision": "pending"},
         }
+        if provenance:
+            allowed = {"content_kind", "official_url", "doi", "retrieved_at", "original_file",
+                       "original_sha256", "content_sha256"}
+            new_entry.update({k: v for k, v in provenance.items() if k in allowed})
 
         for i, src in enumerate(sources):
             if src.get("id") == source_id:
