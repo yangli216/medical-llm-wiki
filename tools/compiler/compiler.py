@@ -129,11 +129,20 @@ class WikiGraph:
 
     def load_graph(self) -> None:
         """Reads and parses all markdown files in wiki/."""
+        if getattr(self, "_loading", False):
+            return
+        self._loading = True
+        try:
+            self._last_loaded_mtime = max((f.stat().st_mtime for f in self.wiki_dir.rglob("*.md")), default=0)
+        except Exception:
+            self._last_loaded_mtime = 0
+
         self.pages.clear()
         self.alias_map.clear()
         self.backlinks.clear()
 
         if not self.wiki_dir.exists():
+            self._loading = False
             return
 
         for md_path in self.wiki_dir.rglob("*.md"):
@@ -159,21 +168,44 @@ class WikiGraph:
 
         for source_id, page in self.pages.items():
             for target in page.links:
-                resolved_id = self.resolve_link(target)
+                resolved_id = self._raw_resolve(target)
                 if resolved_id and resolved_id in self.backlinks:
                     if source_id not in self.backlinks[resolved_id]:
                         self.backlinks[resolved_id].append(source_id)
 
-    def resolve_link(self, link_text: str) -> Optional[str]:
-        """Resolves a link text or alias to the primary page identifier."""
+        self._loading = False
+
+    def _raw_resolve(self, link_text: str) -> Optional[str]:
         clean = link_text.strip()
         if clean in self.alias_map:
             return self.alias_map[clean]
-        # Try stripping leading/trailing path elements
         stem = Path(clean).stem
         if stem in self.alias_map:
             return self.alias_map[stem]
         return None
+
+    def _check_and_reload(self) -> None:
+        """Dynamically reloads graph if markdown files in wiki/ were modified or added."""
+        if getattr(self, "_loading", False) or not self.wiki_dir.exists():
+            return
+        import time
+        now = time.time()
+        if now - getattr(self, "_last_checked_time", 0) < 2.0:
+            return
+        self._last_checked_time = now
+        try:
+            current_mtime = max((f.stat().st_mtime for f in self.wiki_dir.rglob("*.md")), default=0)
+            if current_mtime > getattr(self, "_last_loaded_mtime", 0):
+                self.load_graph()
+        except Exception:
+            pass
+
+    def resolve_link(self, link_text: str) -> Optional[str]:
+        """Resolves a link text or alias to the primary page identifier."""
+        if not link_text:
+            return None
+        self._check_and_reload()
+        return self._raw_resolve(link_text)
 
     def get_stats(self) -> Dict[str, Any]:
         """Computes structural graph metrics."""

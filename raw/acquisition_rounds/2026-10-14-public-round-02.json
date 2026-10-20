@@ -1,0 +1,425 @@
+{
+  "version": 1,
+  "round_id": "2026-10-14-public-round-02",
+  "scope": "第二轮公开可下载来源原件；题名版次核对及书目校正，不替代来源人工核验或临床审核",
+  "sources": [
+    {
+      "source_id": "SRC-CMA-GAST-2022-01",
+      "downloaded_filename": "hp2022.pdf",
+      "original_title": "2022中国幽门螺杆菌感染治疗指南",
+      "edition_year": 2022,
+      "publication_year": 2022,
+      "doi": "10.3760/cma.j.cn311367-20220929-00479",
+      "original_publication": "中华消化杂志, 2022, 42(11):745-756",
+      "original_authority": "中华医学会消化病学分会幽门螺杆菌学组",
+      "official_url": "https://rs.yiigle.com/cmaid/1435828",
+      "download_page_url": "https://www.hnysfww.com/article.php?id=3649",
+      "download_url": "https://www.hnysfww.com/data/article/1683589906291964459.pdf",
+      "host_role": "professional_society_mirror",
+      "completeness": "journal_issue_containing_target_article",
+      "coverage": "湖南省药学会公开附件实际为75页期刊合集，目标指南位于PDF第28–39页（期刊745–756页），非75页全部为该指南。期刊官方PDF入口要求登录，未使用账户、未绕过权限；取得的是学会公开转载附件。原登记题名的“全国共识报告”混淆了另篇共识，改为原文题名，临床摘要未改写。",
+      "format": "pdf",
+      "byte_count": 4447087,
+      "original_sha256": "195bb4d64cc95a4548018d6e8197330889100e0f4e269829ee9066fa282b31f9",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "pages": 75,
+      "parsed_pages": 75,
+      "pdf_extracted_characters": 249890,
+      "parser_warning_count": 1,
+      "article_locator": {
+        "pdf_pages": [
+          28,
+          39
+        ],
+        "journal_pages": [
+          745,
+          756
+        ]
+      },
+      "registration_correction": {
+        "previous": {
+          "title": "2022中国幽门螺杆菌感染治疗指南（全国共识报告）"
+        },
+        "corrected": {
+          "title": "2022中国幽门螺杆菌感染治疗指南"
+        }
+      },
+      "original_file": "raw/originals/SRC-CMA-GAST-2022-01-195bb4d64cc9.pdf",
+      "retrieved_at": "2026-10-14T07:10:22.831812+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-NEUR-2023-01",
+      "downloaded_filename": "stroke2023.pdf",
+      "original_title": "中国急性缺血性卒中诊治指南2023",
+      "edition_year": 2023,
+      "publication_year": 2024,
+      "doi": "10.3760/cma.j.cn113694-20240410-00221",
+      "original_publication": "中华神经科杂志, 2024, 57(6):523-559",
+      "original_authority": "中华医学会神经病学分会 / 中华医学会神经病学分会脑血管病学组",
+      "official_url": "https://kepu.wjw.gz.gov.cn/home/jktt/content/mpost_6284.html",
+      "download_url": "https://medtion-image.medtion.com/uploads/1/file/public/202407/20240708171733_qjshk1vc0j.pdf",
+      "host_role": "government_linked_public_host",
+      "coverage": "广州市卫健委科普网站明确列出的公开PDF链接，文件37页。指南版次2023、期刊发表年2024；本版题名将“脑卒中”简称为“卒中”。第三方文件主机不是作者机构，需人工核对转载一致性。",
+      "format": "pdf",
+      "completeness": "downloaded_publication_file",
+      "byte_count": 4850047,
+      "original_sha256": "d3daad27982d5dbae5724cdfe48b676e053a5bec072f432310db7919a373640f",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "pages": 37,
+      "parsed_pages": 37,
+      "pdf_extracted_characters": 144392,
+      "parser_warning_count": 0,
+      "registration_correction": {
+        "previous": {
+          "title": "中国急性缺血性脑卒中诊治指南（2023）"
+        },
+        "corrected": {
+          "title": "中国急性缺血性卒中诊治指南2023"
+        }
+      },
+      "original_file": "raw/originals/SRC-CMA-NEUR-2023-01-d3daad27982d.pdf",
+      "retrieved_at": "2026-10-14T07:10:22.850125+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-DERM-2022-02",
+      "downloaded_filename": "urticaria2022.pdf",
+      "original_title": "中国荨麻疹诊疗指南（2022版）",
+      "edition_year": 2022,
+      "publication_year": 2022,
+      "doi": "10.35541/cjd.20220609",
+      "original_publication": "中华皮肤科杂志, 2022, 55(12):1041-1049",
+      "original_authority": "中华医学会皮肤性病学分会荨麻疹研究中心",
+      "official_url": "https://rs.yiigle.com/CN321138202212/1436321.htm",
+      "download_page_url": "https://www.hnysfww.com/article.php?id=1585",
+      "download_url": "https://www.hnysfww.com/data/article/1754433218753997051.pdf",
+      "host_role": "professional_society_mirror",
+      "coverage": "湖南省药学会公开9页PDF，题名、DOI与期刊页码匹配。转载网页同时提供2018版、2022版，且网页显示旧发布日期；本次按附件内题名、版次、DOI选择2022版，未使用2018版。",
+      "format": "pdf",
+      "completeness": "downloaded_publication_file",
+      "byte_count": 2281133,
+      "original_sha256": "7ab4d3e193afa72e01585e5eec16ff4527057d96420acd571bf8ff0cf63e9198",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "pages": 9,
+      "parsed_pages": 9,
+      "pdf_extracted_characters": 24462,
+      "parser_warning_count": 10,
+      "original_file": "raw/originals/SRC-CMA-DERM-2022-02-7ab4d3e193af.pdf",
+      "retrieved_at": "2026-10-14T07:10:22.866186+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-RESP-2021-01",
+      "downloaded_filename": "copd2021.pdf",
+      "original_title": "慢性阻塞性肺疾病诊治指南（2021年修订版）",
+      "edition_year": 2021,
+      "publication_year": 2021,
+      "doi": "10.3760/cma.j.cn112147-20210109-00031",
+      "original_publication": "中华结核和呼吸杂志, 2021, 44(3):170-205",
+      "original_authority": "中华医学会呼吸病学分会慢性阻塞性肺疾病学组 / 中国医师协会呼吸医师分会慢性阻塞性肺疾病工作委员会",
+      "official_url": "https://seleguide.yiigle.com/uploads/guide_html/%E6%85%A2%E6%80%A7%E9%98%BB%E5%A1%9E%E6%80%A7%E8%82%BA%E7%96%BE%E7%97%85%E8%AF%8A%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882021%E5%B9%B4%E4%BF%AE%E8%AE%A2%E7%89%88%EF%BC%89%20-%20%E4%B8%AD%E5%8D%8E%E7%BB%93%E6%A0%B8%E5%92%8C%E5%91%BC%E5%90%B8%E6%9D%82%E5%BF%97.html",
+      "download_page_url": "https://www.hnysfww.com/mobile/article.php?id=3109",
+      "download_url": "https://www.hnysfww.com/data/article/1646376221682182208.pdf",
+      "host_role": "professional_society_mirror",
+      "coverage": "36页2021修订版期刊PDF；用公开期刊HTML题名和DOI交叉核对。原登记“及最新规范”没有明确版本，已收窄为实际取得的2021修订版；未据此认定摘要中可能混入的后续规范已获溯源支持。",
+      "format": "pdf",
+      "completeness": "downloaded_publication_file",
+      "byte_count": 3086176,
+      "original_sha256": "dbefbf7a2fc6f5f05c3eda87576cd28a5a3b03fbb94660614acaae21952b8cfa",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "pages": 36,
+      "parsed_pages": 36,
+      "pdf_extracted_characters": 128529,
+      "parser_warning_count": 0,
+      "copy_notes": "公开转载文件可见湖南药事服务网水印/页脚，不宣称与出版社文件逐字节相同。",
+      "registration_correction": {
+        "previous": {
+          "title": "慢性阻塞性肺疾病诊治指南（2021年修订版及最新规范）"
+        },
+        "corrected": {
+          "title": "慢性阻塞性肺疾病诊治指南（2021年修订版）"
+        }
+      },
+      "original_file": "raw/originals/SRC-CMA-RESP-2021-01-dbefbf7a2fc6.pdf",
+      "retrieved_at": "2026-10-14T07:10:22.947107+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-CARD-2019-03",
+      "downloaded_filename": "stemi2019.html",
+      "original_title": "急性ST段抬高型心肌梗死诊断和治疗指南（2019）",
+      "edition_year": 2019,
+      "publication_year": 2019,
+      "doi": "10.3760/cma.j.issn.0253-3758.2019.10.003",
+      "original_publication": "中华心血管病杂志, 2019, 47(10):766-783",
+      "original_authority": "中华医学会心血管病学分会 / 中华心血管病杂志编辑委员会",
+      "official_url": "https://seleguide.yiigle.com/uploads/guide_html/%E6%80%A5%E6%80%A7ST%E6%AE%B5%E6%8A%AC%E9%AB%98%E5%9E%8B%E5%BF%83%E8%82%8C%E6%A2%97%E6%AD%BB%E8%AF%8A%E6%96%AD%E5%92%8C%E6%B2%BB%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%EF%BC%89.html",
+      "host_role": "publisher",
+      "completeness": "article_text_external_assets_not_bundled",
+      "coverage": "期刊Yiigle公开HTML文章响应，含正文与末条参考文献72。CDQI PDF下载发生TLS证书校验错误，未关闭校验，未将失败响应入库；本次仅将期刊HTML作为原件，外链资产未打包。",
+      "format": "html",
+      "download_url": "https://seleguide.yiigle.com/uploads/guide_html/%E6%80%A5%E6%80%A7ST%E6%AE%B5%E6%8A%AC%E9%AB%98%E5%9E%8B%E5%BF%83%E8%82%8C%E6%A2%97%E6%AD%BB%E8%AF%8A%E6%96%AD%E5%92%8C%E6%B2%BB%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%EF%BC%89.html",
+      "byte_count": 218521,
+      "original_sha256": "f07deab77128cd745403f4c5ec52a1ea489d4c61d2a49a092a9efd696dcc7a65",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "html_extracted_characters": 64272,
+      "last_reference_number": 72,
+      "registration_correction": {
+        "previous": {
+          "title": "中国急性ST段抬高型心肌梗死诊断和治疗指南"
+        },
+        "corrected": {
+          "title": "急性ST段抬高型心肌梗死诊断和治疗指南（2019）"
+        }
+      },
+      "original_file": "raw/originals/SRC-CMA-CARD-2019-03-f07deab77128.html",
+      "retrieved_at": "2026-10-14T07:10:22.949779+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-NEUR-2022-01",
+      "downloaded_filename": "migraine2022.pdf",
+      "original_title": "中国偏头痛诊治指南（2022版）",
+      "edition_year": 2022,
+      "publication_year": 2022,
+      "doi": "10.3969/j.issn.1006-9852.2022.12.001",
+      "original_publication": "中国疼痛医学杂志, 2022, 28(12):881-898",
+      "original_authority": "中国医师协会神经内科医师分会 / 中国研究型医院学会头痛与感觉障碍专业委员会",
+      "official_url": "https://ccj.pku.edu.cn/Article/info?aid=342957278",
+      "download_page_url": "https://www.hnysfww.com/article.php?id=3488",
+      "download_url": "https://www.hnysfww.com/data/article/1672249688322767320.pdf",
+      "host_role": "professional_society_mirror",
+      "coverage": "18页2022版，期刊题名及版次与登记匹配，但原登记的中华医学会制定机构/中华神经科杂志书目错误。依据PDF首页及北京大学期刊平台书目校正来源机构和发表期刊，旧值保留；既有ID含CMA是历史标识，不再用其推断机构。与中华医学会另版“偏头痛诊断与治疗指南”不混用，临床摘要仍需人工核查。",
+      "format": "pdf",
+      "completeness": "downloaded_publication_file",
+      "byte_count": 1666324,
+      "original_sha256": "c3715ac1de454a5929460067cf07fc39271fb8c8ae6084f13725a55092d021b6",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "pages": 18,
+      "parsed_pages": 18,
+      "pdf_extracted_characters": 55754,
+      "parser_warning_count": 1,
+      "copy_notes": "公开转载文件可见湖南药事服务网水印/页脚，不宣称与出版社文件逐字节相同。",
+      "registration_correction": {
+        "previous": {
+          "authority": "中华医学会神经病学分会头痛协作组",
+          "publication": "中华神经科杂志 2022年"
+        },
+        "corrected": {
+          "authority": "中国医师协会神经内科医师分会 / 中国研究型医院学会头痛与感觉障碍专业委员会",
+          "publication": "中国疼痛医学杂志 2022年第28卷第12期，881-898"
+        }
+      },
+      "original_file": "raw/originals/SRC-CMA-NEUR-2022-01-c3715ac1de45.pdf",
+      "retrieved_at": "2026-10-14T07:10:22.973063+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-GYN-2020-02",
+      "downloaded_filename": "pregnancyht2020.pdf",
+      "original_title": "妊娠期高血压疾病诊治指南（2020）",
+      "edition_year": 2020,
+      "publication_year": 2020,
+      "original_publication": "中华妇产科杂志, 2020, 55(4):227-238",
+      "original_authority": "中华医学会妇产科学分会妊娠期高血压疾病学组",
+      "official_url": "https://www.hnysfww.com/article.php?id=2363",
+      "download_url": "https://www.hnysfww.com/data/article/1626295975600264593.pdf",
+      "host_role": "professional_society_mirror",
+      "coverage": "湖南省药学会公开转载12页期刊原件，含末页继续教育试题；不是只有指南摘要，末页附带试题不是指南推荐意见。",
+      "format": "pdf",
+      "completeness": "downloaded_publication_file",
+      "doi": "10.3760/cma.j.cn112141-20200114-00039",
+      "byte_count": 909653,
+      "original_sha256": "06c42efdcd154aa9a7e56fb95c5861802814263ca68146e1f9d0e0e832ce43a0",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "pages": 12,
+      "parsed_pages": 12,
+      "pdf_extracted_characters": 31297,
+      "parser_warning_count": 0,
+      "copy_notes": "公开转载文件可见湖南药事服务网水印/页脚，不宣称与出版社文件逐字节相同。",
+      "original_file": "raw/originals/SRC-CMA-GYN-2020-02-06c42efdcd15.pdf",
+      "retrieved_at": "2026-10-14T07:10:22.985660+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-ENT-2022-01",
+      "downloaded_filename": "rhinitis2022.pdf",
+      "original_title": "中国变应性鼻炎诊断和治疗指南（2022年，修订版）",
+      "edition_year": 2022,
+      "publication_year": 2022,
+      "original_publication": "中华耳鼻咽喉头颈外科杂志, 2022, 57(2):106-129",
+      "original_authority": "中华耳鼻咽喉头颈外科杂志编辑委员会鼻科组 / 中华医学会耳鼻咽喉头颈外科学分会鼻科学组",
+      "official_url": "https://www.hnysfww.com/article.php?id=3195",
+      "download_url": "https://www.hnysfww.com/data/article/1651109240442367965.pdf",
+      "host_role": "professional_society_mirror",
+      "coverage": "湖南省药学会公开24页PDF，含文章与期刊附带栏目/后续刊期预告；原件未裁剪或重写。来源登记题名补齐原文的“中国”前缀。",
+      "format": "pdf",
+      "completeness": "downloaded_publication_file",
+      "doi": "10.3760/cma.j.cn115330-20211228-00828",
+      "byte_count": 1513633,
+      "original_sha256": "f297151eee6136ce48418fa837f2ffbf7ed64aa2d26a24f9c30f318bbeea2548",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "pages": 24,
+      "parsed_pages": 24,
+      "pdf_extracted_characters": 76345,
+      "parser_warning_count": 306,
+      "copy_notes": "公开转载文件可见湖南药事服务网水印/页脚，不宣称与出版社文件逐字节相同。",
+      "registration_correction": {
+        "previous": {
+          "title": "变应性鼻炎诊断和治疗指南（2022年，修订版）"
+        },
+        "corrected": {
+          "title": "中国变应性鼻炎诊断和治疗指南（2022年，修订版）"
+        }
+      },
+      "original_file": "raw/originals/SRC-CMA-ENT-2022-01-f297151eee61.pdf",
+      "retrieved_at": "2026-10-14T07:10:23.009237+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-NEUR-2023-02",
+      "downloaded_filename": "insomnia2023.pdf",
+      "original_title": "中国成人失眠诊断与治疗指南（2023版）",
+      "edition_year": 2023,
+      "publication_year": 2024,
+      "doi": "10.3760/cma.j.cn113694-20240406-00209",
+      "original_publication": "中华神经科杂志, 2024, 57(6):560-584",
+      "original_authority": "中华医学会神经病学分会睡眠障碍学组",
+      "official_url": "https://doi.org/10.3760/cma.j.cn113694-20240406-00209",
+      "download_url": "https://medtion-image.medtion.com/uploads/1/file/public/202407/20240719144258_vhtdud2bn4.pdf",
+      "host_role": "public_medical_platform_mirror",
+      "coverage": "公开医学平台25页期刊PDF，文件内DOI、题名和页码匹配；指南版次2023、期刊发表年2024。未使用2025年其他学会指南替代。转载主机不是发文机构，仍需人工来源核验。",
+      "format": "pdf",
+      "completeness": "downloaded_publication_file",
+      "byte_count": 3548827,
+      "original_sha256": "370e39981e530a0287fd57fb00e619aaece1a6ccec1e7c076e3672ff0f357921",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "pages": 25,
+      "parsed_pages": 25,
+      "pdf_extracted_characters": 94740,
+      "parser_warning_count": 0,
+      "original_file": "raw/originals/SRC-CMA-NEUR-2023-02-370e39981e53.pdf",
+      "retrieved_at": "2026-10-14T07:10:23.022908+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-ENDO-2017-01",
+      "downloaded_filename": "hypothyroidism2017.html",
+      "original_title": "成人甲状腺功能减退症诊治指南",
+      "edition_year": 2017,
+      "publication_year": 2017,
+      "doi": "10.3760/cma.j.issn.1000-6699.2017.02.018",
+      "original_publication": "中华内分泌代谢杂志, 2017, 33(2):167-180",
+      "original_authority": "中华医学会内分泌学分会",
+      "official_url": "https://cmab.yiigle.com/uploads/guide_html/%E6%88%90%E4%BA%BA%E7%94%B2%E7%8A%B6%E8%85%BA%E5%8A%9F%E8%83%BD%E5%87%8F%E9%80%80%E7%97%87%E8%AF%8A%E6%B2%BB%E6%8C%87%E5%8D%97.html",
+      "host_role": "publisher",
+      "completeness": "article_text_external_assets_not_bundled",
+      "coverage": "期刊Yiigle公开HTML文章响应，含正文、推荐条款与末条参考文献105。未取得PDF或打包全部外链图表；不据此认定2017年后所有临床结论仍现行有效。",
+      "format": "html",
+      "download_url": "https://cmab.yiigle.com/uploads/guide_html/%E6%88%90%E4%BA%BA%E7%94%B2%E7%8A%B6%E8%85%BA%E5%8A%9F%E8%83%BD%E5%87%8F%E9%80%80%E7%97%87%E8%AF%8A%E6%B2%BB%E6%8C%87%E5%8D%97.html",
+      "byte_count": 413320,
+      "original_sha256": "1589196768d0ae44fba32c6890020dc61611a685aa44f365c2701813c1ff7cac",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "html_extracted_characters": 88502,
+      "last_reference_number": 105,
+      "original_file": "raw/originals/SRC-CMA-ENDO-2017-01-1589196768d0.html",
+      "retrieved_at": "2026-10-14T07:10:23.026229+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      }
+    }
+  ],
+  "total_archived": 10,
+  "formats": {
+    "pdf": 8,
+    "html": 2
+  },
+  "total_pdf_pages": 236,
+  "total_bytes": 22934721,
+  "review_policy": "保留curated_summary和pending审核状态，原始下载字节不裁剪、不重写。归档不代表逐条临床证据核对或再分发授权。",
+  "unresolved": [
+    {
+      "source_id": "SRC-CSG-PANCR-2021-01",
+      "status": "identity_ambiguous_not_archived",
+      "reason": "登记混合“2021，沈阳”和消化病学分会；检索得到外科学分会2021版及消化病学分会2019沈阳版，无法确认指向同一文献。2021外科附件还发生下载中断（pypdf EOF缺失），未挂接或归档。",
+      "candidate_reference_urls": [
+        "https://rs.yiigle.com/cmaid/1331236",
+        "https://doi.org/10.19538/j.cjps.issn1005-2208.2021.07.03",
+        "https://lcgd.cbpt.cnki.net/portal"
+      ]
+    },
+    {
+      "source_id": "SRC-CMA-GAST-2020-03",
+      "status": "edition_ambiguous_not_archived",
+      "reason": "未确认《中国慢性胃炎共识意见（2020年，上海）》匹配书目，不用已发现2012/2017共识或2022指南替代。",
+      "candidate_reference_urls": [
+        "https://drugs.dxy.cn/pc/clinicalGuidelines/jETIbeYNU2pD1cS3pp8wzA%3D%3D?ky=%E6%85%A2%E6%80%A7%E8%90%8E%E7%BC%A9%E6%80%A7%E8%83%83%E7%82%8E"
+      ]
+    },
+    {
+      "source_id": "SRC-CMA-PAIN-2020-01",
+      "status": "edition_ambiguous_not_archived",
+      "reason": "明确检索到的同名共识是2016版，未证实登记2020版；不将2016版挂作2020原件。"
+    },
+    {
+      "source_id": "SRC-CMA-CARD-2019-03",
+      "status": "pdf_unavailable_html_archived",
+      "reason": "CDQI公开PDF链接发生TLS证书校验错误（curl exit60）；未关闭证书校验，改存期刊公开HTML文章。"
+    }
+  ],
+  "validation": {
+    "pdf_pages_parsed": 236,
+    "pdf_title_pages_rendered": 8,
+    "html_reference_ends": {
+      "stemi2019": 72,
+      "hypothyroidism2017": 105
+    },
+    "limitations": "PDF全页可解析及提取文本，但部分文件存在交叉引用/重复字典键警告；幽门螺杆菌文本提取有全角、页码字符映射异常，引用时应视觉核对。HTML外链资产未打包；所有转载副本与出版社字节一致性未经认证。"
+  },
+  "verification_results": {
+    "software_tests_passed": 115,
+    "pdf_pages_parsed": 236,
+    "pdf_target_title_pages_visually_checked": 8,
+    "new_originals_sha256_and_download_bytes_passed": 10,
+    "round1_originals_and_records_unchanged": 10,
+    "live_download_routes_passed": 10,
+    "lint_healthy": true,
+    "readme_inventory_check_passed": true,
+    "total_sources": 61,
+    "total_originals_archived": 20,
+    "remaining_missing_originals": 41,
+    "source_verification_approvals": 0,
+    "clinical_page_approvals": 0,
+    "clinical_rule_approvals": 0,
+    "clinical_content_modified": false
+  }
+}

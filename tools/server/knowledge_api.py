@@ -40,23 +40,36 @@ class KnowledgeApiMixin:
         raw_path = query_params.get("path", [""])[0].strip()
         doc_type = query_params.get("type", [""])[0].strip().lower()
 
-        target = raw_id or raw_name or raw_path
+        target = raw_name or raw_id or raw_path
+        alt_target = raw_id if target == raw_name and raw_id else (raw_name if target == raw_id and raw_name else "")
         if not target:
             self._send_json({"error": "Missing query parameter 'id', 'name', or 'path'"}, status=400)
             return
 
-        # 1. Try drug monograph if type is medication/drug/insert or (not specified and not starting with SRC- or PROT-)
-        if doc_type in ("drug", "insert", "medication") or (doc_type == "" and not target.startswith("SRC-") and not target.startswith("PROT-")):
-            candidates = [target]
-            token0 = target.split()[0].strip() if " " in target else ""
-            if token0 and token0 not in candidates:
-                candidates.append(token0)
-            token_paren = re.split(r'[（\(]', target)[0].strip()
-            if token_paren and token_paren not in candidates:
-                candidates.append(token_paren)
-            token_cleaned = re.sub(r'[\s0-9\.\*gmg片粒盒袋/]+$', '', target).strip()
-            if token_cleaned and token_cleaned not in candidates:
-                candidates.append(token_cleaned)
+        # 1. Try drug monograph if type is medication/drug/insert/prescription/medicine or (not specified and not starting with SRC- or PROT-)
+        if doc_type in ("drug", "insert", "medication", "prescription", "medicine") or (doc_type == "" and not target.startswith("SRC-") and not target.startswith("PROT-")):
+            query_targets = [t for t in [target, alt_target] if t]
+            candidates: List[str] = []
+            for t_item in query_targets:
+                if t_item not in candidates:
+                    candidates.append(t_item)
+                t_no_prefix = re.sub(r'^[\[【(（][^\]】)）]+[\]】)）]', '', t_item).strip()
+                if t_no_prefix and t_no_prefix not in candidates:
+                    candidates.append(t_no_prefix)
+
+                for base in ([t_item, t_no_prefix] if t_no_prefix else [t_item]):
+                    token0 = base.split()[0].strip() if " " in base else ""
+                    if token0 and token0 not in candidates:
+                        candidates.append(token0)
+                    token_paren = re.split(r'[（\(\[【]', base)[0].strip()
+                    if token_paren and token_paren not in candidates:
+                        candidates.append(token_paren)
+                    token_cleaned = re.sub(r'[\s0-9\.\*gmg片粒盒袋支/]+$', '', base).strip()
+                    if token_cleaned and token_cleaned not in candidates:
+                        candidates.append(token_cleaned)
+                    token_both = re.sub(r'[\s0-9\.\*gmg片粒盒袋支/]+$', '', token_paren).strip()
+                    if token_both and token_both not in candidates:
+                        candidates.append(token_both)
 
             d = None
             for cand in candidates:
@@ -64,7 +77,7 @@ class KnowledgeApiMixin:
                 if d:
                     break
 
-            if not d:
+            if not d and doc_type in ("drug", "insert", "medication", "prescription", "medicine"):
                 for cand in candidates:
                     drug_matches = self.drug_repo.search(cand, limit=1)
                     if drug_matches:
@@ -96,7 +109,7 @@ class KnowledgeApiMixin:
                     "html": html_body,
                 })
                 return
-            elif doc_type in ("drug", "insert", "medication"):
+            elif doc_type in ("drug", "insert", "medication", "prescription", "medicine"):
                 # If explicitly querying a drug monograph, do not fallback to unrelated wiki documents
                 self._send_json({"error": "Drug monograph not found", "query": target}, status=404)
                 return
@@ -107,7 +120,7 @@ class KnowledgeApiMixin:
         # 2. Try protocol repository if type is protocol, guideline, or (not specified and not starting with SRC-)
         if doc_type in ("protocol", "guideline") or (doc_type == "" and not target.startswith("SRC-")):
             prot = self.cdss.repo.get(target) or self.cdss.repo.get(norm.canonical_name)
-            if not prot and raw_name:
+            if not prot and raw_name and doc_type in ("protocol", "guideline"):
                 matches = self.cdss.search_protocols(raw_name, limit=1)
                 if matches:
                     prot = self.cdss.repo.get(matches[0]["protocolId"])
@@ -139,10 +152,28 @@ class KnowledgeApiMixin:
 
         # 3. Try WikiGraph (concepts, entities, sources)
         lookup_targets = [target]
+        if alt_target and alt_target not in lookup_targets:
+            lookup_targets.append(alt_target)
         if norm.canonical_name and norm.canonical_name not in lookup_targets:
             lookup_targets.append(norm.canonical_name)
         if norm.clean and norm.clean not in lookup_targets:
             lookup_targets.append(norm.clean)
+
+        for base in list(lookup_targets):
+            # 1. Strip brackets prefix (e.g. [检验], 【放射】)
+            cand_no_prefix = re.sub(r'^[\[【(（][^\]】)）]+[\]】)）]', '', base).strip()
+            if cand_no_prefix and cand_no_prefix not in lookup_targets:
+                lookup_targets.append(cand_no_prefix)
+            # 2. Strip parentheses / brackets (e.g. 血常规（五分类） -> 血常规)
+            cand_no_paren = re.sub(r'[（\(\[【].*?[）\)\]】]', '', base).strip()
+            if cand_no_paren and cand_no_paren not in lookup_targets:
+                lookup_targets.append(cand_no_paren)
+            # 3. Synonym swap X线 <-> X射线, 摄影 <-> 摄片, 彩超 <-> 超声
+            for src, dst in (("X线", "X射线"), ("X射线", "X线"), ("摄片", "摄影"), ("摄影", "摄片"), ("彩超", "超声")):
+                if src in base:
+                    swapped = base.replace(src, dst)
+                    if swapped not in lookup_targets:
+                        lookup_targets.append(swapped)
 
         page = None
         for cand_target in lookup_targets:
@@ -151,7 +182,7 @@ class KnowledgeApiMixin:
             resolved = self.graph.resolve_link(clean_id) or clean_id
             page = self.graph.pages.get(resolved) or self.graph.pages.get(cand_target)
             if not page:
-                for sub in ("sources", "concepts", "entities/diseases", "entities"):
+                for sub in ("sources", "concepts", "entities/diseases", "entities/tests", "entities/examinations", "entities"):
                     p_cand = self.root_dir / "wiki" / sub / f"{clean_id}.md"
                     if p_cand.exists():
                         from tools.compiler.compiler import WikiPage
@@ -159,6 +190,27 @@ class KnowledgeApiMixin:
                         break
             if page:
                 break
+
+        # 3.1 Direct test & examination alias / title scanner fallback
+        if not page and doc_type in ("test", "exam", "examination", "lab", "imaging", "laboratory", "service", ""):
+            for cand_target in lookup_targets:
+                cand_low = cand_target.lower()
+                clean_cand = re.sub(r'[\s0-9\.\*gmgml粒片盒袋/支μuiiu瓶丸包次日mgkg]+$', '', cand_low).strip()
+                for p_id, p_obj in self.graph.pages.items():
+                    if p_obj.frontmatter.get("type") in ("test", "examination"):
+                        p_aliases = [a.lower() for a in p_obj.aliases]
+                        p_title = p_obj.title.lower()
+                        if cand_low == p_title or cand_low in p_aliases:
+                            page = p_obj
+                            break
+                        if clean_cand and (clean_cand == p_title or clean_cand in p_aliases):
+                            page = p_obj
+                            break
+                        if any(cand_low in a or a in cand_low for a in p_aliases if len(a) >= 3):
+                            page = p_obj
+                            break
+                if page:
+                    break
 
         if page:
             html_body = self._markdown_to_html(page.raw_text)
@@ -175,19 +227,26 @@ class KnowledgeApiMixin:
             return
 
         # 4. Search fallback: find closest matching article with strict clinical compatibility
-        if doc_type in ("", "wiki", "concept", "source", "guideline"):
+        if doc_type in ("", "wiki", "concept", "source", "guideline", "test", "exam", "examination", "lab", "imaging"):
             search_query = norm.canonical_name or target
-            search_hits = self.searcher.search(search_query, limit=3)
+            search_hits = self.searcher.search(search_query, limit=5)
             compatible_page = None
             for hit in search_hits:
                 hit_page = self.graph.pages.get(hit["id"])
                 if not hit_page:
                     continue
+                page_type = hit_page.frontmatter.get("type", "")
                 aliases = hit_page.frontmatter.get("aliases", [])
                 if isinstance(aliases, str):
                     aliases = [aliases]
-                icd = hit_page.frontmatter.get("icd10")
-                if norm.is_compatible_with(hit_page.title, aliases, icd):
+                if page_type in ("test", "examination"):
+                    clean_t = re.sub(r'[\(（].*?[\)）]', '', target).strip().lower()
+                    if (target.lower() in hit_page.title.lower() or
+                        any(target.lower() in a.lower() for a in aliases) or
+                        (clean_t and (clean_t in hit_page.title.lower() or any(clean_t in a.lower() for a in aliases)))):
+                        compatible_page = hit_page
+                        break
+                elif norm.is_compatible_with(hit_page.title, aliases, hit_page.frontmatter.get("icd10")):
                     compatible_page = hit_page
                     break
 

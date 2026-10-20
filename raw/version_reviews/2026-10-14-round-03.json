@@ -1,0 +1,459 @@
+{
+  "version": 1,
+  "checked_on": "2026-10-14",
+  "round_id": "2026-10-14-public-round-03",
+  "method": "公开书目与官方/期刊/学会页面检索；保留查询和证据URL。最新性只针对同系列、同机构、同人群，区分网页更新时间、发表年、版次、终版与计划/勘误/专题。",
+  "warning": "no_newer_verified仅表示本次限定检索未核验到新版，不证明绝对最新；其他未列来源仍未开展版本审查。版本检索不等于人工来源核验、临床审核或再分发许可。",
+  "preexisting_archived_sources_reviewed": 20,
+  "records": [
+    {
+      "source_id": "SRC-CMA-CARD-2024-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国高血压防治指南\" 最新 2025 2026",
+        "\"中国高血压防治指南\" \"2024\" site:chlonline.cn"
+      ],
+      "evidence_urls": [
+        "https://www.chlonline.cn/",
+        "https://cjournal.hep.com.cn/1673-7245/CN/1160171857581368285"
+      ],
+      "note": "制定/期刊渠道仍列2024修订版；未核验同系列较新正式版。上传文档站自称2025/2026版不能作为新版凭据。"
+    },
+    {
+      "source_id": "SRC-CDS-ENDO-2024-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国糖尿病防治指南\" 最新 2025 2026"
+      ],
+      "evidence_urls": [
+        "https://diab.cma.org.cn/cn/zhinangongshi.aspx",
+        "https://diab.cma.org.cn/cn/ncontent.aspx?oid=3042"
+      ],
+      "note": "学会指南目录当前列2024版，2025发表时间不是2025版；未找到同系列更晚正式版。"
+    },
+    {
+      "source_id": "SRC-NHC-ONC-2024-01",
+      "checked_on": "2026-10-14",
+      "status": "newer_version_found",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "site:nhc.gov.cn \"原发性肝癌诊疗指南\" 2026 2025"
+      ],
+      "evidence_urls": [
+        "https://www.nhc.gov.cn/yzygj/c100067/202604/3371c9cb2f7f4f55b18c709ff2c53ab8.shtml"
+      ],
+      "note": "卫健委2026-04-09通知明确修订2024版；旧原件保留，不自动迁移临床摘要。",
+      "newer_source_id": "SRC-NHC-ONC-2026-01",
+      "newer_title": "原发性肝癌诊疗指南（2026年版）",
+      "newer_year": 2026
+    },
+    {
+      "source_id": "SRC-CMA-CARD-2024-02",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国心力衰竭诊断和治疗指南\" \"2025\" \"2026\""
+      ],
+      "evidence_urls": [
+        "https://cs.medjournals.cn/cn/zhxxgbzz/popular-articles",
+        "https://csc.cma.org.cn/art/2024/4/18/art_619_56220.html"
+      ],
+      "note": "期刊官方列表仍列2024指南；未核验同系列2025/2026修订版，其他学会或国际指南不等于其新版。"
+    },
+    {
+      "source_id": "SRC-CMA-RESP-2016-02",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国成人社区获得性肺炎\" \"2025\" \"2026\" 指南",
+        "\"中国成人社区获得性肺炎诊断和治疗指南\" 最新 site:cs.medjournals.cn"
+      ],
+      "evidence_urls": [
+        "https://cs.medjournals.cn/cn/zhjhhhxzz",
+        "https://cs.medjournals.cn/cn/zhjhhhxzz/popular-articles"
+      ],
+      "note": "同刊仍列2016成人CAP指南；本轮未确认同系列新版。2025中成药专项/老年人指南不直接取代综合成人指南。"
+    },
+    {
+      "source_id": "SRC-CMA-CARD-2023-03",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国血脂管理指南\" 最新 2025 2026",
+        "\"中国血脂管理指南\" \"2026\" site:csc.cma.org.cn"
+      ],
+      "evidence_urls": [
+        "https://csc.cma.org.cn/art/2023/3/28/art_619_50122.html",
+        "https://cs.medjournals.cn/cn/zhxxgbzz/popular-articles"
+      ],
+      "note": "已核验2023综合版书目，未核验较新同系列正式版；基层版及专项共识不能自动算替代版。"
+    },
+    {
+      "source_id": "SRC-NHC-PHAR-2015-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"抗菌药物临床应用指导原则\" 最新 2025 2026 卫生健康"
+      ],
+      "evidence_urls": [
+        "https://www.nhc.gov.cn/wjw/c100175/201508/1d3a99bcc1624eee8655055dffc58dd8.shtml",
+        "https://wjw.beijing.gov.cn/zwgk_20040/qt/202609/t20260911_4859919.html"
+      ],
+      "note": "2026年官方抗菌药物分级管理目录通知仍引用2015指导原则；没有核验到同名全国原则2025/2026修订发布，不能把分级目录当作新版原则。该结果不是法律适用性审查。"
+    },
+    {
+      "source_id": "SRC-NHC-NUT-2024-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"成人肥胖食养指南\" \"2025\" \"2026\" site:nhc.gov.cn",
+        "\"成人肥胖食养指南\" \"2024\" site:nhc.gov.cn"
+      ],
+      "evidence_urls": [
+        "https://www.nhc.gov.cn/sps/c100088/202402/9ba512ba8e314a47a181db11d2fa188d.shtml",
+        "https://www.nhc.gov.cn/wjw/jiany/202507/3e0d4370402f4b07b77fc3c28cd9c61c.shtml"
+      ],
+      "note": "卫健委食养通知及后续答复指向2024版；未找到该同名食养指南的更晚正式版，肥胖症诊疗指南是另一个系列。"
+    },
+    {
+      "source_id": "SRC-CMA-ENDO-2022-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"原发性骨质疏松症诊疗指南\" 2025 2026 中华医学会"
+      ],
+      "evidence_urls": [
+        "https://csobmr.cma.org.cn/nlist.aspx?cids=20"
+      ],
+      "note": "学会2026-07-16更新目录仍列2022综合版，并另列男性骨质疏松2025版；不能把网页更新日当2026版，也不能用男性专项替代综合版。"
+    },
+    {
+      "source_id": "SRC-CMA-ENDO-2017-01",
+      "checked_on": "2026-10-14",
+      "status": "uncertain",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"成人甲状腺功能减退症诊治指南\" 2025 site:yiigle.com",
+        "\"成人甲状腺功能减退症诊治指南\" \"2025\" pdf -site:book118.com -site:baidu.com"
+      ],
+      "evidence_urls": [
+        "https://cmab.yiigle.com/uploads/guide_html/%E6%88%90%E4%BA%BA%E7%94%B2%E7%8A%B6%E8%85%BA%E5%8A%9F%E8%83%BD%E5%87%8F%E9%80%80%E7%97%87%E8%AF%8A%E6%B2%BB%E6%8C%87%E5%8D%97.html"
+      ],
+      "note": "2017原文书目可确认；二手站点宣称2025更新但未找到同系列一手正文/DOI，不能确认其最新性，也不采信这些2025版声明。"
+    },
+    {
+      "source_id": "SRC-CMA-NEUR-2023-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国急性缺血性卒中诊治指南\" 2025 2026",
+        "\"中国急性缺血性卒中诊治指南\" 最新 site:medjournals.cn"
+      ],
+      "evidence_urls": [
+        "https://cs.medjournals.cn/cn/onlineFirst/popular-articles"
+      ],
+      "note": "期刊当前目录仍列2023综合诊治指南；未核验同系列较新终版，专项再灌注/血管内治疗指南不直接等同整体修订。"
+    },
+    {
+      "source_id": "SRC-CMA-RESP-2021-01",
+      "checked_on": "2026-10-14",
+      "status": "update_in_development",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"慢性阻塞性肺疾病诊治指南\" \"2025\" \"2026\" site:yiigle.com",
+        "\"中国慢性阻塞性肺疾病诊治指南（2026年修订版）计划书\" site:cs.medjournals.cn"
+      ],
+      "evidence_urls": [
+        "https://cs.medjournals.cn/cn/zhjhhhxzz/toc/72998"
+      ],
+      "note": "已确认2026修订计划书（DOI 10.3760/cma.j.cn112147-20260504-00250，PREPARE-2026CN522），不是已经完成的正式终版。计划发布年份不证明终版已发布，不能称当前归档已是2026指南。",
+      "candidate_title": "中国慢性阻塞性肺疾病诊治指南（2026年修订版）计划书",
+      "candidate_doi": "10.3760/cma.j.cn112147-20260504-00250"
+    },
+    {
+      "source_id": "SRC-CMA-CARD-2019-03",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"急性ST段抬高型心肌梗死诊断和治疗指南\" \"2025\" \"2026\""
+      ],
+      "evidence_urls": [
+        "https://seleguide.yiigle.com/uploads/guide_html/%E6%80%A5%E6%80%A7ST%E6%AE%B5%E6%8A%AC%E9%AB%98%E5%9E%8B%E5%BF%83%E8%82%8C%E6%A2%97%E6%AD%BB%E8%AF%8A%E6%96%AD%E5%92%8C%E6%B2%BB%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%EF%BC%89.html"
+      ],
+      "note": "未核验同系列更晚正式终版；美国2025ACS指南或国内其他冠脉共识不能直接标作这份2019指南的新版。"
+    },
+    {
+      "source_id": "SRC-NHC-PED-2023-01",
+      "checked_on": "2026-10-14",
+      "status": "newer_version_found",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"儿童肺炎支原体肺炎诊疗指南（2025年版）\" site:nhc.gov.cn"
+      ],
+      "evidence_urls": [
+        "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56.shtml"
+      ],
+      "note": "卫健委/中医药局2025发布通知明确在2023版基础上修订；保留2023原件与既有临床稿。",
+      "newer_source_id": "SRC-NHC-PED-2025-01",
+      "newer_title": "儿童肺炎支原体肺炎诊疗指南（2025年版）",
+      "newer_year": 2025
+    },
+    {
+      "source_id": "SRC-CMA-NEUR-2023-02",
+      "checked_on": "2026-10-14",
+      "status": "erratum_found",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"关于\" \"成人失眠\" \"更正\" site:cs.medjournals.cn"
+      ],
+      "evidence_urls": [
+        "https://cs.medjournals.cn/cn/zhsjkzz/toc/64505"
+      ],
+      "note": "发现期刊2024年10期正式勘误（DOI 10.3760/cma.j.issn.1006-7876.2024.10.102）。这是原文更正，不是新版综合指南；旧PDF不可宣称已纳入勘误。更正内容已记录，尚未改动临床文本。",
+      "erratum": {
+        "doi": "10.3760/cma.j.issn.1006-7876.2024.10.102",
+        "journal_locator": "中华神经科杂志2024年第57卷第10期；所涉原文期刊第572页",
+        "correction": "原文“紫花地丁”更正为“香堇菜”"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-GAST-2022-01",
+      "checked_on": "2026-10-14",
+      "status": "related_update_found",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"幽门螺杆菌感染治疗指南\" \"2025\" \"2026\" site:yiigle.com"
+      ],
+      "evidence_urls": [
+        "https://rs.yiigle.com/cmaid/1697127"
+      ],
+      "note": "发现同学组2026双联根除方案专题共识，范围小于2022综合治疗指南，未证实其取代2022指南；相关临床条款需同时复核专题更新。",
+      "related_title": "幽门螺杆菌双联根除方案临床应用与专家共识（2026）"
+    },
+    {
+      "source_id": "SRC-CMA-DERM-2022-02",
+      "checked_on": "2026-10-14",
+      "status": "related_update_found",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国荨麻疹诊疗指南\" 2025 2026",
+        "\"中国难治性慢性自发性荨麻疹诊治指南（2025版）\" site:yiigle.com"
+      ],
+      "evidence_urls": [
+        "https://www.cjebp.cn/CN/Y2026/V21/I3/190",
+        "https://rs.yiigle.com/CN321138202212/1436321.htm",
+        "https://rs.yiigle.com/cmaid/1696904"
+      ],
+      "note": "检索到2025难治性慢性自发性荨麻疹专题指南及2026儿童急性荨麻疹共识；疾病/人群范围不同，不能当作2022全人群综合指南的自动替代。"
+    },
+    {
+      "source_id": "SRC-CMA-NEUR-2022-01",
+      "checked_on": "2026-10-14",
+      "status": "related_update_found",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国偏头痛诊治指南\" 2025 2026"
+      ],
+      "evidence_urls": [
+        "https://ccj.pku.edu.cn/article/info?aid=385531921",
+        "https://www.guidelines-registry.org/guide/a6cd0ca5-1395-404d-bdf4-b4f41f5837d5"
+      ],
+      "note": "2025患者版用于患者/照护者，引用2022医师综合版及专题指南；不是替代2022医师指南的证据。",
+      "related_title": "中国偏头痛诊治指南（患者版）"
+    },
+    {
+      "source_id": "SRC-CMA-GYN-2020-02",
+      "checked_on": "2026-10-14",
+      "status": "related_update_found",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"妊娠期高血压疾病诊治指南\" 2025 2026",
+        "\"妊娠期高血压疾病诊治指南\" \"2020\" site:medjournals.cn"
+      ],
+      "evidence_urls": [
+        "https://cs.medjournals.cn/cn/zhfckzz"
+      ],
+      "note": "期刊同时列2020妊娠期高血压综合指南和2025子痫前期预测与预防指南；新文范围不同，不直接视为综合指南换版。官网部分全文链接误指私网地址，本轮未访问这些地址。",
+      "related_title": "子痫前期预测与预防指南（2025）",
+      "related_doi": "10.3760/cma.j.cn112141-20241130-00636"
+    },
+    {
+      "source_id": "SRC-CMA-ENT-2022-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"变应性鼻炎诊断和治疗指南\" 2025 2026"
+      ],
+      "evidence_urls": [
+        "https://cs.medjournals.cn/cn/zhebyhtjwkzz/popular-articles",
+        "https://cs.medjournals.cn/cn/zhyfyxzz/toc/73596",
+        "https://www.hnysfww.com/article.php?id=3195"
+      ],
+      "note": "未核验2022变应性鼻炎综合指南同系列新版；非变应性鼻炎、鼻窦炎、花粉症季节前预防等专题更新不自动取代综合版。"
+    },
+    {
+      "source_id": "SRC-NHC-ONC-2026-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"原发性肝癌诊疗指南（2026年版）\" site:nhc.gov.cn"
+      ],
+      "evidence_urls": [
+        "https://www.nhc.gov.cn/yzygj/c100067/202604/3371c9cb2f7f4f55b18c709ff2c53ab8.shtml"
+      ],
+      "note": "目前核验到的同系列最新正式发布为2026版；是截至本轮检索的结论，不是持续最新保证。",
+      "confirmed_edition": 2026
+    },
+    {
+      "source_id": "SRC-NHC-PED-2025-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"儿童肺炎支原体肺炎诊疗指南\" \"2026年版\" site:nhc.gov.cn"
+      ],
+      "evidence_urls": [
+        "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56.shtml"
+      ],
+      "note": "已核验2025版，未核验到2026同系列发布。",
+      "confirmed_edition": 2025
+    },
+    {
+      "source_id": "SRC-CMA-OPHTH-2024-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国干眼临床诊疗专家共识（2024年）\" \"2025\" \"2026\" site:yiigle.com",
+        "\"中国干眼临床诊疗专家共识\" 2026 site:cs.medjournals.cn"
+      ],
+      "evidence_urls": [
+        "https://zhykzz.yiigle.com/yjdt/index.htm?lang=En",
+        "https://cs.medjournals.cn/cn/zhykzz/popular-articles"
+      ],
+      "note": "同刊当前列2024临床诊疗共识；2026药物相关眼表不良反应等专题不能当作其新版。",
+      "confirmed_edition": 2024
+    },
+    {
+      "source_id": "SRC-CSPE-CARD-2025-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国心房颤动管理指南（2025）\" \"2026\" site:zgxz.cbpt.cnki.net"
+      ],
+      "evidence_urls": [
+        "https://www.caogr.org/detail_1_893.html",
+        "https://zgxz.cbpt.cnki.net/portal/journal/portal/client/index"
+      ],
+      "note": "核验2025发布及其修订2021建议的关系，未核验同系列2026综合版；现有PDF仍为卷期占位符网络稿，版本最新性与取得最终排印原件不同。",
+      "confirmed_edition": 2025
+    },
+    {
+      "source_id": "SRC-CMA-GAST-2020-02",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"2020年中国胃食管反流病专家共识\" 最新 2025 2026",
+        "\"2020年中国胃食管反流病专家共识\" \"2025\" \"2026\" site:yiigle.com"
+      ],
+      "evidence_urls": [
+        "https://www.shsma.org.cn/web/news/5838",
+        "https://cmab.yiigle.com/uploads/guide_html/2020%E5%B9%B4%E4%B8%AD%E5%9B%BD%E8%83%83%E9%A3%9F%E7%AE%A1%E5%8F%8D%E6%B5%81%E7%97%85%E4%B8%93%E5%AE%B6%E5%85%B1%E8%AF%86.html"
+      ],
+      "note": "本轮未核验同系列更晚综合共识，2025中西医结合等专题不直接替代本系列。"
+    },
+    {
+      "source_id": "SRC-CMA-GAST-2020-01",
+      "checked_on": "2026-10-14",
+      "status": "no_newer_verified",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"慢性便秘基层诊疗指南\" \"2025\" \"2026\" -site:book118.com -site:baidu.com -site:renrendoc.com"
+      ],
+      "evidence_urls": [
+        "https://cmab.yiigle.com/uploads/guide_html/%E6%85%A2%E6%80%A7%E4%BE%BF%E7%A7%98%E5%9F%BA%E5%B1%82%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%E5%B9%B4%EF%BC%89%20-%20%E4%B8%AD%E5%8D%8E%E5%85%A8%E7%A7%91%E5%8C%BB%E5%B8%88%E6%9D%82%E5%BF%97.html"
+      ],
+      "note": "原件为2019版、2020发表；本轮未核验同系列较新基层诊疗指南，老年慢病管理/外科便秘/其他国家文件不能直接作替代版。"
+    },
+    {
+      "source_id": "SRC-CMA-CARD-2021-02",
+      "checked_on": "2026-10-14",
+      "status": "newer_version_found",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国心房颤动管理指南（2025）\" pdf",
+        "\"中国心房颤动管理指南（2025）\" \"10.\""
+      ],
+      "evidence_urls": [
+        "https://www.caogr.org/detail_1_893.html",
+        "https://zgxz.cbpt.cnki.net/portal/journal/portal/client/paperRank_list/type_xiazaipaihang?number=100&pageNum=1&year="
+      ],
+      "note": "学会发布资料及2025原文摘要均明确修订2021认识和治疗建议，独立登记新版；旧2021条目仍没有原件，不迁移其临床摘要。",
+      "newer_source_id": "SRC-CSPE-CARD-2025-01",
+      "newer_title": "中国心房颤动管理指南（2025）",
+      "newer_year": 2025
+    },
+    {
+      "source_id": "SRC-CMA-OPHTH-2020-01",
+      "checked_on": "2026-10-14",
+      "status": "identity_uncertain",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国干眼临床诊疗专家共识\" \"2024\" site:yiigle.com"
+      ],
+      "evidence_urls": [
+        "https://cs.medjournals.cn/cn/zhykzz",
+        "https://www.gzzoc.org.cn/sites/zoc.live1.sysucloud2.sysu.edu.cn/files/2025-10/2024_zhongguoganyanlinchuangzhenliaozhuanjiagongshi2024nian.pdf"
+      ],
+      "note": "2020是多部分、另一组机构的系列共识；2024原文明确修订2013临床共识，不能未经核对就认为它是此2020登记条目的正式替代版。2024另建来源，2020登记保留待核对。",
+      "related_source_id": "SRC-CMA-OPHTH-2024-01"
+    },
+    {
+      "source_id": "SRC-CMA-NEPH-2024-01",
+      "checked_on": "2026-10-14",
+      "status": "identity_uncertain",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国慢性肾脏病筛查、诊断及治疗临床实践指南\" \"2026\" pdf"
+      ],
+      "evidence_urls": [
+        "https://www.cjn.org.cn/CN/volumn/volumn_1401.shtml",
+        "https://rs.yiigle.com/cmaid/1684007"
+      ],
+      "note": "已确认2026 CKD指南书目（DOI 10.3760/cma.j.cn441217-20251005-01003），由非公立医疗机构协会工作组制定，介绍修订2022版；不能直接认定它替代未明确DOI的原登记2024版本。全文入口要求登录，本轮未归档摘要冒充原文。",
+      "candidate_title": "中国慢性肾脏病筛查、诊断及治疗临床实践指南（2026版）",
+      "candidate_doi": "10.3760/cma.j.cn441217-20251005-01003",
+      "candidate_year": 2026
+    },
+    {
+      "source_id": "SRC-CMA-ENDO-2024-02",
+      "checked_on": "2026-10-14",
+      "status": "identity_uncertain",
+      "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+      "search_queries": [
+        "\"中国高尿酸血症与痛风诊疗指南（2024）\" site:yiigle.com"
+      ],
+      "evidence_urls": [
+        "https://zhnfmdxzz.yiigle.com/CN311282202511/index.jhtml?tplReset=qikan"
+      ],
+      "note": "已核验2024更新指南分两部分于2025发表的官方目录，不将发表年变成2025新版；现有登记概括为综合单篇，仍需取得两部分并核对身份/范围，暂不能确认最新且完整。",
+      "candidate_title": "中国高尿酸血症与痛风诊疗指南（2024）第一/第二部分"
+    }
+  ]
+}

@@ -20,6 +20,7 @@ def inventory_markdown(root: Path) -> str:
         ("门诊协议", types.get("protocol", 0)),
         ("药品说明书整理页", types.get("drug_insert", 0)),
         ("疾病 / 药物 / 概念 / 综合 / 症状", " / ".join(str(types.get(k, 0)) for k in ("disease", "drug", "concept", "synthesis", "symptom"))),
+        ("临床检验 / 医技检查", f"{types.get('test', 0)} / {types.get('examination', 0)}"),
         ("临床规则 / 说明书规则", f"{rules.get('clinical_safety_rules', 0)} / {rules.get('monograph_rules', 0)}"),
         ("测试方法（静态计数，非本次通过数）", stats["test_methods"]),
         ("已归档原始文件 / 已核验来源", f"{quality['originalsArchived']} / {quality['provenanceVerified']}"),

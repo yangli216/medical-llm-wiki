@@ -1,0 +1,338 @@
+{
+  "version": 1,
+  "round_id": "2026-10-14-public-round-03",
+  "sources": [
+    {
+      "source_id": "SRC-NHC-ONC-2026-01",
+      "new_registration": true,
+      "downloaded_filename": "liver2026.pdf",
+      "original_title": "原发性肝癌诊疗指南（2026年版）",
+      "edition_year": 2026,
+      "publication_year": 2026,
+      "authority": "国家卫生健康委办公厅",
+      "category": "肿瘤系统",
+      "original_publication": "国卫办医政函〔2026〕105号附件（2026-04-09公开）",
+      "official_url": "https://www.nhc.gov.cn/yzygj/c100067/202604/3371c9cb2f7f4f55b18c709ff2c53ab8.shtml",
+      "download_url": "https://www.nhc.gov.cn/yzygj/c100067/202604/3371c9cb2f7f4f55b18c709ff2c53ab8/files/%E5%8E%9F%E5%8F%91%E6%80%A7%E8%82%9D%E7%99%8C%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882026%E7%89%88%EF%BC%89.pdf",
+      "host_role": "issuing_authority",
+      "supersedes_source_id": "SRC-NHC-ONC-2024-01",
+      "coverage": "卫健委正式发布2026版226页附件，通知明确修订2024版。独立新来源，不覆盖2024原件，不自动替换临床摘要或规则。",
+      "byte_count": 11480781,
+      "original_sha256": "7e2d0e76ac7b5a9f773b25316f5e0e34c8fc4a338303cb95a6774732c084688f",
+      "format": "pdf",
+      "extracted_characters": 218367,
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "pages": 226,
+      "completeness": "downloaded_publication_file",
+      "original_file": "raw/originals/SRC-NHC-ONC-2026-01-7e2d0e76ac7b.pdf",
+      "retrieved_at": "2026-10-14T07:27:15.117223+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"原发性肝癌诊疗指南（2026年版）\" site:nhc.gov.cn"
+        ],
+        "evidence_urls": [
+          "https://www.nhc.gov.cn/yzygj/c100067/202604/3371c9cb2f7f4f55b18c709ff2c53ab8.shtml"
+        ],
+        "note": "目前核验到的同系列最新正式发布为2026版；是截至本轮检索的结论，不是持续最新保证。",
+        "confirmed_edition": 2026
+      }
+    },
+    {
+      "source_id": "SRC-NHC-PED-2025-01",
+      "new_registration": true,
+      "downloaded_filename": "mpp2025.pdf",
+      "original_title": "儿童肺炎支原体肺炎诊疗指南（2025年版）",
+      "edition_year": 2025,
+      "publication_year": 2025,
+      "authority": "国家卫生健康委办公厅 / 国家中医药局综合司",
+      "category": "儿科呼吸系统",
+      "original_publication": "国卫办医政函〔2025〕361号附件（2025-09-23公开）",
+      "official_url": "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56.shtml",
+      "download_url": "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56/files/%E5%84%BF%E7%AB%A5%E8%82%BA%E7%82%8E%E6%94%AF%E5%8E%9F%E4%BD%93%E8%82%BA%E7%82%8E%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882025%E5%B9%B4%E7%89%88%EF%BC%89.pdf",
+      "host_role": "issuing_authority",
+      "supersedes_source_id": "SRC-NHC-PED-2023-01",
+      "coverage": "两部门正式发布32页2025版附件，明确修订2023版。新来源仍待核验及临床审校；旧2023 DOC保留。",
+      "byte_count": 595117,
+      "original_sha256": "452e1442cbcae7231e1bac8f23031f84085a7e75aef347fac6d9a04162575b32",
+      "format": "pdf",
+      "extracted_characters": 16942,
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "pages": 32,
+      "completeness": "downloaded_publication_file",
+      "original_file": "raw/originals/SRC-NHC-PED-2025-01-452e1442cbca.pdf",
+      "retrieved_at": "2026-10-14T07:27:15.125076+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"儿童肺炎支原体肺炎诊疗指南\" \"2026年版\" site:nhc.gov.cn"
+        ],
+        "evidence_urls": [
+          "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56.shtml"
+        ],
+        "note": "已核验2025版，未核验到2026同系列发布。",
+        "confirmed_edition": 2025
+      }
+    },
+    {
+      "source_id": "SRC-CMA-OPHTH-2024-01",
+      "new_registration": true,
+      "downloaded_filename": "dryeye2024.pdf",
+      "original_title": "中国干眼临床诊疗专家共识（2024年）",
+      "edition_year": 2024,
+      "publication_year": 2024,
+      "authority": "中华医学会眼科学分会角膜病学组 / 中国医师协会眼科医师分会角膜病学组",
+      "category": "眼科",
+      "original_publication": "中华眼科杂志, 2024, 60(12):968-976",
+      "doi": "10.3760/cma.j.cn112142-20240517-00227",
+      "official_url": "https://zhykzz.yiigle.com/yjdt/index.htm?lang=En",
+      "download_url": "https://www.gzzoc.org.cn/sites/zoc.live1.sysucloud2.sysu.edu.cn/files/2025-10/2024_zhongguoganyanlinchuangzhenliaozhuanjiagongshi2024nian.pdf",
+      "host_role": "institutional_hospital_mirror",
+      "related_source_id": "SRC-CMA-OPHTH-2020-01",
+      "coverage": "中山大学中山眼科中心公开转载9页期刊PDF。原文自述修订2013临床共识；不据此宣称直接替代另一机构的2020系列共识。单独登记2024临床诊疗共识，保留2020来源待核对身份。",
+      "byte_count": 1645151,
+      "original_sha256": "288a554eb71e96d4c421e86cb3585011546a31aaecaaf50641de8e1a6450fbd3",
+      "format": "pdf",
+      "extracted_characters": 23704,
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "pages": 9,
+      "completeness": "downloaded_publication_file",
+      "original_file": "raw/originals/SRC-CMA-OPHTH-2024-01-288a554eb71e.pdf",
+      "retrieved_at": "2026-10-14T07:27:15.132018+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国干眼临床诊疗专家共识（2024年）\" \"2025\" \"2026\" site:yiigle.com",
+          "\"中国干眼临床诊疗专家共识\" 2026 site:cs.medjournals.cn"
+        ],
+        "evidence_urls": [
+          "https://zhykzz.yiigle.com/yjdt/index.htm?lang=En",
+          "https://cs.medjournals.cn/cn/zhykzz/popular-articles"
+        ],
+        "note": "同刊当前列2024临床诊疗共识；2026药物相关眼表不良反应等专题不能当作其新版。",
+        "confirmed_edition": 2024
+      }
+    },
+    {
+      "source_id": "SRC-CSPE-CARD-2025-01",
+      "new_registration": true,
+      "downloaded_filename": "afib2025.pdf",
+      "original_title": "中国心房颤动管理指南（2025）",
+      "edition_year": 2025,
+      "publication_year": 2025,
+      "authority": "中华医学会心电生理和起搏分会 / 中国医师协会心律学专业委员会",
+      "category": "心血管系统",
+      "original_publication": "中国心脏起搏与心电生理杂志2025版网络发布稿（附件刊期/卷期仍为占位符）",
+      "doi": "10.13333/j.cnki.cjcpe.2025.04.001",
+      "official_url": "https://www.caogr.org/detail_1_893.html",
+      "download_page_url": "https://www.sinocardiomed.com/2025/08/0934214228.html",
+      "download_url": "https://www.sinocardiomed.com/wp-content/uploads/2025/08/2025080913331948.pdf",
+      "host_role": "public_medical_platform_mirror",
+      "supersedes_source_id": "SRC-CMA-CARD-2021-02",
+      "completeness": "online_copy_with_bibliographic_placeholders",
+      "coverage": "公开医学平台转载71页PDF，首页DOI和摘要明确修订《心房颤动：目前的认识和治疗建议（2021）》，学会发布会资料交叉确认。文件仍有XXXX/XX卷期占位符，记为网络发布稿，不冒称正式终排本；后续需取得出版社定版。",
+      "byte_count": 2310844,
+      "original_sha256": "b39fbe1e7da9d701706eb6cf849df8ddc3ac11cc1545e4d8ee1e3ad80fc87972",
+      "format": "pdf",
+      "extracted_characters": 248254,
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "pages": 71,
+      "original_file": "raw/originals/SRC-CSPE-CARD-2025-01-b39fbe1e7da9.pdf",
+      "retrieved_at": "2026-10-14T07:27:15.157332+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国心房颤动管理指南（2025）\" \"2026\" site:zgxz.cbpt.cnki.net"
+        ],
+        "evidence_urls": [
+          "https://www.caogr.org/detail_1_893.html",
+          "https://zgxz.cbpt.cnki.net/portal/journal/portal/client/index"
+        ],
+        "note": "核验2025发布及其修订2021建议的关系，未核验同系列2026综合版；现有PDF仍为卷期占位符网络稿，版本最新性与取得最终排印原件不同。",
+        "confirmed_edition": 2025
+      }
+    },
+    {
+      "source_id": "SRC-CMA-GAST-2020-02",
+      "downloaded_filename": "gerd2020.html",
+      "original_title": "2020年中国胃食管反流病专家共识",
+      "edition_year": 2020,
+      "publication_year": 2020,
+      "authority": "中华医学会消化病学分会",
+      "original_publication": "中华消化杂志2020年",
+      "doi": "10.3760/cma.j.cn311367-20200918-00558",
+      "official_url": "https://cmab.yiigle.com/uploads/guide_html/2020%E5%B9%B4%E4%B8%AD%E5%9B%BD%E8%83%83%E9%A3%9F%E7%AE%A1%E5%8F%8D%E6%B5%81%E7%97%85%E4%B8%93%E5%AE%B6%E5%85%B1%E8%AF%86.html",
+      "download_url": "https://cmab.yiigle.com/uploads/guide_html/2020%E5%B9%B4%E4%B8%AD%E5%9B%BD%E8%83%83%E9%A3%9F%E7%AE%A1%E5%8F%8D%E6%B5%81%E7%97%85%E4%B8%93%E5%AE%B6%E5%85%B1%E8%AF%86.html",
+      "host_role": "publisher",
+      "completeness": "article_text_external_assets_not_bundled",
+      "coverage": "期刊公开HTML原文含正文与参考文献末条167；外链图表/样式未打包。未核验该综合共识同系列更晚正式版，2025中西医结合/专项文件不直接作为换版依据。",
+      "byte_count": 591187,
+      "original_sha256": "7d3efe02a4943044ea36f665f95b953cabe6eb39e916f166b2de22b2784675c0",
+      "format": "html",
+      "extracted_characters": 93685,
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "last_reference_number": 167,
+      "original_file": "raw/originals/SRC-CMA-GAST-2020-02-7d3efe02a494.html",
+      "retrieved_at": "2026-10-14T07:27:15.159969+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"2020年中国胃食管反流病专家共识\" 最新 2025 2026",
+          "\"2020年中国胃食管反流病专家共识\" \"2025\" \"2026\" site:yiigle.com"
+        ],
+        "evidence_urls": [
+          "https://www.shsma.org.cn/web/news/5838",
+          "https://cmab.yiigle.com/uploads/guide_html/2020%E5%B9%B4%E4%B8%AD%E5%9B%BD%E8%83%83%E9%A3%9F%E7%AE%A1%E5%8F%8D%E6%B5%81%E7%97%85%E4%B8%93%E5%AE%B6%E5%85%B1%E8%AF%86.html"
+        ],
+        "note": "本轮未核验同系列更晚综合共识，2025中西医结合等专题不直接替代本系列。"
+      }
+    },
+    {
+      "source_id": "SRC-CMA-GAST-2020-01",
+      "downloaded_filename": "constipation2019.html",
+      "original_title": "慢性便秘基层诊疗指南（2019年）",
+      "edition_year": 2019,
+      "publication_year": 2020,
+      "authority": "中华医学会 / 中华医学会杂志社 / 中华医学会消化病学分会 / 中华医学会全科医学分会 / 中华全科医师杂志编辑委员会",
+      "original_publication": "中华全科医师杂志, 2020, 19(12):1100-1107",
+      "doi": "10.3760/cma.j.cn114798-20201030-01109",
+      "official_url": "https://cmab.yiigle.com/uploads/guide_html/%E6%85%A2%E6%80%A7%E4%BE%BF%E7%A7%98%E5%9F%BA%E5%B1%82%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%E5%B9%B4%EF%BC%89%20-%20%E4%B8%AD%E5%8D%8E%E5%85%A8%E7%A7%91%E5%8C%BB%E5%B8%88%E6%9D%82%E5%BF%97.html",
+      "download_url": "https://cmab.yiigle.com/uploads/guide_html/%E6%85%A2%E6%80%A7%E4%BE%BF%E7%A7%98%E5%9F%BA%E5%B1%82%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%E5%B9%B4%EF%BC%89%20-%20%E4%B8%AD%E5%8D%8E%E5%85%A8%E7%A7%91%E5%8C%BB%E5%B8%88%E6%9D%82%E5%BF%97.html",
+      "host_role": "publisher",
+      "completeness": "article_text_external_assets_not_bundled",
+      "coverage": "公开期刊HTML正文，参考文献末条12。指南版次2019、发表年份2020；原登记题名的2020年已校正并保留旧值。未核验同系列更晚正式版；外链资产未打包。",
+      "byte_count": 424813,
+      "original_sha256": "7a8273654e88e20629937c4aae1845290a2e3e0c7e717d7abc15e02eda5fe91d",
+      "format": "html",
+      "extracted_characters": 35558,
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "last_reference_number": 12,
+      "registration_correction": {
+        "previous": {
+          "title": "慢性便秘基层诊疗指南（2020年）",
+          "year": 2020
+        },
+        "corrected": {
+          "title": "慢性便秘基层诊疗指南（2019年）"
+        }
+      },
+      "original_file": "raw/originals/SRC-CMA-GAST-2020-01-7a8273654e88.html",
+      "retrieved_at": "2026-10-14T07:27:15.162054+00:00",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"慢性便秘基层诊疗指南\" \"2025\" \"2026\" -site:book118.com -site:baidu.com -site:renrendoc.com"
+        ],
+        "evidence_urls": [
+          "https://cmab.yiigle.com/uploads/guide_html/%E6%85%A2%E6%80%A7%E4%BE%BF%E7%A7%98%E5%9F%BA%E5%B1%82%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%E5%B9%B4%EF%BC%89%20-%20%E4%B8%AD%E5%8D%8E%E5%85%A8%E7%A7%91%E5%8C%BB%E5%B8%88%E6%9D%82%E5%BF%97.html"
+        ],
+        "note": "原件为2019版、2020发表；本轮未核验同系列较新基层诊疗指南，老年慢病管理/外科便秘/其他国家文件不能直接作替代版。"
+      }
+    }
+  ],
+  "supplements": [
+    {
+      "source_id": "SRC-CMA-ENDO-2022-01",
+      "downloaded_filename": "bone2022-full.pdf",
+      "original_title": "原发性骨质疏松症诊疗指南（2022）",
+      "original_publication": "中华骨质疏松和骨矿盐疾病杂志, 2022, 15(6):573-611",
+      "doi": "10.3969/j.issn.1674-2591.2022.06.001",
+      "official_url": "https://csobmr.cma.org.cn/nlist.aspx?cids=20",
+      "download_url": "https://files.sciconf.cn/gs_pdf/2026/07/16/20260716144713519488.pdf",
+      "original_sha256": "4450919522ec4be807f9db3e1dba779d07bc5d304019c195a1be10bb5e75c30e",
+      "byte_count": 5639311,
+      "pages": 39,
+      "format": "pdf",
+      "host_role": "authoring_society_linked_host",
+      "coverage": "官方学会2026目录链接的2022首刊39页版；补充保存，不覆盖前轮21页再刊件，也不算新增来源。PDF视觉可读，但文字映射明显乱码，不得将提取文本用于剂量或切点判定。",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_file": "raw/originals/SRC-CMA-ENDO-2022-01-supplement-4450919522ec.pdf",
+      "retrieved_at": "2026-10-14T07:33:55Z"
+    }
+  ],
+  "scope": "第三轮公开原件采集与书目/版本时效检索。独立登记新版，旧文件保留；不自动审校临床内容。",
+  "newly_archived_sources": 6,
+  "new_source_registrations": 4,
+  "new_original_files": 7,
+  "formats": {
+    "pdf": 5,
+    "html": 2
+  },
+  "total_pdf_pages_including_supplement": 377,
+  "total_bytes": 22687204,
+  "version_review_manifest": "raw/version_reviews/2026-10-14-round-03.json",
+  "unresolved": [
+    {
+      "source_id": "SRC-CMA-NEPH-2024-01",
+      "reason": "发现2026正式书目，现有2024登记的身份/修订关系未证实；期刊网站证书不匹配，正确DOI官方入口要求登录，本轮没有完整原件，不把摘要当原文归档。",
+      "candidate_doi": "10.3760/cma.j.cn441217-20251005-01003",
+      "url": "https://rs.yiigle.com/cmaid/1684007"
+    },
+    {
+      "source_id": "SRC-CMA-ENDO-2024-02",
+      "reason": "官方目录确认2024指南在2025分两部分发表，尚未取得两部分原件，不声称最新且完整。",
+      "url": "https://zhnfmdxzz.yiigle.com/CN311282202511/index.jhtml?tplReset=qikan"
+    }
+  ],
+  "validation": {
+    "pdf_pages_parsed": 377,
+    "pdf_covers_visually_checked": 5,
+    "html_reference_ends": {
+      "gerd2020": 167,
+      "constipation2019": 12
+    },
+    "limitations": "骨质疏松39页首刊文件视觉可读但文字映射明显乱码；房颤71页附件有XXXX/XX刊期占位符，不能冒充定版。HTML外链未打包。保留下载字节，不执行脚本或宏，不修订临床建议。"
+  },
+  "verification_results": {
+    "software_tests_passed": 115,
+    "new_download_bytes_and_sha256_passed": 7,
+    "previous_round_originals_and_retrieval_records_unchanged": 20,
+    "pdf_pages_parsed": 377,
+    "pdf_covers_visually_checked": 5,
+    "version_records_consistent": 30,
+    "new_source_pages_available": 4,
+    "new_original_routes_passed": 6,
+    "search_index_pages": 441,
+    "lint_healthy": true,
+    "readme_inventory_check_passed": true,
+    "total_registered_sources": 65,
+    "total_primary_originals_archived": 26,
+    "total_original_files_including_supplements": 27,
+    "missing_primary_originals": 39,
+    "provenance_verified": 0,
+    "clinical_ready": false
+  }
+}

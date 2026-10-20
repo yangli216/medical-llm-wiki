@@ -13,7 +13,7 @@ from typing import Any
 from tools.collector.collector import SourceCollector
 from tools.compiler.compiler import WikiGraph
 
-CLINICAL_PAGE_TYPES = {"disease", "drug", "concept", "synthesis", "symptom", "protocol", "drug_insert", "source"}
+CLINICAL_PAGE_TYPES = {"disease", "drug", "concept", "synthesis", "symptom", "protocol", "drug_insert", "source", "test", "examination"}
 
 
 def sha256_file(path: Path) -> str:

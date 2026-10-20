@@ -81,6 +81,22 @@ class QualityTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             record_review(self.root, self.page_record())
 
+    def test_archive_legacy_word_preserves_bytes_and_pending_state(self):
+        artifact = self.root / "original.doc"
+        # OLE signature fixture tests byte preservation, not Word document parsing.
+        artifact.write_bytes(b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" + b"fixture")
+        source = archive_source(self.root, "SRC-TEST", artifact, "https://example.org/published")
+        self.assertEqual((self.root / source["original_file"]).read_bytes(), artifact.read_bytes())
+        self.assertEqual(source["provenance_review"]["decision"], "pending")
+        self.assertTrue(source_evidence(self.root, source)["originalArchived"])
+
+    def test_archive_rejects_html_error_page_named_doc(self):
+        artifact = self.root / "error.doc"
+        artifact.write_text("<html>Access denied</html>")
+        with self.assertRaisesRegex(ValueError, "OLE"):
+            archive_source(self.root, "SRC-TEST", artifact, "https://example.org/published")
+        self.assertFalse(self.source().get("original_file"))
+
     def test_content_or_clinical_metadata_changes_invalidate_review(self):
         self.approve_source()
         record_review(self.root, self.page_record())

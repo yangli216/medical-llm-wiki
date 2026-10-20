@@ -33,6 +33,8 @@ schema/ & tools/      -> 规范定义与自动化工具链层 (Schema & Tooling)
 | `wiki/concepts/` | `concept` | 诊断标准、临床路径、筛查策略、评分量表（如 CURB-65、GOLD 分级、CNLC 分期）。 |
 | `wiki/protocols/` | `protocol` | 门诊临床诊疗决策协议。面向门诊医生站 AI 推荐与 CDSS 拦截的标准化方案，包含规范病历模板、推荐医嘱项（处方/检验/检查）与用药禁忌拦截规则。 |
 | `wiki/synthesis/` | `synthesis` | 跨病种/跨指南综合专题。共病综合管理、多药联合安全、药物相互作用、MDT 综合决策。 |
+| `wiki/entities/tests/` | `test` | 临床检验指标实体。标本类型、参考区间、危急值切点、临床意义、干扰因素与药物前置监测。 |
+| `wiki/entities/examinations/` | `examination` | 医技与医学影像检查实体。检查类别、适应证、操作规范、禁忌证与特殊人群警戒、报告关键征象与诊断价值。 |
 
 ---
 
@@ -43,7 +45,7 @@ schema/ & tools/      -> 规范定义与自动化工具链层 (Schema & Tooling)
 ```yaml
 ---
 title: 原发性高血压
-type: disease # 枚举: disease | drug | concept | organization | source | synthesis | index
+type: disease # 枚举: disease | drug | concept | organization | source | synthesis | index | symptom | drug_insert | test | examination
 tags:
   - 医学/心血管
   - 慢病管理

@@ -25,12 +25,16 @@ def archive_source(root: Path, source_id: str, artifact: Path, official_url: str
     if not artifact.is_file():
         raise ValueError("原始文件不存在")
     digest = sha256_file(artifact)
-    # Only PDF and text artifacts can be attached by this local workflow.
+    # Preserve public originals, including legacy Word attachments, as bytes.
     suffix = artifact.suffix.lower()
-    if suffix not in (".pdf", ".md", ".txt", ".html"):
-        raise ValueError("支持 PDF、Markdown、文本或 HTML 原文")
+    if suffix not in (".pdf", ".md", ".txt", ".html", ".doc"):
+        raise ValueError("支持 PDF、Markdown、文本、HTML 或旧版 Word (.doc) 原文")
     if not artifact.stat().st_size:
         raise ValueError("原始文件不能为空")
+    if suffix == ".doc":
+        with artifact.open("rb") as stream:
+            if stream.read(8) != b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1":
+                raise ValueError("DOC 不是有效的 OLE 文件；不能归档错误页或改名的文件")
     if suffix == ".pdf":
         from pypdf import PdfReader
         try:

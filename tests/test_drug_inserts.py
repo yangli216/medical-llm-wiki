@@ -79,6 +79,27 @@ class TestDrugInsertRepository(unittest.TestCase):
         self.assertIsNotNone(d6)
         self.assertEqual(d6["id"], "马来酸依那普利片")
 
+        # Chlorphenamine resolution by full name, colloquial name, trade name, and ATC code
+        d_cpm1 = self.repo.get("马来酸氯苯那敏片")
+        self.assertIsNotNone(d_cpm1)
+        self.assertEqual(d_cpm1["id"], "马来酸氯苯那敏片")
+
+        d_cpm2 = self.repo.get("氯苯那敏片")
+        self.assertIsNotNone(d_cpm2)
+        self.assertEqual(d_cpm2["id"], "马来酸氯苯那敏片")
+
+        d_cpm3 = self.repo.get("扑尔敏")
+        self.assertIsNotNone(d_cpm3)
+        self.assertEqual(d_cpm3["id"], "马来酸氯苯那敏片")
+
+        d_cpm4 = self.repo.get("氯苯那敏")
+        self.assertIsNotNone(d_cpm4)
+        self.assertEqual(d_cpm4["id"], "马来酸氯苯那敏片")
+
+        d_cpm5 = self.repo.get("R06AB04")
+        self.assertIsNotNone(d_cpm5)
+        self.assertEqual(d_cpm5["id"], "马来酸氯苯那敏片")
+
     def test_frontmatter_structural_integrity(self):
         """Verify that all monographs have valid dosage limits and contraindication metadata."""
         for d in self.repo._drugs.values():

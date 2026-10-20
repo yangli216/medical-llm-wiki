@@ -51,8 +51,13 @@ class WikiHTTPHandler(SourceIngestionMixin, KnowledgeApiMixin, ChatApiMixin, Bas
         self.end_headers()
 
     def do_GET(self) -> None:
-        parsed_url = urllib.parse.urlparse(self.path)
-        path = parsed_url.path
+        raw_path = self.path
+        try:
+            raw_path = raw_path.encode("latin-1").decode("utf-8")
+        except Exception:
+            pass
+        parsed_url = urllib.parse.urlparse(raw_path)
+        path = parsed_url.path.rstrip("/") if parsed_url.path != "/" else "/"
         query_params = urllib.parse.parse_qs(parsed_url.query)
 
         if path == "/" or path == "/index.html":

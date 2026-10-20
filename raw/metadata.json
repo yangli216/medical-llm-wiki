@@ -14,19 +14,45 @@
       "key_scope": "原发性高血压分级、分期、分型，诊室及诊室外诊断标准，降压目标，五大类常规药物及ARNI联合用药",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://www.yantai.gov.cn/art/2025/7/1/art_66786_3274344.html",
+      "doi": "10.16439/j.issn.1673-7245.2024.07.002",
+      "retrieved_at": "2026-10-14T06:54:24.916631+00:00",
+      "original_file": "raw/originals/SRC-CMA-CARD-2024-01-271b4db6e7ea.pdf",
+      "original_sha256": "271b4db6e7eafd2af651e8f8b3c9c37881719a9acae2dc6a673cbaa32a8b65d8",
       "content_sha256": "441af352040f05800f0419ac2ab8b57ddb5d24d1fcab7c0a8e1de8ce04fa8220",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://www.yantai.gov.cn/cms_files/jcms1/web1/site/attach/0/026946c3e45b43b8a20788d4d63d3e2d.pdf",
+      "original_title": "中国高血压防治指南（2024年修订版）",
+      "original_format": "pdf",
+      "original_publication_year": 2024,
+      "guideline_edition_year": 2024,
+      "original_host_role": "government_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "provenance_notes": "烟台市政府网站的医院公开附件，中华高血压杂志(中英文)2024年32卷7期，603–700页，共98页；非发文机构首发服务器，待人工核对转载一致性。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 98,
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国高血压防治指南\" 最新 2025 2026",
+          "\"中国高血压防治指南\" \"2024\" site:chlonline.cn"
+        ],
+        "evidence_urls": [
+          "https://www.chlonline.cn/",
+          "https://cjournal.hep.com.cn/1673-7245/CN/1160171857581368285"
+        ],
+        "note": "制定/期刊渠道仍列2024修订版；未核验同系列较新正式版。上传文档站自称2025/2026版不能作为新版凭据。"
       }
     },
     {
       "id": "SRC-CDS-ENDO-2024-01",
-      "title": "中国2型糖尿病防治指南（2024版）",
+      "title": "中国糖尿病防治指南（2024版）",
       "authority": "中华医学会糖尿病学分会 (CDS)",
       "publication": "中华糖尿病杂志",
       "year": 2024,
@@ -36,14 +62,43 @@
       "key_scope": "2型糖尿病静脉血浆糖与HbA1c诊断切点，个体化控制目标，二甲双胍一线基石，SGLT2i与GLP-1RA心肾保护用药",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://diab.cma.org.cn/cn/zhinangongshi.aspx",
+      "doi": "10.3760/cma.j.cn115791-20241203-00705",
+      "retrieved_at": "2026-10-14T06:54:24.885944+00:00",
+      "original_file": "raw/originals/SRC-CDS-ENDO-2024-01-4884c911879a.pdf",
+      "original_sha256": "4884c911879af5aa55a5f5cbd825fdedec0b168c34fde8781bc39d35b4b00c22",
       "content_sha256": "d2c5387e0436d3b76a86ce618898090e3fd64f3d7c268aea253724b75a9ef1ee",
       "provenance_review": {
         "decision": "pending"
+      },
+      "previous_registration": {
+        "title": "中国2型糖尿病防治指南（2024版）",
+        "year": 2024
+      },
+      "download_url": "https://files.sciconf.cn/master/50/33230/202501/20250120111901_47273.pdf",
+      "original_title": "中国糖尿病防治指南（2024版）",
+      "original_format": "pdf",
+      "original_publication_year": 2025,
+      "guideline_edition_year": 2024,
+      "original_host_role": "authoring_society_linked_host",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "provenance_notes": "中华医学会糖尿病学分会指南列表直接链接的124页期刊原文，中华糖尿病杂志2025,17(1):16–139。指南版次2024、期刊出版年2025；原登记题名额外包含“2型”，已校正来源题名，临床摘要未改写。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 124,
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国糖尿病防治指南\" 最新 2025 2026"
+        ],
+        "evidence_urls": [
+          "https://diab.cma.org.cn/cn/zhinangongshi.aspx",
+          "https://diab.cma.org.cn/cn/ncontent.aspx?oid=3042"
+        ],
+        "note": "学会指南目录当前列2024版，2025发表时间不是2025版；未找到同系列更晚正式版。"
       }
     },
     {
@@ -58,14 +113,41 @@
       "key_scope": "肝癌典型多期CT/MR增强特征，scHCC亚厘米肝癌，CNLC中国分期系统，外科切除/介入TACE/消融/靶向免疫联合一线方案与转化治疗",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
+      "official_url": "https://www.nhc.gov.cn/yzygj/c100068/202404/b12cab9adae7424493cd2d387f018367/files/1732871166035_91949.pdf",
       "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "retrieved_at": "2026-10-14T06:54:24.738352+00:00",
+      "original_file": "raw/originals/SRC-NHC-ONC-2024-01-01f2f97a8b58.pdf",
+      "original_sha256": "01f2f97a8b58d461ea5b2eb9433d40f4ea858a8317336d0ff0a408e035583395",
       "content_sha256": "fee6005e5412801fb81bbcb0e71fffe1aa191fdd351e7e263953d99bd2aa87d7",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://www.nhc.gov.cn/yzygj/c100068/202404/b12cab9adae7424493cd2d387f018367/files/1732871166035_91949.pdf",
+      "original_title": "原发性肝癌诊疗指南（2024年版）",
+      "original_format": "pdf",
+      "original_publication_year": 2024,
+      "guideline_edition_year": 2024,
+      "original_host_role": "issuing_authority",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "provenance_notes": "国家卫生健康委发布的143页附件；保留正文与参考文献。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 143,
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "newer_version_found",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "site:nhc.gov.cn \"原发性肝癌诊疗指南\" 2026 2025"
+        ],
+        "evidence_urls": [
+          "https://www.nhc.gov.cn/yzygj/c100067/202604/3371c9cb2f7f4f55b18c709ff2c53ab8.shtml"
+        ],
+        "note": "卫健委2026-04-09通知明确修订2024版；旧原件保留，不自动迁移临床摘要。",
+        "newer_source_id": "SRC-NHC-ONC-2026-01",
+        "newer_title": "原发性肝癌诊疗指南（2026年版）",
+        "newer_year": 2026
       }
     },
     {
@@ -92,7 +174,7 @@
     },
     {
       "id": "SRC-CMA-NEUR-2023-01",
-      "title": "中国急性缺血性脑卒中诊治指南（2023）",
+      "title": "中国急性缺血性卒中诊治指南2023",
       "authority": "中华医学会神经病学分会 / 中华医学会神经病学分会脑血管病学组",
       "publication": "中华神经科杂志",
       "year": 2023,
@@ -102,19 +184,56 @@
       "key_scope": "急性脑梗死院前急救绿通，4.5小时静脉溶栓（阿替普酶/替奈普酶），6-24小时多模影像评估下机械取栓，抗栓时序策略",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://kepu.wjw.gz.gov.cn/home/jktt/content/mpost_6284.html",
+      "doi": "10.3760/cma.j.cn113694-20240410-00221",
+      "retrieved_at": "2026-10-14T07:10:22.850125+00:00",
+      "original_file": "raw/originals/SRC-CMA-NEUR-2023-01-d3daad27982d.pdf",
+      "original_sha256": "d3daad27982d5dbae5724cdfe48b676e053a5bec072f432310db7919a373640f",
       "content_sha256": "9c539660aafd2238222267d8201748a9c81fba42cd91eab101d99e2032eff3ab",
       "provenance_review": {
         "decision": "pending"
+      },
+      "previous_registration": {
+        "title": "中国急性缺血性脑卒中诊治指南（2023）"
+      },
+      "download_url": "https://medtion-image.medtion.com/uploads/1/file/public/202407/20240708171733_qjshk1vc0j.pdf",
+      "original_title": "中国急性缺血性卒中诊治指南2023",
+      "original_format": "pdf",
+      "original_publication": "中华神经科杂志, 2024, 57(6):523-559",
+      "original_authority": "中华医学会神经病学分会 / 中华医学会神经病学分会脑血管病学组",
+      "original_publication_year": 2024,
+      "guideline_edition_year": 2023,
+      "original_host_role": "government_linked_public_host",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "广州市卫健委科普网站明确列出的公开PDF链接，文件37页。指南版次2023、期刊发表年2024；本版题名将“脑卒中”简称为“卒中”。第三方文件主机不是作者机构，需人工核对转载一致性。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 4850047,
+      "original_page_count": 37,
+      "original_validation": {
+        "parsed_pages": 37,
+        "extracted_characters": 144392,
+        "parser_warning_count": 0
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国急性缺血性卒中诊治指南\" 2025 2026",
+          "\"中国急性缺血性卒中诊治指南\" 最新 site:medjournals.cn"
+        ],
+        "evidence_urls": [
+          "https://cs.medjournals.cn/cn/onlineFirst/popular-articles"
+        ],
+        "note": "期刊当前目录仍列2023综合诊治指南；未核验同系列较新终版，专项再灌注/血管内治疗指南不直接等同整体修订。"
       }
     },
     {
       "id": "SRC-CMA-RESP-2021-01",
-      "title": "慢性阻塞性肺疾病诊治指南（2021年修订版及最新规范）",
+      "title": "慢性阻塞性肺疾病诊治指南（2021年修订版）",
       "authority": "中华医学会呼吸病学分会慢阻肺学组",
       "publication": "中华结核和呼吸杂志",
       "year": 2021,
@@ -124,14 +243,55 @@
       "key_scope": "FEV1/FVC<0.70肺功能确诊，GOLD 1-4级气流受限分级，ABCD/ABE综合评估，双支扩剂与三联吸入制剂应用，急性加重期管理",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://seleguide.yiigle.com/uploads/guide_html/%E6%85%A2%E6%80%A7%E9%98%BB%E5%A1%9E%E6%80%A7%E8%82%BA%E7%96%BE%E7%97%85%E8%AF%8A%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882021%E5%B9%B4%E4%BF%AE%E8%AE%A2%E7%89%88%EF%BC%89%20-%20%E4%B8%AD%E5%8D%8E%E7%BB%93%E6%A0%B8%E5%92%8C%E5%91%BC%E5%90%B8%E6%9D%82%E5%BF%97.html",
+      "doi": "10.3760/cma.j.cn112147-20210109-00031",
+      "retrieved_at": "2026-10-14T07:10:22.947107+00:00",
+      "original_file": "raw/originals/SRC-CMA-RESP-2021-01-dbefbf7a2fc6.pdf",
+      "original_sha256": "dbefbf7a2fc6f5f05c3eda87576cd28a5a3b03fbb94660614acaae21952b8cfa",
       "content_sha256": "704ff8249a638b3bd05043f7aa579f99e7e2b8f484ac56b1d24a920b201b2248",
       "provenance_review": {
         "decision": "pending"
+      },
+      "previous_registration": {
+        "title": "慢性阻塞性肺疾病诊治指南（2021年修订版及最新规范）"
+      },
+      "download_url": "https://www.hnysfww.com/data/article/1646376221682182208.pdf",
+      "original_title": "慢性阻塞性肺疾病诊治指南（2021年修订版）",
+      "original_format": "pdf",
+      "original_publication": "中华结核和呼吸杂志, 2021, 44(3):170-205",
+      "original_authority": "中华医学会呼吸病学分会慢性阻塞性肺疾病学组 / 中国医师协会呼吸医师分会慢性阻塞性肺疾病工作委员会",
+      "original_publication_year": 2021,
+      "guideline_edition_year": 2021,
+      "original_host_role": "professional_society_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "36页2021修订版期刊PDF；用公开期刊HTML题名和DOI交叉核对。原登记“及最新规范”没有明确版本，已收窄为实际取得的2021修订版；未据此认定摘要中可能混入的后续规范已获溯源支持。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 3086176,
+      "original_page_count": 36,
+      "original_validation": {
+        "parsed_pages": 36,
+        "extracted_characters": 128529,
+        "parser_warning_count": 0
+      },
+      "download_page_url": "https://www.hnysfww.com/mobile/article.php?id=3109",
+      "original_copy_notes": "公开转载文件可见湖南药事服务网水印/页脚，不宣称与出版社文件逐字节相同。",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "update_in_development",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"慢性阻塞性肺疾病诊治指南\" \"2025\" \"2026\" site:yiigle.com",
+          "\"中国慢性阻塞性肺疾病诊治指南（2026年修订版）计划书\" site:cs.medjournals.cn"
+        ],
+        "evidence_urls": [
+          "https://cs.medjournals.cn/cn/zhjhhhxzz/toc/72998"
+        ],
+        "note": "已确认2026修订计划书（DOI 10.3760/cma.j.cn112147-20260504-00250，PREPARE-2026CN522），不是已经完成的正式终版。计划发布年份不证明终版已发布，不能称当前归档已是2026指南。",
+        "candidate_title": "中国慢性阻塞性肺疾病诊治指南（2026年修订版）计划书",
+        "candidate_doi": "10.3760/cma.j.cn112147-20260504-00250"
       }
     },
     {
@@ -146,14 +306,40 @@
       "key_scope": "心衰表型分类（HFrEF/HFmrEF/HFpEF/HFimpEF），HFrEF新四联药物治疗基石（ARNI/ACEI/ARB + β受体阻滞剂 + MRA + SGLT2i）",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://csc.cma.org.cn/art/2024/4/18/art_619_56220.html",
+      "doi": "10.3760/cma.j.cn112148-20231101-00405",
+      "retrieved_at": "2026-10-14T06:54:24.946049+00:00",
+      "original_file": "raw/originals/SRC-CMA-CARD-2024-02-c8fc39d0e486.pdf",
+      "original_sha256": "c8fc39d0e486fda5932b15855c55208704de1d13727f05436156e7d12c8d8594",
       "content_sha256": "be7034aaecd31513873d2ed4ab2d37a92fa7c391286c96196217ada4aedbe729",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://www.hnysfww.com/data/article/1710983533716760047.pdf",
+      "original_title": "中国心力衰竭诊断和治疗指南2024",
+      "original_format": "pdf",
+      "original_publication_year": 2024,
+      "guideline_edition_year": 2024,
+      "original_host_role": "professional_society_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "provenance_notes": "湖南省药学会公开转载的完整期刊PDF，中华心血管病杂志2024,52(3):235–275；中华医学会官网发布页题名带“上”，本次取得41页附件，不能将“上”网页本身算成全文。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 41,
+      "download_page_url": "https://www.hnysfww.com/mobile/article.php?id=3924",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国心力衰竭诊断和治疗指南\" \"2025\" \"2026\""
+        ],
+        "evidence_urls": [
+          "https://cs.medjournals.cn/cn/zhxxgbzz/popular-articles",
+          "https://csc.cma.org.cn/art/2024/4/18/art_619_56220.html"
+        ],
+        "note": "期刊官方列表仍列2024指南；未核验同系列2025/2026修订版，其他学会或国际指南不等于其新版。"
       }
     },
     {
@@ -168,14 +354,39 @@
       "key_scope": "CAP临床诊断标准，CURB-65严重度评估与诊治场所决策，常见致病原经验性抗感染选择，抗菌药物合理降阶梯",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://seleguide.yiigle.com/uploads/guide_html/%E4%B8%AD%E5%9B%BD%E6%88%90%E4%BA%BA%E7%A4%BE%E5%8C%BA%E8%8E%B7%E5%BE%97%E6%80%A7%E8%82%BA%E7%82%8E%E8%AF%8A%E6%96%AD%E5%92%8C%E6%B2%BB%E7%96%97%E6%8C%87%E5%8D%97%282016%E5%B9%B4%E7%89%88%29.html",
+      "doi": "10.3760/cma.j.issn.1001-0939.2016.04.005",
+      "retrieved_at": "2026-10-14T06:54:24.849245+00:00",
+      "original_file": "raw/originals/SRC-CMA-RESP-2016-02-95955f0c4e7f.html",
+      "original_sha256": "95955f0c4e7fb3b153fa15c4e8da08a6bc0fcbe8a9563e59ee4fb860c60e83a1",
       "content_sha256": "16c4457871c8bdab32732f1884a3fb741eee3210f1317c94e77b857a5274ef4d",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://seleguide.yiigle.com/uploads/guide_html/%E4%B8%AD%E5%9B%BD%E6%88%90%E4%BA%BA%E7%A4%BE%E5%8C%BA%E8%8E%B7%E5%BE%97%E6%80%A7%E8%82%BA%E7%82%8E%E8%AF%8A%E6%96%AD%E5%92%8C%E6%B2%BB%E7%96%97%E6%8C%87%E5%8D%97%282016%E5%B9%B4%E7%89%88%29.html",
+      "original_title": "中国成人社区获得性肺炎诊断和治疗指南（2016年版）",
+      "original_format": "html",
+      "original_publication_year": 2016,
+      "guideline_edition_year": 2016,
+      "original_host_role": "publisher",
+      "original_completeness": "article_text_external_assets_not_bundled",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "provenance_notes": "中华医学会杂志社 Yiigle 站点公开的文章HTML响应，含正文与参考文献336条；外链图片/样式未打包，不声称已取得PDF或完整离线图表。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国成人社区获得性肺炎\" \"2025\" \"2026\" 指南",
+          "\"中国成人社区获得性肺炎诊断和治疗指南\" 最新 site:cs.medjournals.cn"
+        ],
+        "evidence_urls": [
+          "https://cs.medjournals.cn/cn/zhjhhhxzz",
+          "https://cs.medjournals.cn/cn/zhjhhhxzz/popular-articles"
+        ],
+        "note": "同刊仍列2016成人CAP指南；本轮未确认同系列新版。2025中成药专项/老年人指南不直接取代综合成人指南。"
       }
     },
     {
@@ -202,24 +413,53 @@
     },
     {
       "id": "SRC-NHC-PHAR-2015-01",
-      "title": "抗菌药物临床应用指导原则（国家卫健委最新规范）",
+      "title": "抗菌药物临床应用指导原则（2015年版）",
       "authority": "中华人民共和国国家卫生健康委员会 / 国家中医药管理局 / 中央军委后勤保障部卫生局",
       "publication": "国卫办医发官方文件",
-      "year": 2024,
+      "year": 2015,
       "category": "临床药学与感染防护",
       "level": "国家法定临床用药指导原则",
       "file_path": "raw/docs/SRC-NHC-PHAR-2015-01.md",
       "key_scope": "抗菌药物安全/有效/经济核心原则，非限制/限制/特殊使用级三级处方权限与会诊制度，I类切口围手术期预防用药指征，经验用药与病原学送检",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
+      "official_url": "https://www.nhc.gov.cn/wjw/c100175/201508/1d3a99bcc1624eee8655055dffc58dd8.shtml",
       "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "retrieved_at": "2026-10-14T06:54:24.844346+00:00",
+      "original_file": "raw/originals/SRC-NHC-PHAR-2015-01-b8377be1edec.pdf",
+      "original_sha256": "b8377be1edec51cb283e14ebe0bd65e9a1cafcab3122da4d91629c375e2ae55b",
       "content_sha256": "5eba9b5ebc0cacef9e8bfd2bf5b3db6e90cef700f9123cfe006ebfbbc337ccbe",
       "provenance_review": {
         "decision": "pending"
+      },
+      "previous_registration": {
+        "title": "抗菌药物临床应用指导原则（国家卫健委最新规范）",
+        "year": 2024
+      },
+      "download_url": "https://www.gov.cn/foot/site1/20150827/9021440664034848.pdf",
+      "original_title": "抗菌药物临床应用指导原则（2015年版）",
+      "original_format": "pdf",
+      "original_publication_year": 2015,
+      "guideline_edition_year": 2015,
+      "original_host_role": "government_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "provenance_notes": "中国政府网保存的国卫办医发〔2015〕43号附件。原登记题名“最新规范”和year=2024不符合该原件，已校正来源题名和年份；没有据此确认其现行有效性。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 91,
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"抗菌药物临床应用指导原则\" 最新 2025 2026 卫生健康"
+        ],
+        "evidence_urls": [
+          "https://www.nhc.gov.cn/wjw/c100175/201508/1d3a99bcc1624eee8655055dffc58dd8.shtml",
+          "https://wjw.beijing.gov.cn/zwgk_20040/qt/202609/t20260911_4859919.html"
+        ],
+        "note": "2026年官方抗菌药物分级管理目录通知仍引用2015指导原则；没有核验到同名全国原则2025/2026修订发布，不能把分级目录当作新版原则。该结果不是法律适用性审查。"
       }
     },
     {
@@ -234,14 +474,40 @@
       "key_scope": "ASCVD总体心血管危险评估，LDL-C分层控制目标（极高危<1.8且降幅>50%，超高危<1.4且降幅>50%），中等强度他汀为基础，依折麦布与PCSK9抑制剂联合降脂",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://csc.cma.org.cn/art/2023/3/28/art_619_50122.html",
+      "doi": "10.3760/cma.j.cn112148-20230119-00038",
+      "retrieved_at": "2026-10-14T06:54:24.800996+00:00",
+      "original_file": "raw/originals/SRC-CMA-CARD-2023-03-a2f5059ac268.pdf",
+      "original_sha256": "a2f5059ac2686b20edd51f14c5a91e861c3ba742072f36c3a6c2f8b31fa231c7",
       "content_sha256": "3dfb8b60603200419125d637d3cb86b85f0984effd08ba27a596d43e6fc2206a",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://csc.cma.org.cn/module/download/downfile.jsp?classid=0&filename=96b4e603cee74b7fb208b278aa92bd8b.pdf",
+      "original_title": "中国血脂管理指南（2023年）",
+      "original_format": "pdf",
+      "original_publication_year": 2023,
+      "guideline_edition_year": 2023,
+      "original_host_role": "authoring_society",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "provenance_notes": "中华医学会心血管病学分会发布附件，中华心血管病杂志51卷3期，含附录。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 35,
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国血脂管理指南\" 最新 2025 2026",
+          "\"中国血脂管理指南\" \"2026\" site:csc.cma.org.cn"
+        ],
+        "evidence_urls": [
+          "https://csc.cma.org.cn/art/2023/3/28/art_619_50122.html",
+          "https://cs.medjournals.cn/cn/zhxxgbzz/popular-articles"
+        ],
+        "note": "已核验2023综合版书目，未核验较新同系列正式版；基层版及专项共识不能自动算替代版。"
       }
     },
     {
@@ -264,11 +530,24 @@
       "content_sha256": "ff525046b4869f92bb8dbd129d2f53c21ccdde81e6b75ab73e0c1d059b099d53",
       "provenance_review": {
         "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "identity_uncertain",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国高尿酸血症与痛风诊疗指南（2024）\" site:yiigle.com"
+        ],
+        "evidence_urls": [
+          "https://zhnfmdxzz.yiigle.com/CN311282202511/index.jhtml?tplReset=qikan"
+        ],
+        "note": "已核验2024更新指南分两部分于2025发表的官方目录，不将发表年变成2025新版；现有登记概括为综合单篇，仍需取得两部分并核对身份/范围，暂不能确认最新且完整。",
+        "candidate_title": "中国高尿酸血症与痛风诊疗指南（2024）第一/第二部分"
       }
     },
     {
       "id": "SRC-CMA-GAST-2022-01",
-      "title": "2022中国幽门螺杆菌感染治疗指南（全国共识报告）",
+      "title": "2022中国幽门螺杆菌感染治疗指南",
       "authority": "中华医学会消化病学分会幽门螺杆菌学组",
       "publication": "中华消化杂志 2022年第42卷第11期",
       "year": 2022,
@@ -278,19 +557,67 @@
       "key_scope": "含铋剂四联（PPI/P-CAB + 铋剂 + 2种抗生素）标准14天首选根除方案，抗生素耐药特征，13C/14C尿素呼气试验（UBT）停药4周复查金标准",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://rs.yiigle.com/cmaid/1435828",
+      "doi": "10.3760/cma.j.cn311367-20220929-00479",
+      "retrieved_at": "2026-10-14T07:10:22.831812+00:00",
+      "original_file": "raw/originals/SRC-CMA-GAST-2022-01-195bb4d64cc9.pdf",
+      "original_sha256": "195bb4d64cc95a4548018d6e8197330889100e0f4e269829ee9066fa282b31f9",
       "content_sha256": "b62a162e0a42482f12d610a54c817f8389fee2fb8609dabcd6d2d8e4eddee9cd",
       "provenance_review": {
         "decision": "pending"
+      },
+      "previous_registration": {
+        "title": "2022中国幽门螺杆菌感染治疗指南（全国共识报告）"
+      },
+      "download_url": "https://www.hnysfww.com/data/article/1683589906291964459.pdf",
+      "original_title": "2022中国幽门螺杆菌感染治疗指南",
+      "original_format": "pdf",
+      "original_publication": "中华消化杂志, 2022, 42(11):745-756",
+      "original_authority": "中华医学会消化病学分会幽门螺杆菌学组",
+      "original_publication_year": 2022,
+      "guideline_edition_year": 2022,
+      "original_host_role": "professional_society_mirror",
+      "original_completeness": "journal_issue_containing_target_article",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "湖南省药学会公开附件实际为75页期刊合集，目标指南位于PDF第28–39页（期刊745–756页），非75页全部为该指南。期刊官方PDF入口要求登录，未使用账户、未绕过权限；取得的是学会公开转载附件。原登记题名的“全国共识报告”混淆了另篇共识，改为原文题名，临床摘要未改写。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 4447087,
+      "original_page_count": 75,
+      "original_validation": {
+        "parsed_pages": 75,
+        "extracted_characters": 249890,
+        "parser_warning_count": 1
+      },
+      "download_page_url": "https://www.hnysfww.com/article.php?id=3649",
+      "original_article_locator": {
+        "pdf_pages": [
+          28,
+          39
+        ],
+        "journal_pages": [
+          745,
+          756
+        ]
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "related_update_found",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"幽门螺杆菌感染治疗指南\" \"2025\" \"2026\" site:yiigle.com"
+        ],
+        "evidence_urls": [
+          "https://rs.yiigle.com/cmaid/1697127"
+        ],
+        "note": "发现同学组2026双联根除方案专题共识，范围小于2022综合治疗指南，未证实其取代2022指南；相关临床条款需同时复核专题更新。",
+        "related_title": "幽门螺杆菌双联根除方案临床应用与专家共识（2026）"
       }
     },
     {
       "id": "SRC-CMA-CARD-2019-03",
-      "title": "中国急性ST段抬高型心肌梗死诊断和治疗指南",
+      "title": "急性ST段抬高型心肌梗死诊断和治疗指南（2019）",
       "authority": "中华医学会心血管病学分会 / 中华心血管病杂志编辑委员会",
       "publication": "中华心血管病杂志 2019年第47卷第10期",
       "year": 2019,
@@ -300,14 +627,48 @@
       "key_scope": "STEMI急诊绿色通道，心电图ST弓背抬高与肌钙蛋白cTn确诊，再灌注直接PCI（D2B<90分钟）为首选，双联抗血小板（阿司匹林+替格瑞洛）强化抗栓与早期他汀降脂",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://seleguide.yiigle.com/uploads/guide_html/%E6%80%A5%E6%80%A7ST%E6%AE%B5%E6%8A%AC%E9%AB%98%E5%9E%8B%E5%BF%83%E8%82%8C%E6%A2%97%E6%AD%BB%E8%AF%8A%E6%96%AD%E5%92%8C%E6%B2%BB%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%EF%BC%89.html",
+      "doi": "10.3760/cma.j.issn.0253-3758.2019.10.003",
+      "retrieved_at": "2026-10-14T07:10:22.949779+00:00",
+      "original_file": "raw/originals/SRC-CMA-CARD-2019-03-f07deab77128.html",
+      "original_sha256": "f07deab77128cd745403f4c5ec52a1ea489d4c61d2a49a092a9efd696dcc7a65",
       "content_sha256": "490a3094bfc18d49c32b737ed6ae5538e642fb17712d525a1c964e2af74eafa9",
       "provenance_review": {
         "decision": "pending"
+      },
+      "previous_registration": {
+        "title": "中国急性ST段抬高型心肌梗死诊断和治疗指南"
+      },
+      "download_url": "https://seleguide.yiigle.com/uploads/guide_html/%E6%80%A5%E6%80%A7ST%E6%AE%B5%E6%8A%AC%E9%AB%98%E5%9E%8B%E5%BF%83%E8%82%8C%E6%A2%97%E6%AD%BB%E8%AF%8A%E6%96%AD%E5%92%8C%E6%B2%BB%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%EF%BC%89.html",
+      "original_title": "急性ST段抬高型心肌梗死诊断和治疗指南（2019）",
+      "original_format": "html",
+      "original_publication": "中华心血管病杂志, 2019, 47(10):766-783",
+      "original_authority": "中华医学会心血管病学分会 / 中华心血管病杂志编辑委员会",
+      "original_publication_year": 2019,
+      "guideline_edition_year": 2019,
+      "original_host_role": "publisher",
+      "original_completeness": "article_text_external_assets_not_bundled",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "期刊Yiigle公开HTML文章响应，含正文与末条参考文献72。CDQI PDF下载发生TLS证书校验错误，未关闭校验，未将失败响应入库；本次仅将期刊HTML作为原件，外链资产未打包。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 218521,
+      "original_validation": {
+        "html_extracted_characters": 64272,
+        "last_reference_number": 72
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"急性ST段抬高型心肌梗死诊断和治疗指南\" \"2025\" \"2026\""
+        ],
+        "evidence_urls": [
+          "https://seleguide.yiigle.com/uploads/guide_html/%E6%80%A5%E6%80%A7ST%E6%AE%B5%E6%8A%AC%E9%AB%98%E5%9E%8B%E5%BF%83%E8%82%8C%E6%A2%97%E6%AD%BB%E8%AF%8A%E6%96%AD%E5%92%8C%E6%B2%BB%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%EF%BC%89.html"
+        ],
+        "note": "未核验同系列更晚正式终版；美国2025ACS指南或国内其他冠脉共识不能直接标作这份2019指南的新版。"
       }
     },
     {
@@ -330,6 +691,22 @@
       "content_sha256": "3e07c978ac8c8315e33c4068487836405d12a23ee013e011cb4cd868de40a2ea",
       "provenance_review": {
         "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "identity_uncertain",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国慢性肾脏病筛查、诊断及治疗临床实践指南\" \"2026\" pdf"
+        ],
+        "evidence_urls": [
+          "https://www.cjn.org.cn/CN/volumn/volumn_1401.shtml",
+          "https://rs.yiigle.com/cmaid/1684007"
+        ],
+        "note": "已确认2026 CKD指南书目（DOI 10.3760/cma.j.cn441217-20251005-01003），由非公立医疗机构协会工作组制定，介绍修订2022版；不能直接认定它替代未明确DOI的原登记2024版本。全文入口要求登录，本轮未归档摘要冒充原文。",
+        "candidate_title": "中国慢性肾脏病筛查、诊断及治疗临床实践指南（2026版）",
+        "candidate_doi": "10.3760/cma.j.cn441217-20251005-01003",
+        "candidate_year": 2026
       }
     },
     {
@@ -554,7 +931,7 @@
     },
     {
       "id": "SRC-CMA-ENT-2022-01",
-      "title": "变应性鼻炎诊断和治疗指南（2022年，修订版）",
+      "title": "中国变应性鼻炎诊断和治疗指南（2022年，修订版）",
       "authority": "中华医学会耳鼻咽喉头颈外科学分会鼻科学组",
       "publication": "中华耳鼻咽喉头颈外科杂志 2022年第57卷第2期",
       "year": 2022,
@@ -564,14 +941,53 @@
       "key_scope": "变应原过敏原IgE介导，打喷嚏/清水涕/鼻痒/鼻塞四大主诉，一线首选鼻用糖皮质激素（糠酸莫米松/丙酸氟替卡松）与第二代口服抗组胺药（氯雷他定/西替利嗪），环境控制与阶梯治疗",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://www.hnysfww.com/article.php?id=3195",
+      "doi": "10.3760/cma.j.cn115330-20211228-00828",
+      "retrieved_at": "2026-10-14T07:10:23.009237+00:00",
+      "original_file": "raw/originals/SRC-CMA-ENT-2022-01-f297151eee61.pdf",
+      "original_sha256": "f297151eee6136ce48418fa837f2ffbf7ed64aa2d26a24f9c30f318bbeea2548",
       "content_sha256": "b20894ed0f7541da3182376f3d156b50b40e69848e0e236183d1eedb799b4feb",
       "provenance_review": {
         "decision": "pending"
+      },
+      "previous_registration": {
+        "title": "变应性鼻炎诊断和治疗指南（2022年，修订版）"
+      },
+      "download_url": "https://www.hnysfww.com/data/article/1651109240442367965.pdf",
+      "original_title": "中国变应性鼻炎诊断和治疗指南（2022年，修订版）",
+      "original_format": "pdf",
+      "original_publication": "中华耳鼻咽喉头颈外科杂志, 2022, 57(2):106-129",
+      "original_authority": "中华耳鼻咽喉头颈外科杂志编辑委员会鼻科组 / 中华医学会耳鼻咽喉头颈外科学分会鼻科学组",
+      "original_publication_year": 2022,
+      "guideline_edition_year": 2022,
+      "original_host_role": "professional_society_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "湖南省药学会公开24页PDF，含文章与期刊附带栏目/后续刊期预告；原件未裁剪或重写。来源登记题名补齐原文的“中国”前缀。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 1513633,
+      "original_page_count": 24,
+      "original_validation": {
+        "parsed_pages": 24,
+        "extracted_characters": 76345,
+        "parser_warning_count": 306
+      },
+      "original_copy_notes": "公开转载文件可见湖南药事服务网水印/页脚，不宣称与出版社文件逐字节相同。",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"变应性鼻炎诊断和治疗指南\" 2025 2026"
+        ],
+        "evidence_urls": [
+          "https://cs.medjournals.cn/cn/zhebyhtjwkzz/popular-articles",
+          "https://cs.medjournals.cn/cn/zhyfyxzz/toc/73596",
+          "https://www.hnysfww.com/article.php?id=3195"
+        ],
+        "note": "未核验2022变应性鼻炎综合指南同系列新版；非变应性鼻炎、鼻窦炎、花粉症季节前预防等专题更新不自动取代综合版。"
       }
     },
     {
@@ -608,21 +1024,59 @@
       "key_scope": "入睡困难、睡眠维持障碍及早醒诊断标准，失眠认知行为治疗(CBTI)一线首选，非苯二氮䓬类受体激动剂(右佐匹克隆/唑吡坦)短程使用，严格限制长半衰期苯二氮䓬长期维持，老年人跌倒防范",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://doi.org/10.3760/cma.j.cn113694-20240406-00209",
+      "doi": "10.3760/cma.j.cn113694-20240406-00209",
+      "retrieved_at": "2026-10-14T07:10:23.022908+00:00",
+      "original_file": "raw/originals/SRC-CMA-NEUR-2023-02-370e39981e53.pdf",
+      "original_sha256": "370e39981e530a0287fd57fb00e619aaece1a6ccec1e7c076e3672ff0f357921",
       "content_sha256": "e65a552182f4ae70dcbec2ba8773b470db81a4dff15bae9f3f27d2c24e56b163",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://medtion-image.medtion.com/uploads/1/file/public/202407/20240719144258_vhtdud2bn4.pdf",
+      "original_title": "中国成人失眠诊断与治疗指南（2023版）",
+      "original_format": "pdf",
+      "original_publication": "中华神经科杂志, 2024, 57(6):560-584",
+      "original_authority": "中华医学会神经病学分会睡眠障碍学组",
+      "original_publication_year": 2024,
+      "guideline_edition_year": 2023,
+      "original_host_role": "public_medical_platform_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "公开医学平台25页期刊PDF，文件内DOI、题名和页码匹配；指南版次2023、期刊发表年2024。未使用2025年其他学会指南替代。转载主机不是发文机构，仍需人工来源核验。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 3548827,
+      "original_page_count": 25,
+      "original_validation": {
+        "parsed_pages": 25,
+        "extracted_characters": 94740,
+        "parser_warning_count": 0
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "erratum_found",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"关于\" \"成人失眠\" \"更正\" site:cs.medjournals.cn"
+        ],
+        "evidence_urls": [
+          "https://cs.medjournals.cn/cn/zhsjkzz/toc/64505"
+        ],
+        "note": "发现期刊2024年10期正式勘误（DOI 10.3760/cma.j.issn.1006-7876.2024.10.102）。这是原文更正，不是新版综合指南；旧PDF不可宣称已纳入勘误。更正内容已记录，尚未改动临床文本。",
+        "erratum": {
+          "doi": "10.3760/cma.j.issn.1006-7876.2024.10.102",
+          "journal_locator": "中华神经科杂志2024年第57卷第10期；所涉原文期刊第572页",
+          "correction": "原文“紫花地丁”更正为“香堇菜”"
+        }
       }
     },
     {
       "id": "SRC-CMA-NEUR-2022-01",
       "title": "中国偏头痛诊治指南（2022版）",
-      "authority": "中华医学会神经病学分会头痛协作组",
-      "publication": "中华神经科杂志 2022年",
+      "authority": "中国医师协会神经内科医师分会 / 中国研究型医院学会头痛与感觉障碍专业委员会",
+      "publication": "中国疼痛医学杂志 2022年第28卷第12期，881-898",
       "year": 2022,
       "category": "神经系统与头痛专科",
       "level": "国家权威神经专科指南",
@@ -630,14 +1084,55 @@
       "key_scope": "偏头痛发作期特异性止痛（佐米曲普坦/利扎曲普坦）与非特异性药物（NSAIDs），缺血性心脑血管疾病曲普坦类绝对禁用，药物过度使用性头痛(MOH)阻断，发作频率≥2次/月启动预防治疗（普萘洛尔/氟桂利嗪/托吡酯）",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://ccj.pku.edu.cn/Article/info?aid=342957278",
+      "doi": "10.3969/j.issn.1006-9852.2022.12.001",
+      "retrieved_at": "2026-10-14T07:10:22.973063+00:00",
+      "original_file": "raw/originals/SRC-CMA-NEUR-2022-01-c3715ac1de45.pdf",
+      "original_sha256": "c3715ac1de454a5929460067cf07fc39271fb8c8ae6084f13725a55092d021b6",
       "content_sha256": "1a163108d505ad726d86fb4269099eb62166a88a001a2dca443402b039ac554d",
       "provenance_review": {
         "decision": "pending"
+      },
+      "previous_registration": {
+        "authority": "中华医学会神经病学分会头痛协作组",
+        "publication": "中华神经科杂志 2022年"
+      },
+      "download_url": "https://www.hnysfww.com/data/article/1672249688322767320.pdf",
+      "original_title": "中国偏头痛诊治指南（2022版）",
+      "original_format": "pdf",
+      "original_publication": "中国疼痛医学杂志, 2022, 28(12):881-898",
+      "original_authority": "中国医师协会神经内科医师分会 / 中国研究型医院学会头痛与感觉障碍专业委员会",
+      "original_publication_year": 2022,
+      "guideline_edition_year": 2022,
+      "original_host_role": "professional_society_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "18页2022版，期刊题名及版次与登记匹配，但原登记的中华医学会制定机构/中华神经科杂志书目错误。依据PDF首页及北京大学期刊平台书目校正来源机构和发表期刊，旧值保留；既有ID含CMA是历史标识，不再用其推断机构。与中华医学会另版“偏头痛诊断与治疗指南”不混用，临床摘要仍需人工核查。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 1666324,
+      "original_page_count": 18,
+      "original_validation": {
+        "parsed_pages": 18,
+        "extracted_characters": 55754,
+        "parser_warning_count": 1
+      },
+      "download_page_url": "https://www.hnysfww.com/article.php?id=3488",
+      "original_copy_notes": "公开转载文件可见湖南药事服务网水印/页脚，不宣称与出版社文件逐字节相同。",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "related_update_found",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国偏头痛诊治指南\" 2025 2026"
+        ],
+        "evidence_urls": [
+          "https://ccj.pku.edu.cn/article/info?aid=385531921",
+          "https://www.guidelines-registry.org/guide/a6cd0ca5-1395-404d-bdf4-b4f41f5837d5"
+        ],
+        "note": "2025患者版用于患者/照护者，引用2022医师综合版及专题指南；不是替代2022医师指南的证据。",
+        "related_title": "中国偏头痛诊治指南（患者版）"
       }
     },
     {
@@ -652,15 +1147,62 @@
       "key_scope": "双能X射线吸收仪(DXA)骨密度T值≤-2.5诊断金标准，脆性骨折病史，基础补充钙剂(500~600mg)与维生素D(800~1200IU)，一线抗骨吸收药物（阿仑膦酸钠/唑来膦酸），口服双膦酸盐晨起空腹立位30分钟防食管糜烂，eGFR<35ml/min禁用",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://www.chinagp.net/CN/10.12114/j.issn.1007-9572.2023.0121",
+      "doi": "10.12114/j.issn.1007-9572.2023.0121",
+      "retrieved_at": "2026-10-14T06:54:24.990986+00:00",
+      "original_file": "raw/originals/SRC-CMA-ENDO-2022-01-e6b9a4423ff5.pdf",
+      "original_sha256": "e6b9a4423ff557c3569acdcb81f149822186a3dce100f8d8bd4bcce7884069ee",
       "content_sha256": "9174b7f7261203e8ab8e2ad635275cbf14f970c52df960785280d5d5b1b6abf5",
       "provenance_review": {
         "decision": "pending"
-      }
+      },
+      "download_url": "https://www.chinagp.net/CN/PDF/10.12114/j.issn.1007-9572.2023.0121",
+      "original_title": "原发性骨质疏松症诊疗指南（2022）",
+      "original_format": "pdf",
+      "original_publication_year": 2023,
+      "guideline_edition_year": 2022,
+      "original_host_role": "publisher_republication",
+      "original_completeness": "republication_with_primary_publication_supplement",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "provenance_notes": "中国全科医学2023,26(14):1671–1691公开PDF再刊版；末页明确“其余参考文献略”，非原登记的中华骨质疏松和骨矿盐疾病杂志首刊版。记录为参考文献节略的再刊原件，不声称覆盖全部原始参考文献。公开下载接口需临时token，从发布页点击PDF获得，不持久化临时token。 第三轮补充保存学会目录直接链接的2022首刊39页PDF，原21页再刊保留。首刊文字映射异常，需视觉核对；附加文件有独立SHA-256和pending状态。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 21,
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"原发性骨质疏松症诊疗指南\" 2025 2026 中华医学会"
+        ],
+        "evidence_urls": [
+          "https://csobmr.cma.org.cn/nlist.aspx?cids=20"
+        ],
+        "note": "学会2026-07-16更新目录仍列2022综合版，并另列男性骨质疏松2025版；不能把网页更新日当2026版，也不能用男性专项替代综合版。"
+      },
+      "supplemental_originals": [
+        {
+          "source_id": "SRC-CMA-ENDO-2022-01",
+          "downloaded_filename": "bone2022-full.pdf",
+          "original_title": "原发性骨质疏松症诊疗指南（2022）",
+          "original_publication": "中华骨质疏松和骨矿盐疾病杂志, 2022, 15(6):573-611",
+          "doi": "10.3969/j.issn.1674-2591.2022.06.001",
+          "official_url": "https://csobmr.cma.org.cn/nlist.aspx?cids=20",
+          "download_url": "https://files.sciconf.cn/gs_pdf/2026/07/16/20260716144713519488.pdf",
+          "original_sha256": "4450919522ec4be807f9db3e1dba779d07bc5d304019c195a1be10bb5e75c30e",
+          "byte_count": 5639311,
+          "pages": 39,
+          "format": "pdf",
+          "host_role": "authoring_society_linked_host",
+          "coverage": "官方学会2026目录链接的2022首刊39页版；补充保存，不覆盖前轮21页再刊件，也不算新增来源。PDF视觉可读，但文字映射明显乱码，不得将提取文本用于剂量或切点判定。",
+          "provenance_review": {
+            "decision": "pending"
+          },
+          "rights_status": "public_download_available_redistribution_not_reviewed",
+          "original_file": "raw/originals/SRC-CMA-ENDO-2022-01-supplement-4450919522ec.pdf",
+          "retrieved_at": "2026-10-14T07:33:55Z"
+        }
+      ]
     },
     {
       "id": "SRC-CMA-OPHTH-2020-01",
@@ -682,11 +1224,25 @@
       "content_sha256": "cd69c39d2319a8547e9b84dde967bfddb2b5804895f025e569dedb62b88fb51c",
       "provenance_review": {
         "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "identity_uncertain",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国干眼临床诊疗专家共识\" \"2024\" site:yiigle.com"
+        ],
+        "evidence_urls": [
+          "https://cs.medjournals.cn/cn/zhykzz",
+          "https://www.gzzoc.org.cn/sites/zoc.live1.sysucloud2.sysu.edu.cn/files/2025-10/2024_zhongguoganyanlinchuangzhenliaozhuanjiagongshi2024nian.pdf"
+        ],
+        "note": "2020是多部分、另一组机构的系列共识；2024原文明确修订2013临床共识，不能未经核对就认为它是此2020登记条目的正式替代版。2024另建来源，2020登记保留待核对。",
+        "related_source_id": "SRC-CMA-OPHTH-2024-01"
       }
     },
     {
       "id": "SRC-CMA-GAST-2020-01",
-      "title": "慢性便秘基层诊疗指南（2020年）",
+      "title": "慢性便秘基层诊疗指南（2019年）",
       "authority": "中华医学会消化病学分会胃肠动力学组 / 中华医学会全科医学分会",
       "publication": "中华全科医师杂志 2020年",
       "year": 2020,
@@ -696,15 +1252,45 @@
       "key_scope": "排便困难与排便次数<3次/周，器质性疾病红旗征排查（消瘦/贫血/便血），一线容积性泻药（小麦纤维素颗粒）与渗透性泻药（乳果糖/聚乙二醇），严禁长期滥用刺激性泻药（番泻叶/大黄/比沙可啶防结肠黑变病与神经肌病），水与纤维摄入宣教",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://cmab.yiigle.com/uploads/guide_html/%E6%85%A2%E6%80%A7%E4%BE%BF%E7%A7%98%E5%9F%BA%E5%B1%82%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%E5%B9%B4%EF%BC%89%20-%20%E4%B8%AD%E5%8D%8E%E5%85%A8%E7%A7%91%E5%8C%BB%E5%B8%88%E6%9D%82%E5%BF%97.html",
+      "doi": "10.3760/cma.j.cn114798-20201030-01109",
+      "retrieved_at": "2026-10-14T07:27:15.162054+00:00",
+      "original_file": "raw/originals/SRC-CMA-GAST-2020-01-7a8273654e88.html",
+      "original_sha256": "7a8273654e88e20629937c4aae1845290a2e3e0c7e717d7abc15e02eda5fe91d",
       "content_sha256": "1b6932dea17edaf718fae10ce5f0afb686fe45e5c56eed437af4d839aee50f6c",
       "provenance_review": {
         "decision": "pending"
-      }
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"慢性便秘基层诊疗指南\" \"2025\" \"2026\" -site:book118.com -site:baidu.com -site:renrendoc.com"
+        ],
+        "evidence_urls": [
+          "https://cmab.yiigle.com/uploads/guide_html/%E6%85%A2%E6%80%A7%E4%BE%BF%E7%A7%98%E5%9F%BA%E5%B1%82%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%E5%B9%B4%EF%BC%89%20-%20%E4%B8%AD%E5%8D%8E%E5%85%A8%E7%A7%91%E5%8C%BB%E5%B8%88%E6%9D%82%E5%BF%97.html"
+        ],
+        "note": "原件为2019版、2020发表；本轮未核验同系列较新基层诊疗指南，老年慢病管理/外科便秘/其他国家文件不能直接作替代版。"
+      },
+      "previous_registration": {
+        "title": "慢性便秘基层诊疗指南（2020年）",
+        "year": 2020
+      },
+      "original_title": "慢性便秘基层诊疗指南（2019年）",
+      "download_url": "https://cmab.yiigle.com/uploads/guide_html/%E6%85%A2%E6%80%A7%E4%BE%BF%E7%A7%98%E5%9F%BA%E5%B1%82%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882019%E5%B9%B4%EF%BC%89%20-%20%E4%B8%AD%E5%8D%8E%E5%85%A8%E7%A7%91%E5%8C%BB%E5%B8%88%E6%9D%82%E5%BF%97.html",
+      "original_format": "html",
+      "original_authority": "中华医学会 / 中华医学会杂志社 / 中华医学会消化病学分会 / 中华医学会全科医学分会 / 中华全科医师杂志编辑委员会",
+      "original_publication": "中华全科医师杂志, 2020, 19(12):1100-1107",
+      "original_publication_year": 2020,
+      "guideline_edition_year": 2019,
+      "original_host_role": "publisher",
+      "original_completeness": "article_text_external_assets_not_bundled",
+      "original_byte_count": 424813,
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-03",
+      "provenance_notes": "公开期刊HTML正文，参考文献末条12。指南版次2019、发表年份2020；原登记题名的2020年已校正并保留旧值。未核验同系列更晚正式版；外链资产未打包。",
+      "rights_status": "public_download_available_redistribution_not_reviewed"
     },
     {
       "id": "SRC-NHC-PED-2023-01",
@@ -718,14 +1304,41 @@
       "key_scope": "儿童肺炎支原体肺炎(MPP)分型（轻症/重症/难治性RMPP），首选大环内酯类（阿奇霉素轻症10mg/kg qd 3天停4天或5天疗法），耐药支原体识别，二线四环素类（多西环素/米诺环素用于≥8岁患儿或<8岁严重耐药知情同意），糖皮质激素与抗凝指征",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
+      "official_url": "https://www.nhc.gov.cn/wjw/c100378/202302/09c825807cb44295a3ebbf17e6a1ddca.shtml",
       "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "retrieved_at": "2026-10-14T06:54:24.853398+00:00",
+      "original_file": "raw/originals/SRC-NHC-PED-2023-01-808130c60518.doc",
+      "original_sha256": "808130c60518605ddba9ed000fa9c91e76af0c3816858143c174a18b0e579c25",
       "content_sha256": "cbf4b81bb0cca4461c5a919c1ecb4dd7ca68ab9d8d280cd65abcb84397bf4be6",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://www.nhc.gov.cn/wjw/c100378/202302/09c825807cb44295a3ebbf17e6a1ddca/files/1732871302685_46089.doc",
+      "original_title": "儿童肺炎支原体肺炎诊疗指南（2023年版）",
+      "original_format": "doc",
+      "original_publication_year": 2023,
+      "guideline_edition_year": 2023,
+      "original_host_role": "issuing_authority",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "provenance_notes": "国家卫生健康委公开DOC附件，原始字节保留；通过OLE签名、file识别与textutil只读文本提取核对题名。已发现官方2025年版，不覆盖当前2023年来源，摘要仍待版本复核。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "newer_edition_url": "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56/files/%E5%84%BF%E7%AB%A5%E8%82%BA%E7%82%8E%E6%94%AF%E5%8E%9F%E4%BD%93%E8%82%BA%E7%82%8E%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882025%E5%B9%B4%E7%89%88%EF%BC%89.pdf",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "newer_version_found",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"儿童肺炎支原体肺炎诊疗指南（2025年版）\" site:nhc.gov.cn"
+        ],
+        "evidence_urls": [
+          "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56.shtml"
+        ],
+        "note": "卫健委/中医药局2025发布通知明确在2023版基础上修订；保留2023原件与既有临床稿。",
+        "newer_source_id": "SRC-NHC-PED-2025-01",
+        "newer_title": "儿童肺炎支原体肺炎诊疗指南（2025年版）",
+        "newer_year": 2025
       }
     },
     {
@@ -762,15 +1375,43 @@
       "key_scope": "胃食管反流病（GERD）包括反流性食管炎（RE）、非糜烂性反流病（NERD）及Barrett食管，内镜下洛杉矶分级（LA-A/B/C/D），PPI（艾司奥美拉唑/雷贝拉唑）及新型P-CAB（伏诺拉生）一线单药与初始治疗，促胃肠动力药（莫沙必利）与抗酸保护剂（铝碳酸镁）联合辅助，难治性GERD评估与CYP2C19快代谢型鉴别",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://cmab.yiigle.com/uploads/guide_html/2020%E5%B9%B4%E4%B8%AD%E5%9B%BD%E8%83%83%E9%A3%9F%E7%AE%A1%E5%8F%8D%E6%B5%81%E7%97%85%E4%B8%93%E5%AE%B6%E5%85%B1%E8%AF%86.html",
+      "doi": "10.3760/cma.j.cn311367-20200918-00558",
+      "retrieved_at": "2026-10-14T07:27:15.159969+00:00",
+      "original_file": "raw/originals/SRC-CMA-GAST-2020-02-7d3efe02a494.html",
+      "original_sha256": "7d3efe02a4943044ea36f665f95b953cabe6eb39e916f166b2de22b2784675c0",
       "content_sha256": "ff26dcda96a53db0950fbe7bf53a9fb6389f77d1c80e59a4e6d3bcd0fdd79c42",
       "provenance_review": {
         "decision": "pending"
-      }
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"2020年中国胃食管反流病专家共识\" 最新 2025 2026",
+          "\"2020年中国胃食管反流病专家共识\" \"2025\" \"2026\" site:yiigle.com"
+        ],
+        "evidence_urls": [
+          "https://www.shsma.org.cn/web/news/5838",
+          "https://cmab.yiigle.com/uploads/guide_html/2020%E5%B9%B4%E4%B8%AD%E5%9B%BD%E8%83%83%E9%A3%9F%E7%AE%A1%E5%8F%8D%E6%B5%81%E7%97%85%E4%B8%93%E5%AE%B6%E5%85%B1%E8%AF%86.html"
+        ],
+        "note": "本轮未核验同系列更晚综合共识，2025中西医结合等专题不直接替代本系列。"
+      },
+      "original_title": "2020年中国胃食管反流病专家共识",
+      "download_url": "https://cmab.yiigle.com/uploads/guide_html/2020%E5%B9%B4%E4%B8%AD%E5%9B%BD%E8%83%83%E9%A3%9F%E7%AE%A1%E5%8F%8D%E6%B5%81%E7%97%85%E4%B8%93%E5%AE%B6%E5%85%B1%E8%AF%86.html",
+      "original_format": "html",
+      "original_authority": "中华医学会消化病学分会",
+      "original_publication": "中华消化杂志2020年",
+      "original_publication_year": 2020,
+      "guideline_edition_year": 2020,
+      "original_host_role": "publisher",
+      "original_completeness": "article_text_external_assets_not_bundled",
+      "original_byte_count": 591187,
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-03",
+      "provenance_notes": "期刊公开HTML原文含正文与参考文献末条167；外链图表/样式未打包。未核验该综合共识同系列更晚正式版，2025中西医结合/专项文件不直接作为换版依据。",
+      "rights_status": "public_download_available_redistribution_not_reviewed"
     },
     {
       "id": "SRC-CMA-NEPH-2021-01",
@@ -828,14 +1469,46 @@
       "key_scope": "原发性甲减与亚临床甲减临床诊断切点，血清TSH升高伴FT4降低，左甲状腺素钠片（L-T4）全程足量替代治疗（1.6~1.8 μg/kg/d），清晨空腹白水送服服药规范，老年及合并冠心病患者小剂量（12.5~25 μg/d）起始慢滴定原则，避免与钙剂铁剂铝碳酸镁同服（强螯合吸收降低>50%，必须间隔至少4小时）",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://cmab.yiigle.com/uploads/guide_html/%E6%88%90%E4%BA%BA%E7%94%B2%E7%8A%B6%E8%85%BA%E5%8A%9F%E8%83%BD%E5%87%8F%E9%80%80%E7%97%87%E8%AF%8A%E6%B2%BB%E6%8C%87%E5%8D%97.html",
+      "doi": "10.3760/cma.j.issn.1000-6699.2017.02.018",
+      "retrieved_at": "2026-10-14T07:10:23.026229+00:00",
+      "original_file": "raw/originals/SRC-CMA-ENDO-2017-01-1589196768d0.html",
+      "original_sha256": "1589196768d0ae44fba32c6890020dc61611a685aa44f365c2701813c1ff7cac",
       "content_sha256": "14578449c675ac5dcda92def410045656ac83f487b89d8c2272870c895b7bfc1",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://cmab.yiigle.com/uploads/guide_html/%E6%88%90%E4%BA%BA%E7%94%B2%E7%8A%B6%E8%85%BA%E5%8A%9F%E8%83%BD%E5%87%8F%E9%80%80%E7%97%87%E8%AF%8A%E6%B2%BB%E6%8C%87%E5%8D%97.html",
+      "original_title": "成人甲状腺功能减退症诊治指南",
+      "original_format": "html",
+      "original_publication": "中华内分泌代谢杂志, 2017, 33(2):167-180",
+      "original_authority": "中华医学会内分泌学分会",
+      "original_publication_year": 2017,
+      "guideline_edition_year": 2017,
+      "original_host_role": "publisher",
+      "original_completeness": "article_text_external_assets_not_bundled",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "期刊Yiigle公开HTML文章响应，含正文、推荐条款与末条参考文献105。未取得PDF或打包全部外链图表；不据此认定2017年后所有临床结论仍现行有效。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 413320,
+      "original_validation": {
+        "html_extracted_characters": 88502,
+        "last_reference_number": 105
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "uncertain",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"成人甲状腺功能减退症诊治指南\" 2025 site:yiigle.com",
+          "\"成人甲状腺功能减退症诊治指南\" \"2025\" pdf -site:book118.com -site:baidu.com"
+        ],
+        "evidence_urls": [
+          "https://cmab.yiigle.com/uploads/guide_html/%E6%88%90%E4%BA%BA%E7%94%B2%E7%8A%B6%E8%85%BA%E5%8A%9F%E8%83%BD%E5%87%8F%E9%80%80%E7%97%87%E8%AF%8A%E6%B2%BB%E6%8C%87%E5%8D%97.html"
+        ],
+        "note": "2017原文书目可确认；二手站点宣称2025更新但未找到同系列一手正文/DOI，不能确认其最新性，也不采信这些2025版声明。"
       }
     },
     {
@@ -894,14 +1567,51 @@
       "key_scope": "荨麻疹临床特征与病程分类（急性≤6周 vs 慢性>6周），风团速发速退（24小时内消退）特征，喉头水肿/过敏性休克红旗征排查与急救肾上腺素肌注，一线第二代非镇静抗组胺药（氯雷他定/西替利嗪/左西替利嗪）阶梯加倍或联合方案，高龄患者避免常规第一代抗组胺药（防中枢抑制过度嗜睡跌倒及抗胆碱能认知损害），严重泛发伴喉头紧缩短期系统糖皮质激素权衡",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://rs.yiigle.com/CN321138202212/1436321.htm",
+      "doi": "10.35541/cjd.20220609",
+      "retrieved_at": "2026-10-14T07:10:22.866186+00:00",
+      "original_file": "raw/originals/SRC-CMA-DERM-2022-02-7ab4d3e193af.pdf",
+      "original_sha256": "7ab4d3e193afa72e01585e5eec16ff4527057d96420acd571bf8ff0cf63e9198",
       "content_sha256": "741d812a6b22fe700adc4cd65e576d8662ce6a063ce44deec9e917a683dd9e21",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://www.hnysfww.com/data/article/1754433218753997051.pdf",
+      "original_title": "中国荨麻疹诊疗指南（2022版）",
+      "original_format": "pdf",
+      "original_publication": "中华皮肤科杂志, 2022, 55(12):1041-1049",
+      "original_authority": "中华医学会皮肤性病学分会荨麻疹研究中心",
+      "original_publication_year": 2022,
+      "guideline_edition_year": 2022,
+      "original_host_role": "professional_society_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "湖南省药学会公开9页PDF，题名、DOI与期刊页码匹配。转载网页同时提供2018版、2022版，且网页显示旧发布日期；本次按附件内题名、版次、DOI选择2022版，未使用2018版。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 2281133,
+      "original_page_count": 9,
+      "original_validation": {
+        "parsed_pages": 9,
+        "extracted_characters": 24462,
+        "parser_warning_count": 10
+      },
+      "download_page_url": "https://www.hnysfww.com/article.php?id=1585",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "related_update_found",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国荨麻疹诊疗指南\" 2025 2026",
+          "\"中国难治性慢性自发性荨麻疹诊治指南（2025版）\" site:yiigle.com"
+        ],
+        "evidence_urls": [
+          "https://www.cjebp.cn/CN/Y2026/V21/I3/190",
+          "https://rs.yiigle.com/CN321138202212/1436321.htm",
+          "https://rs.yiigle.com/cmaid/1696904"
+        ],
+        "note": "检索到2025难治性慢性自发性荨麻疹专题指南及2026儿童急性荨麻疹共识；疾病/人群范围不同，不能当作2022全人群综合指南的自动替代。"
       }
     },
     {
@@ -1004,14 +1714,51 @@
       "key_scope": "妊娠期高血压、子痫前期（轻/重度）、子痫诊断标准与重症监护，降压目标130-140/80-90mmHg，拉贝洛尔/硝苯地平首选，ACEI/ARB/ARNI禁忌黑框，硫酸镁解痉防抽搐规范",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "",
-      "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "official_url": "https://www.hnysfww.com/article.php?id=2363",
+      "doi": "10.3760/cma.j.cn112141-20200114-00039",
+      "retrieved_at": "2026-10-14T07:10:22.985660+00:00",
+      "original_file": "raw/originals/SRC-CMA-GYN-2020-02-06c42efdcd15.pdf",
+      "original_sha256": "06c42efdcd154aa9a7e56fb95c5861802814263ca68146e1f9d0e0e832ce43a0",
       "content_sha256": "664c5659ca5bbe8b5a2a985ace0bb2d1b963cddec9372e30fcfa44976bc5abb5",
       "provenance_review": {
         "decision": "pending"
+      },
+      "download_url": "https://www.hnysfww.com/data/article/1626295975600264593.pdf",
+      "original_title": "妊娠期高血压疾病诊治指南（2020）",
+      "original_format": "pdf",
+      "original_publication": "中华妇产科杂志, 2020, 55(4):227-238",
+      "original_authority": "中华医学会妇产科学分会妊娠期高血压疾病学组",
+      "original_publication_year": 2020,
+      "guideline_edition_year": 2020,
+      "original_host_role": "professional_society_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-02",
+      "provenance_notes": "湖南省药学会公开转载12页期刊原件，含末页继续教育试题；不是只有指南摘要，末页附带试题不是指南推荐意见。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "publisher_byte_identity_verified": false,
+      "original_byte_count": 909653,
+      "original_page_count": 12,
+      "original_validation": {
+        "parsed_pages": 12,
+        "extracted_characters": 31297,
+        "parser_warning_count": 0
+      },
+      "original_copy_notes": "公开转载文件可见湖南药事服务网水印/页脚，不宣称与出版社文件逐字节相同。",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "related_update_found",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"妊娠期高血压疾病诊治指南\" 2025 2026",
+          "\"妊娠期高血压疾病诊治指南\" \"2020\" site:medjournals.cn"
+        ],
+        "evidence_urls": [
+          "https://cs.medjournals.cn/cn/zhfckzz"
+        ],
+        "note": "期刊同时列2020妊娠期高血压综合指南和2025子痫前期预测与预防指南；新文范围不同，不直接视为综合指南换版。官网部分全文链接误指私网地址，本轮未访问这些地址。",
+        "related_title": "子痫前期预测与预防指南（2025）",
+        "related_doi": "10.3760/cma.j.cn112141-20241130-00636"
       }
     },
     {
@@ -1078,6 +1825,23 @@
       "content_sha256": "b3fdc9d7ea73db722b53e3f21fd1c1e04312ceadbc06d5f913ab541a85f1221f",
       "provenance_review": {
         "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "newer_version_found",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国心房颤动管理指南（2025）\" pdf",
+          "\"中国心房颤动管理指南（2025）\" \"10.\""
+        ],
+        "evidence_urls": [
+          "https://www.caogr.org/detail_1_893.html",
+          "https://zgxz.cbpt.cnki.net/portal/journal/portal/client/paperRank_list/type_xiazaipaihang?number=100&pageNum=1&year="
+        ],
+        "note": "学会发布资料及2025原文摘要均明确修订2021认识和治疗建议，独立登记新版；旧2021条目仍没有原件，不迁移其临床摘要。",
+        "newer_source_id": "SRC-CSPE-CARD-2025-01",
+        "newer_title": "中国心房颤动管理指南（2025）",
+        "newer_year": 2025
       }
     },
     {
@@ -1136,18 +1900,47 @@
       "key_scope": "1. 诊断切点：成人 BMI ≥ 24 kg/m² 为超重，≥ 28 kg/m² 为肥胖；男性腰围 ≥ 90cm、女性 ≥ 85cm 为中心型肥胖。\n2. 饮食干预：控制总能量摄入，推荐每日能量摄入减少 500～1000 kcal；优质蛋白质占比达 50% 以上。\n3. 减重靶标：以 6 个月内体重减轻 5%～10% 为适宜目标，严禁剧烈极低能量禁食。",
       "status": "active",
       "content_kind": "curated_summary",
-      "official_url": "https://www.chinanutri.cn/yyjkzxpt/yyjkkpzx/xcclk/tzglxj/202504/t20250429_306363.html",
+      "official_url": "https://wjw.baoji.gov.cn/col2223/col2269/202403/t20240319_652418.html",
       "doi": "",
-      "retrieved_at": "",
-      "original_file": "",
-      "original_sha256": "",
+      "retrieved_at": "2026-10-14T06:54:24.781593+00:00",
+      "original_file": "raw/originals/SRC-NHC-NUT-2024-01-ce7e43937883.pdf",
+      "original_sha256": "ce7e43937883f2d89bb3b505a410d023df510027e2015457d2800e98f5a330a2",
       "content_sha256": "5c7040f23d1edf2ec748401b8e130b5410e44b2f35b5f2215284779bd96d75c1",
       "provenance_review": {
         "decision": "pending"
       },
-      "download_url": "https://www.chinanutri.cn/yyjkzxpt/yyjkkpzx/xcclk/tzglxj/202504/W020250430499231972013.pdf",
-      "acquisition_status": "pending_download",
-      "provenance_notes": "已定位中国疾控中心营养与健康所公开下载页；本次 PDF 获取遇到 HTTP 445 或浏览器超时，尚未归档。"
+      "download_url": "https://wjw.baoji.gov.cn/col2223/col2269/202403/P020241228641521653546.pdf",
+      "acquisition_status": "archived",
+      "provenance_notes": "宝鸡市卫生健康委员会公开转载的70页国家卫健委办公厅指南；此前营养所链接获取失败，本轮改由政府转载附件取得。",
+      "previous_acquisition_attempt": {
+        "official_url": "https://www.chinanutri.cn/yyjkzxpt/yyjkkpzx/xcclk/tzglxj/202504/t20250429_306363.html",
+        "download_url": "https://www.chinanutri.cn/yyjkzxpt/yyjkkpzx/xcclk/tzglxj/202504/W020250430499231972013.pdf",
+        "status": "failed",
+        "reason": "HTTP 445 或浏览器超时；未归档该响应"
+      },
+      "original_title": "成人肥胖食养指南（2024年版）",
+      "original_format": "pdf",
+      "original_publication_year": 2024,
+      "guideline_edition_year": 2024,
+      "original_host_role": "government_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "acquisition_round": "2026-10-13-public-round-01",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 70,
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"成人肥胖食养指南\" \"2025\" \"2026\" site:nhc.gov.cn",
+          "\"成人肥胖食养指南\" \"2024\" site:nhc.gov.cn"
+        ],
+        "evidence_urls": [
+          "https://www.nhc.gov.cn/sps/c100088/202402/9ba512ba8e314a47a181db11d2fa188d.shtml",
+          "https://www.nhc.gov.cn/wjw/jiany/202507/3e0d4370402f4b07b77fc3c28cd9c61c.shtml"
+        ],
+        "note": "卫健委食养通知及后续答复指向2024版；未找到该同名食养指南的更晚正式版，肥胖症诊疗指南是另一个系列。"
+      }
     },
     {
       "id": "SRC-CSES-APP-2023-01",
@@ -1346,6 +2139,218 @@
       "provenance_review": {
         "decision": "pending"
       }
+    },
+    {
+      "id": "SRC-NHC-ONC-2026-01",
+      "title": "原发性肝癌诊疗指南（2026年版）",
+      "authority": "国家卫生健康委办公厅",
+      "publication": "国卫办医政函〔2026〕105号附件（2026-04-09公开）",
+      "year": 2026,
+      "category": "肿瘤系统",
+      "level": "待核验来源",
+      "file_path": "raw/docs/SRC-NHC-ONC-2026-01.md",
+      "key_scope": "卫健委正式发布2026版226页附件，通知明确修订2024版。独立新来源，不覆盖2024原件，不自动替换临床摘要或规则。",
+      "status": "active",
+      "content_kind": "unverified_text",
+      "official_url": "https://www.nhc.gov.cn/yzygj/c100067/202604/3371c9cb2f7f4f55b18c709ff2c53ab8.shtml",
+      "doi": "",
+      "retrieved_at": "2026-10-14T07:27:15.117223+00:00",
+      "original_file": "raw/originals/SRC-NHC-ONC-2026-01-7e2d0e76ac7b.pdf",
+      "original_sha256": "7e2d0e76ac7b5a9f773b25316f5e0e34c8fc4a338303cb95a6774732c084688f",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "content_sha256": "35916344cef5ab5f4fe8f7916217d9bd737dcd02d12a67af7f70361cc8495c68",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"原发性肝癌诊疗指南（2026年版）\" site:nhc.gov.cn"
+        ],
+        "evidence_urls": [
+          "https://www.nhc.gov.cn/yzygj/c100067/202604/3371c9cb2f7f4f55b18c709ff2c53ab8.shtml"
+        ],
+        "note": "目前核验到的同系列最新正式发布为2026版；是截至本轮检索的结论，不是持续最新保证。",
+        "confirmed_edition": 2026
+      },
+      "original_title": "原发性肝癌诊疗指南（2026年版）",
+      "download_url": "https://www.nhc.gov.cn/yzygj/c100067/202604/3371c9cb2f7f4f55b18c709ff2c53ab8/files/%E5%8E%9F%E5%8F%91%E6%80%A7%E8%82%9D%E7%99%8C%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882026%E7%89%88%EF%BC%89.pdf",
+      "original_format": "pdf",
+      "original_authority": "国家卫生健康委办公厅",
+      "original_publication": "国卫办医政函〔2026〕105号附件（2026-04-09公开）",
+      "original_publication_year": 2026,
+      "guideline_edition_year": 2026,
+      "original_host_role": "issuing_authority",
+      "original_completeness": "downloaded_publication_file",
+      "original_byte_count": 11480781,
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-03",
+      "provenance_notes": "卫健委正式发布2026版226页附件，通知明确修订2024版。独立新来源，不覆盖2024原件，不自动替换临床摘要或规则。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 226,
+      "registration_stage": "bibliography_only",
+      "supersedes_source_id": "SRC-NHC-ONC-2024-01"
+    },
+    {
+      "id": "SRC-NHC-PED-2025-01",
+      "title": "儿童肺炎支原体肺炎诊疗指南（2025年版）",
+      "authority": "国家卫生健康委办公厅 / 国家中医药局综合司",
+      "publication": "国卫办医政函〔2025〕361号附件（2025-09-23公开）",
+      "year": 2025,
+      "category": "儿科呼吸系统",
+      "level": "待核验来源",
+      "file_path": "raw/docs/SRC-NHC-PED-2025-01.md",
+      "key_scope": "两部门正式发布32页2025版附件，明确修订2023版。新来源仍待核验及临床审校；旧2023 DOC保留。",
+      "status": "active",
+      "content_kind": "unverified_text",
+      "official_url": "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56.shtml",
+      "doi": "",
+      "retrieved_at": "2026-10-14T07:27:15.125076+00:00",
+      "original_file": "raw/originals/SRC-NHC-PED-2025-01-452e1442cbca.pdf",
+      "original_sha256": "452e1442cbcae7231e1bac8f23031f84085a7e75aef347fac6d9a04162575b32",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "content_sha256": "df315578a963a616f28a2e737acdfbe09baf09b434f32fe84b9743e755ba8d8b",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"儿童肺炎支原体肺炎诊疗指南\" \"2026年版\" site:nhc.gov.cn"
+        ],
+        "evidence_urls": [
+          "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56.shtml"
+        ],
+        "note": "已核验2025版，未核验到2026同系列发布。",
+        "confirmed_edition": 2025
+      },
+      "original_title": "儿童肺炎支原体肺炎诊疗指南（2025年版）",
+      "download_url": "https://www.nhc.gov.cn/yzygj/c100068/202509/19e7145436b049a68d4ba8c2060dfa56/files/%E5%84%BF%E7%AB%A5%E8%82%BA%E7%82%8E%E6%94%AF%E5%8E%9F%E4%BD%93%E8%82%BA%E7%82%8E%E8%AF%8A%E7%96%97%E6%8C%87%E5%8D%97%EF%BC%882025%E5%B9%B4%E7%89%88%EF%BC%89.pdf",
+      "original_format": "pdf",
+      "original_authority": "国家卫生健康委办公厅 / 国家中医药局综合司",
+      "original_publication": "国卫办医政函〔2025〕361号附件（2025-09-23公开）",
+      "original_publication_year": 2025,
+      "guideline_edition_year": 2025,
+      "original_host_role": "issuing_authority",
+      "original_completeness": "downloaded_publication_file",
+      "original_byte_count": 595117,
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-03",
+      "provenance_notes": "两部门正式发布32页2025版附件，明确修订2023版。新来源仍待核验及临床审校；旧2023 DOC保留。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 32,
+      "registration_stage": "bibliography_only",
+      "supersedes_source_id": "SRC-NHC-PED-2023-01"
+    },
+    {
+      "id": "SRC-CMA-OPHTH-2024-01",
+      "title": "中国干眼临床诊疗专家共识（2024年）",
+      "authority": "中华医学会眼科学分会角膜病学组 / 中国医师协会眼科医师分会角膜病学组",
+      "publication": "中华眼科杂志, 2024, 60(12):968-976",
+      "year": 2024,
+      "category": "眼科",
+      "level": "待核验来源",
+      "file_path": "raw/docs/SRC-CMA-OPHTH-2024-01.md",
+      "key_scope": "中山大学中山眼科中心公开转载9页期刊PDF。原文自述修订2013临床共识；不据此宣称直接替代另一机构的2020系列共识。单独登记2024临床诊疗共识，保留2020来源待核对身份。",
+      "status": "active",
+      "content_kind": "unverified_text",
+      "official_url": "https://zhykzz.yiigle.com/yjdt/index.htm?lang=En",
+      "doi": "10.3760/cma.j.cn112142-20240517-00227",
+      "retrieved_at": "2026-10-14T07:27:15.132018+00:00",
+      "original_file": "raw/originals/SRC-CMA-OPHTH-2024-01-288a554eb71e.pdf",
+      "original_sha256": "288a554eb71e96d4c421e86cb3585011546a31aaecaaf50641de8e1a6450fbd3",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "content_sha256": "16643a52ef4b9d50f59492752bb4839ab645a5ca1894b9cd497beace3c370004",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国干眼临床诊疗专家共识（2024年）\" \"2025\" \"2026\" site:yiigle.com",
+          "\"中国干眼临床诊疗专家共识\" 2026 site:cs.medjournals.cn"
+        ],
+        "evidence_urls": [
+          "https://zhykzz.yiigle.com/yjdt/index.htm?lang=En",
+          "https://cs.medjournals.cn/cn/zhykzz/popular-articles"
+        ],
+        "note": "同刊当前列2024临床诊疗共识；2026药物相关眼表不良反应等专题不能当作其新版。",
+        "confirmed_edition": 2024
+      },
+      "original_title": "中国干眼临床诊疗专家共识（2024年）",
+      "download_url": "https://www.gzzoc.org.cn/sites/zoc.live1.sysucloud2.sysu.edu.cn/files/2025-10/2024_zhongguoganyanlinchuangzhenliaozhuanjiagongshi2024nian.pdf",
+      "original_format": "pdf",
+      "original_authority": "中华医学会眼科学分会角膜病学组 / 中国医师协会眼科医师分会角膜病学组",
+      "original_publication": "中华眼科杂志, 2024, 60(12):968-976",
+      "original_publication_year": 2024,
+      "guideline_edition_year": 2024,
+      "original_host_role": "institutional_hospital_mirror",
+      "original_completeness": "downloaded_publication_file",
+      "original_byte_count": 1645151,
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-03",
+      "provenance_notes": "中山大学中山眼科中心公开转载9页期刊PDF。原文自述修订2013临床共识；不据此宣称直接替代另一机构的2020系列共识。单独登记2024临床诊疗共识，保留2020来源待核对身份。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 9,
+      "registration_stage": "bibliography_only",
+      "related_source_id": "SRC-CMA-OPHTH-2020-01"
+    },
+    {
+      "id": "SRC-CSPE-CARD-2025-01",
+      "title": "中国心房颤动管理指南（2025）",
+      "authority": "中华医学会心电生理和起搏分会 / 中国医师协会心律学专业委员会",
+      "publication": "中国心脏起搏与心电生理杂志2025版网络发布稿（附件刊期/卷期仍为占位符）",
+      "year": 2025,
+      "category": "心血管系统",
+      "level": "待核验来源",
+      "file_path": "raw/docs/SRC-CSPE-CARD-2025-01.md",
+      "key_scope": "公开医学平台转载71页PDF，首页DOI和摘要明确修订《心房颤动：目前的认识和治疗建议（2021）》，学会发布会资料交叉确认。文件仍有XXXX/XX卷期占位符，记为网络发布稿，不冒称正式终排本；后续需取得出版社定版。",
+      "status": "active",
+      "content_kind": "unverified_text",
+      "official_url": "https://www.caogr.org/detail_1_893.html",
+      "doi": "10.13333/j.cnki.cjcpe.2025.04.001",
+      "retrieved_at": "2026-10-14T07:27:15.157332+00:00",
+      "original_file": "raw/originals/SRC-CSPE-CARD-2025-01-b39fbe1e7da9.pdf",
+      "original_sha256": "b39fbe1e7da9d701706eb6cf849df8ddc3ac11cc1545e4d8ee1e3ad80fc87972",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "content_sha256": "2535934dc548a09449259abfe07f1c56e77c33afbbc28088ad0ba639644eaee1",
+      "version_review": {
+        "checked_on": "2026-10-14",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；不是全部医学证据的现行性认证",
+        "search_queries": [
+          "\"中国心房颤动管理指南（2025）\" \"2026\" site:zgxz.cbpt.cnki.net"
+        ],
+        "evidence_urls": [
+          "https://www.caogr.org/detail_1_893.html",
+          "https://zgxz.cbpt.cnki.net/portal/journal/portal/client/index"
+        ],
+        "note": "核验2025发布及其修订2021建议的关系，未核验同系列2026综合版；现有PDF仍为卷期占位符网络稿，版本最新性与取得最终排印原件不同。",
+        "confirmed_edition": 2025
+      },
+      "original_title": "中国心房颤动管理指南（2025）",
+      "download_url": "https://www.sinocardiomed.com/wp-content/uploads/2025/08/2025080913331948.pdf",
+      "original_format": "pdf",
+      "original_authority": "中华医学会心电生理和起搏分会 / 中国医师协会心律学专业委员会",
+      "original_publication": "中国心脏起搏与心电生理杂志2025版网络发布稿（附件刊期/卷期仍为占位符）",
+      "original_publication_year": 2025,
+      "guideline_edition_year": 2025,
+      "original_host_role": "public_medical_platform_mirror",
+      "original_completeness": "online_copy_with_bibliographic_placeholders",
+      "original_byte_count": 2310844,
+      "acquisition_status": "archived",
+      "acquisition_round": "2026-10-14-public-round-03",
+      "provenance_notes": "公开医学平台转载71页PDF，首页DOI和摘要明确修订《心房颤动：目前的认识和治疗建议（2021）》，学会发布会资料交叉确认。文件仍有XXXX/XX卷期占位符，记为网络发布稿，不冒称正式终排本；后续需取得出版社定版。",
+      "rights_status": "public_download_available_redistribution_not_reviewed",
+      "original_page_count": 71,
+      "download_page_url": "https://www.sinocardiomed.com/2025/08/0934214228.html",
+      "registration_stage": "bibliography_only",
+      "supersedes_source_id": "SRC-CMA-CARD-2021-02"
     }
   ]
 }

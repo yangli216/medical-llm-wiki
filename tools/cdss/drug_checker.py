@@ -37,6 +37,9 @@ class DrugInsertRepository:
             page = WikiPage(fpath, self.root_dir / "wiki")
             fm = page.frontmatter
             
+            aliases = fm.get("aliases", [])
+            if isinstance(aliases, str):
+                aliases = [aliases]
             drug_entry = {
                 "id": stem,
                 "generic_name": fm.get("generic_name", stem),
@@ -45,6 +48,7 @@ class DrugInsertRepository:
                 "atc_code": fm.get("atc_code", ""),
                 "approval_category": fm.get("approval_category", ""),
                 "trade_names": fm.get("trade_names", []),
+                "aliases": aliases,
                 "forms_and_specs": fm.get("forms_and_specs", []),
                 "max_daily_dose": fm.get("max_daily_dose", ""),
                 "standard_maintenance_dose": fm.get("standard_maintenance_dose", ""),
@@ -84,6 +88,30 @@ class DrugInsertRepository:
             for trade in drug_entry["trade_names"]:
                 self._index[trade.lower()] = stem
 
+            for alias in drug_entry["aliases"]:
+                if alias:
+                    self._index[alias.lower()] = stem
+                    for spec in drug_entry.get("forms_and_specs", []):
+                        spec_clean = spec.split("/")[0].strip()
+                        if spec_clean:
+                            self._index[f"{alias} {spec_clean}".lower()] = stem
+
+        try:
+            self._last_loaded_mtime = max((f.stat().st_mtime for f in self.inserts_dir.glob("*.md")), default=0)
+        except Exception:
+            self._last_loaded_mtime = 0
+
+    def _check_and_reload(self) -> None:
+        """Dynamically reloads monographs if markdown files in wiki/inserts/ were modified or added."""
+        if not self.inserts_dir.exists():
+            return
+        try:
+            current_mtime = max((f.stat().st_mtime for f in self.inserts_dir.glob("*.md")), default=0)
+            if current_mtime > getattr(self, "_last_loaded_mtime", 0):
+                self.load_all()
+        except Exception:
+            pass
+
     def list_all(self) -> List[Dict[str, Any]]:
         """Returns summarized metadata of all registered drug monographs."""
         return [
@@ -95,6 +123,7 @@ class DrugInsertRepository:
                 "atc_code": d["atc_code"],
                 "approval_category": d["approval_category"],
                 "trade_names": d["trade_names"],
+                "aliases": d.get("aliases", []),
                 "forms_and_specs": d["forms_and_specs"],
                 "max_daily_dose": d["max_daily_dose"],
                 "standard_maintenance_dose": d["standard_maintenance_dose"],
@@ -109,29 +138,39 @@ class DrugInsertRepository:
         """Resolves a drug by name, alias, trade name, ATC code, or clinic order text with specifications."""
         if not query:
             return None
+        self._check_and_reload()
         q_raw = query.strip()
         q_clean = q_raw.lower()
         if q_clean in self._index:
             return self._drugs.get(self._index[q_clean])
 
-        # Clinic input normalization candidates: e.g. "连花清瘟胶囊 0.35g", "连花清瘟胶囊 (24粒/盒)"
+        # Clinic input normalization candidates: e.g. "[基]氯苯那敏片 4mg", "连花清瘟胶囊 0.35g", "连花清瘟胶囊 (24粒/盒)"
         candidates: List[str] = []
-        # 1. Strip trailing spec/package (e.g. " 0.35g", " 10ml", " 24粒/盒", " 0.5g*12片")
-        cand_no_spec = re.sub(r'[\s0-9\.\*gmgml粒片盒袋/支μuiiu瓶丸包次日mgkg]+$', '', q_clean).strip()
-        if cand_no_spec and cand_no_spec != q_clean:
-            candidates.append(cand_no_spec)
-        # 2. Strip bracketed manufacturer or packaging info
-        cand_no_paren = re.sub(r'[\(（].*?[\)）]', '', q_clean).strip()
-        if cand_no_paren and cand_no_paren != q_clean:
-            candidates.append(cand_no_paren)
-            cand_paren_no_spec = re.sub(r'[\s0-9\.\*gmgml粒片盒袋/支μuiiu瓶丸包次日mgkg]+$', '', cand_no_paren).strip()
-            if cand_paren_no_spec and cand_paren_no_spec not in candidates:
-                candidates.append(cand_paren_no_spec)
-        # 3. First whitespace token
-        if " " in q_clean:
-            token0 = q_clean.split()[0].strip()
-            if token0 and token0 not in candidates:
-                candidates.append(token0)
+        cand_no_prefix = re.sub(r'^[\[【(（][^\]】)）]+[\]】)）]', '', q_clean).strip()
+        if cand_no_prefix and cand_no_prefix != q_clean:
+            candidates.append(cand_no_prefix)
+
+        bases = [q_clean]
+        if cand_no_prefix and cand_no_prefix not in bases:
+            bases.append(cand_no_prefix)
+
+        for base in bases:
+            # 1. Strip trailing spec/package (e.g. " 4mg", " 0.35g", " 10ml", " 24粒/盒", " 0.5g*12片")
+            cand_no_spec = re.sub(r'[\s0-9\.\*gmgml粒片盒袋/支μuiiu瓶丸包次日mgkg]+$', '', base).strip()
+            if cand_no_spec and cand_no_spec not in candidates:
+                candidates.append(cand_no_spec)
+            # 2. Strip bracketed manufacturer or packaging info (supports (), （）, [], 【】)
+            cand_no_paren = re.sub(r'[（\(\[【].*?[）\)\]】]', '', base).strip()
+            if cand_no_paren and cand_no_paren not in candidates:
+                candidates.append(cand_no_paren)
+                cand_paren_no_spec = re.sub(r'[\s0-9\.\*gmgml粒片盒袋/支μuiiu瓶丸包次日mgkg]+$', '', cand_no_paren).strip()
+                if cand_paren_no_spec and cand_paren_no_spec not in candidates:
+                    candidates.append(cand_paren_no_spec)
+            # 3. First whitespace token
+            if " " in base:
+                token0 = base.split()[0].strip()
+                if token0 and token0 not in candidates:
+                    candidates.append(token0)
 
         for cand in candidates:
             if cand in self._index:
@@ -156,9 +195,10 @@ class DrugInsertRepository:
         return None
 
     def search(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
-        """Keyword search across generic names, trade names, indications, and categories."""
+        """Keyword search across generic names, trade names, aliases, indications, and categories."""
         if not query:
             return self.list_all()[:limit]
+        self._check_and_reload()
         q_clean = query.strip().lower()
         exact = self.get(q_clean)
         matches = []
@@ -173,6 +213,7 @@ class DrugInsertRepository:
                 or q_clean in d["english_name"].lower()
                 or q_clean in d["category"].lower()
                 or any(q_clean in tn.lower() for tn in d["trade_names"])
+                or any(q_clean in al.lower() for al in d.get("aliases", []))
                 or q_clean in d["raw_body"].lower()
             ):
                 matches.append(d)
