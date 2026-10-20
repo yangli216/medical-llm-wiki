@@ -110,9 +110,21 @@ class CdssEngine:
                     score += 40.0
 
             if norm.icd_code and prot.icd10:
-                if norm.icd_code.upper() == prot.icd10.upper():
+                from tools.cdss.icd_mapper import ICDMapper
+                icd_cands = ICDMapper.get_instance().resolve_candidates(norm.icd_code)
+                prot_icds = [c.strip().upper() for c in prot.icd10.split(",") if c.strip()]
+                matched_rank = None
+                for idx, cand in enumerate(icd_cands):
+                    if cand in prot_icds:
+                        matched_rank = idx
+                        break
+                if matched_rank == 0:
                     score += 100.0
-                elif norm.icd_category and prot.icd10.upper().startswith(norm.icd_category.upper()):
+                elif matched_rank is not None and matched_rank <= 2:
+                    score += 90.0
+                elif matched_rank is not None:
+                    score += 75.0
+                elif norm.icd_category and any(p_icd.startswith(norm.icd_category.upper()) for p_icd in prot_icds):
                     score += 60.0
 
             for stem in norm.core_stems:

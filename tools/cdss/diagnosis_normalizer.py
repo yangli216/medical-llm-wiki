@@ -105,6 +105,14 @@ class NormalizedDiagnosis:
             cand_icd = target_icd.strip().upper()
             if self.icd_code.upper() == cand_icd:
                 return True
+            from tools.cdss.icd_mapper import ICDMapper
+            candidates = ICDMapper.get_instance().resolve_candidates(self.icd_code)
+            for sub_target in [c.strip().upper() for c in target_icd.split(",") if c.strip()]:
+                if sub_target in candidates:
+                    return True
+                for c in candidates:
+                    if sub_target.startswith(c.split(".")[0]):
+                        return True
             if self.icd_category and cand_icd.startswith(self.icd_category.upper()):
                 return True
 
@@ -148,18 +156,14 @@ class ClinicalDiagnosisNormalizer:
             w in raw for w in ("怎么", "如何", "选药", "为什么", "什么")
         )
 
-        # 1. Extract ICD-10 code (e.g. K35.8, K35.800, E11.9, I10)
-        icd_code: Optional[str] = None
-        icd_category: Optional[str] = None
-        m_icd = re.search(r"\b([A-Z][0-9]{2}(?:\.[0-9]{1,4})?)\b", raw)
-        if not m_icd:
-            m_icd = re.search(r"\[([A-Z][0-9]{2}(?:\.[0-9]{1,4})?)\]", raw)
+        # 1. Extract ICD-10 code (e.g. K35.8, K35.800, E11.9, I10, J39.900)
+        from tools.cdss.icd_mapper import ICDMapper
+        icd_code = ICDMapper.extract_icd(raw)
+        icd_category = icd_code.split(".")[0] if icd_code else None
 
-        if m_icd:
-            icd_code = m_icd.group(1).upper()
-            icd_category = icd_code.split(".")[0]
-            # Remove ICD code from text
-            text_no_icd = raw.replace(m_icd.group(0), " ").strip()
+        if icd_code:
+            # Remove ICD code and any surrounding brackets/parentheses from text
+            text_no_icd = re.sub(r"[\[\(（【]?" + re.escape(icd_code) + r"[\]\)）】]?", " ", raw).strip()
         else:
             text_no_icd = raw
 

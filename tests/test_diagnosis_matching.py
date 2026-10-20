@@ -135,6 +135,81 @@ class TestDiagnosisMatchingAndPrecisionGuard(unittest.TestCase):
             self.assertEqual(matches[0]["protocolId"], expected_pid)
             self.assertIn(keyword, matches[0]["title"])
 
+    def test_icd10_prioritized_mapping_and_crosswalk(self):
+        """
+        Verifies that ICD-10 codes take priority, support 6-digit hierarchy reduction,
+        and support clinical crosswalk mappings (e.g. J39.900 -> J06.9, K35.900 -> K35.8).
+        """
+        from tools.cdss.icd_mapper import ICDMapper
+        mapper = ICDMapper.get_instance()
+
+        # 1. Candidate resolution
+        cands_uri = mapper.resolve_candidates("J39.900")
+        self.assertIn("J06.9", cands_uri)
+        self.assertIn("J06", cands_uri)
+
+        cands_app = mapper.resolve_candidates("K35.900")
+        self.assertIn("K35.8", cands_app)
+
+        # 2. WikiGraph ICD-10 resolution
+        page_dis = self.graph.resolve_by_icd("J39.900", type_hint="disease")
+        self.assertIsNotNone(page_dis)
+        self.assertEqual(page_dis.file_path.stem, "急性上呼吸道感染")
+
+        page_prot = self.graph.resolve_by_icd("J39.900", type_hint="protocol")
+        self.assertIsNotNone(page_prot)
+        self.assertIn("急性上呼吸道感染", page_prot.title)
+
+        page_app = self.graph.resolve_by_icd("K35.900", type_hint="disease")
+        self.assertIsNotNone(page_app)
+        self.assertEqual(page_app.file_path.stem, "急性阑尾炎")
+
+        # 3. ProtocolRepository ICD-10 resolution
+        prot_uri = self.cdss.repo.get_by_icd("J39.900")
+        self.assertIsNotNone(prot_uri)
+        self.assertEqual(prot_uri.protocol_id, "PROT-URI-005")
+
+        prot_app = self.cdss.repo.get_by_icd("K35.900")
+        self.assertIsNotNone(prot_app)
+        self.assertEqual(prot_app.protocol_id, "PROT-APP-043")
+
+        # 4. Mock HTTP Handler with explicit icd10 and mixed string
+        class MockHandler:
+            def __init__(self, root_dir, graph, searcher, cdss):
+                self.root_dir = root_dir
+                self.graph = graph
+                self.searcher = searcher
+                self.cdss = cdss
+                self.sent_json = None
+                self.sent_status = None
+
+            def _markdown_to_html(self, text):
+                return "<p>" + text[:50] + "</p>"
+
+            def _send_json(self, data, status=200):
+                self.sent_json = data
+                self.sent_status = status
+
+        MockHandler._handle_wiki_doc = WikiHTTPHandler._handle_wiki_doc
+        h = MockHandler(self.root_dir, self.graph, self.searcher, self.cdss)
+
+        # Guideline lookup with icd10 parameter
+        h._handle_wiki_doc({"icd10": ["J39.900"], "type": ["guideline"]})
+        self.assertEqual(h.sent_status, 200)
+        self.assertEqual(h.sent_json.get("id"), "PROT-URI-005")
+        self.assertEqual(h.sent_json.get("type"), "protocol")
+
+        # Disease wiki doc lookup with icd10 parameter
+        h._handle_wiki_doc({"icd10": ["J39.900"]})
+        self.assertEqual(h.sent_status, 200)
+        self.assertEqual(h.sent_json.get("id"), "急性上呼吸道感染")
+        self.assertEqual(h.sent_json.get("type"), "disease")
+
+        # Mixed name + bracketed icd10
+        h._handle_wiki_doc({"name": ["上呼吸道疾病 (J39.900)"], "type": ["guideline"]})
+        self.assertEqual(h.sent_status, 200)
+        self.assertEqual(h.sent_json.get("id"), "PROT-URI-005")
+
 
 if __name__ == "__main__":
     unittest.main()

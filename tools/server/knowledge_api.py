@@ -7,44 +7,170 @@ from typing import Any, Dict, List
 
 class KnowledgeApiMixin:
     def _handle_knowledge_search(self, payload: Dict[str, Any]) -> None:
-        """Adapts to RHN PmphaiClinicalKnowledgeGateway ProviderResult[] protocol."""
+        """Adapts to RHN PmphaiClinicalKnowledgeGateway ProviderResult[] protocol with ICD priority."""
         query = payload.get("query") or ""
         limit = int(payload.get("limit", 5))
+        icd_code = payload.get("icd10") or payload.get("icd") or payload.get("code")
+        if not icd_code and query:
+            from tools.cdss.icd_mapper import ICDMapper
+            icd_code = ICDMapper.extract_icd(query)
+
         hits = self.searcher.search(query, limit=limit)
         results = []
-        for h in hits:
-            sources = h.get("sources", [])
-            lib_name = sources[0] if sources else "国家卫生健康委员会临床诊疗指南与规范"
-            results.append({
-                "id": h["id"],
-                "name": h["title"],
-                "content": h.get("snippet", ""),
-                "score": round(float(h.get("score", 1.0)) / 100.0, 4),
-                "resourcePos": h.get("rel_path", ""),
-                "sourceInfo": {
-                    "knowledgeLibName": lib_name,
-                    "knowledgeLibId": f"LIB-{h['id'].upper()}",
-                    "publishYear": "2024",
-                },
-                "aiAbstract": h.get("snippet", ""),
-            })
+        if icd_code:
+            prot = self.cdss.repo.get_by_icd(icd_code)
+            page = self.graph.resolve_by_icd(icd_code, type_hint="disease")
+            matched_ids = set()
+            if prot:
+                matched_ids.add(prot.protocol_id)
+                results.append({
+                    "id": prot.protocol_id,
+                    "name": prot.title,
+                    "content": prot.summary or prot.raw_text[:200],
+                    "score": 1.0,
+                    "resourcePos": f"protocols/{prot.file_path.name}",
+                    "sourceInfo": {
+                        "knowledgeLibName": "国家卫生健康委员会临床路径与方案指南库",
+                        "knowledgeLibId": f"LIB-{prot.protocol_id}",
+                        "publishYear": "2024",
+                    },
+                    "aiAbstract": prot.summary or "",
+                })
+            if page and page.file_path.stem not in matched_ids:
+                matched_ids.add(page.file_path.stem)
+                results.append({
+                    "id": page.file_path.stem,
+                    "name": page.title,
+                    "content": page.body[:200],
+                    "score": 0.98,
+                    "resourcePos": str(page.rel_path),
+                    "sourceInfo": {
+                        "knowledgeLibName": "国家临床医学知识库",
+                        "knowledgeLibId": f"LIB-{page.file_path.stem.upper()}",
+                        "publishYear": "2024",
+                    },
+                    "aiAbstract": page.body[:200],
+                })
+            for h in hits:
+                if h["id"] not in matched_ids:
+                    sources = h.get("sources", [])
+                    lib_name = sources[0] if sources else "国家卫生健康委员会临床诊疗指南与规范"
+                    results.append({
+                        "id": h["id"],
+                        "name": h["title"],
+                        "content": h.get("snippet", ""),
+                        "score": round(float(h.get("score", 1.0)) / 100.0, 4),
+                        "resourcePos": h.get("rel_path", ""),
+                        "sourceInfo": {
+                            "knowledgeLibName": lib_name,
+                            "knowledgeLibId": f"LIB-{h['id'].upper()}",
+                            "publishYear": "2024",
+                        },
+                        "aiAbstract": h.get("snippet", ""),
+                    })
+            results = results[:limit]
+        else:
+            for h in hits:
+                sources = h.get("sources", [])
+                lib_name = sources[0] if sources else "国家卫生健康委员会临床诊疗指南与规范"
+                results.append({
+                    "id": h["id"],
+                    "name": h["title"],
+                    "content": h.get("snippet", ""),
+                    "score": round(float(h.get("score", 1.0)) / 100.0, 4),
+                    "resourcePos": h.get("rel_path", ""),
+                    "sourceInfo": {
+                        "knowledgeLibName": lib_name,
+                        "knowledgeLibId": f"LIB-{h['id'].upper()}",
+                        "publishYear": "2024",
+                    },
+                    "aiAbstract": h.get("snippet", ""),
+                })
         self._send_json(results)
 
     def _handle_wiki_doc(self, query_params: Dict[str, List[str]]) -> None:
         """
         Universal document retrieval endpoint for drug inserts, clinical guidelines,
         disease entities, and decision protocols.
+        Supports explicit and implicit ICD-10 prioritised retrieval.
         """
         raw_name = query_params.get("name", [""])[0].strip()
         raw_id = query_params.get("id", [""])[0].strip()
         raw_path = query_params.get("path", [""])[0].strip()
+        raw_icd = (
+            query_params.get("icd10", [""])[0].strip()
+            or query_params.get("icd", [""])[0].strip()
+            or query_params.get("code", [""])[0].strip()
+        )
         doc_type = query_params.get("type", [""])[0].strip().lower()
 
-        target = raw_name or raw_id or raw_path
+        target = raw_name or raw_id or raw_path or raw_icd
         alt_target = raw_id if target == raw_name and raw_id else (raw_name if target == raw_id and raw_name else "")
         if not target:
-            self._send_json({"error": "Missing query parameter 'id', 'name', or 'path'"}, status=400)
+            self._send_json({"error": "Missing query parameter 'id', 'name', 'path', or 'icd10'"}, status=400)
             return
+
+        from tools.cdss.icd_mapper import ICDMapper
+        if not raw_icd:
+            raw_icd = ICDMapper.extract_icd(target) or (ICDMapper.extract_icd(alt_target) if alt_target else "")
+
+        # 0. High priority ICD-10 resolution
+        if raw_icd:
+            if doc_type in ("protocol", "guideline"):
+                prot = self.cdss.repo.get_by_icd(raw_icd)
+                if prot:
+                    html_body = self._markdown_to_html(prot.raw_text)
+                    self._send_json({
+                        "id": prot.protocol_id,
+                        "title": prot.title,
+                        "type": "protocol",
+                        "category": prot.category,
+                        "icd10": prot.icd10,
+                        "aliases": prot.aliases,
+                        "sources": prot.sources,
+                        "summary": prot.summary,
+                        "relPath": f"protocols/{prot.file_path.name}",
+                        "markdown": prot.raw_text,
+                        "html": html_body,
+                        "items": [it.to_rhn_intent_item() for it in prot.items],
+                    })
+                    return
+            elif doc_type in ("disease", "concept", "wiki", "entity") or doc_type == "":
+                page = self.graph.resolve_by_icd(raw_icd, type_hint="disease")
+                if page:
+                    html_body = self._markdown_to_html(page.raw_text)
+                    self._send_json({
+                        "id": page.file_path.stem,
+                        "title": page.title,
+                        "type": page.page_type,
+                        "category": page.frontmatter.get("category", ""),
+                        "icd10": page.icd10,
+                        "aliases": page.aliases,
+                        "tags": page.tags,
+                        "sources": page.sources,
+                        "relPath": str(page.rel_path),
+                        "markdown": page.raw_text,
+                        "html": html_body,
+                    })
+                    return
+                prot = self.cdss.repo.get_by_icd(raw_icd)
+                if prot:
+                    html_body = self._markdown_to_html(prot.raw_text)
+                    self._send_json({
+                        "id": prot.protocol_id,
+                        "title": prot.title,
+                        "type": "protocol",
+                        "category": prot.category,
+                        "icd10": prot.icd10,
+                        "aliases": prot.aliases,
+                        "sources": prot.sources,
+                        "summary": prot.summary,
+                        "relPath": f"protocols/{prot.file_path.name}",
+                        "markdown": prot.raw_text,
+                        "html": html_body,
+                        "items": [it.to_rhn_intent_item() for it in prot.items],
+                    })
+                    return
 
         # 1. Try drug monograph if type is medication/drug/insert/prescription/medicine or (not specified and not starting with SRC- or PROT-)
         if doc_type in ("drug", "insert", "medication", "prescription", "medicine") or (doc_type == "" and not target.startswith("SRC-") and not target.startswith("PROT-")):
@@ -117,9 +243,11 @@ class KnowledgeApiMixin:
         from tools.cdss.diagnosis_normalizer import ClinicalDiagnosisNormalizer
         norm = ClinicalDiagnosisNormalizer.normalize(target)
 
-        # 2. Try protocol repository if type is protocol, guideline, or (not specified and not starting with SRC-)
-        if doc_type in ("protocol", "guideline") or (doc_type == "" and not target.startswith("SRC-")):
-            prot = self.cdss.repo.get(target) or self.cdss.repo.get(norm.canonical_name)
+        # 2. Try protocol repository if type is protocol, guideline, or starting with PROT-
+        if doc_type in ("protocol", "guideline") or target.startswith("PROT-"):
+            prot = self.cdss.repo.get(target)
+            if not prot and raw_icd:
+                prot = self.cdss.repo.get_by_icd(raw_icd)
             if not prot and raw_name and doc_type in ("protocol", "guideline"):
                 matches = self.cdss.search_protocols(raw_name, limit=1)
                 if matches:
@@ -152,6 +280,8 @@ class KnowledgeApiMixin:
 
         # 3. Try WikiGraph (concepts, entities, sources)
         lookup_targets = [target]
+        if raw_icd and raw_icd not in lookup_targets:
+            lookup_targets.append(raw_icd)
         if alt_target and alt_target not in lookup_targets:
             lookup_targets.append(alt_target)
         if norm.canonical_name and norm.canonical_name not in lookup_targets:

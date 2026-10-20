@@ -114,6 +114,7 @@ class WikiPage:
         self.tags = tags if isinstance(tags, list) else [str(tags)]
         sources = self.frontmatter.get("sources", [])
         self.sources = sources if isinstance(sources, list) else [str(sources)]
+        self.icd10 = str(self.frontmatter.get("icd10") or self.frontmatter.get("icd") or "").strip()
 
 
 class WikiGraph:
@@ -124,6 +125,10 @@ class WikiGraph:
         self.wiki_dir = self.root_dir / "wiki"
         self.pages: Dict[str, WikiPage] = {}  # key is primary node identifier (file stem or title)
         self.alias_map: Dict[str, str] = {}  # alias -> primary node identifier
+        self.icd_map: Dict[str, str] = {}  # Normalized ICD -> primary_id
+        self.disease_icd_map: Dict[str, str] = {}  # Normalized ICD -> disease page primary_id
+        self.protocol_icd_map: Dict[str, str] = {}  # Normalized ICD -> protocol page primary_id
+        self.icd_prefix_map: Dict[str, List[str]] = {}  # 3-char category -> list of primary_ids
         self.backlinks: Dict[str, List[str]] = {}  # primary -> list of callers
         self.load_graph()
 
@@ -139,6 +144,10 @@ class WikiGraph:
 
         self.pages.clear()
         self.alias_map.clear()
+        self.icd_map.clear()
+        self.disease_icd_map.clear()
+        self.protocol_icd_map.clear()
+        self.icd_prefix_map.clear()
         self.backlinks.clear()
 
         if not self.wiki_dir.exists():
@@ -162,6 +171,25 @@ class WikiGraph:
                 if alias not in self.pages:
                     self.alias_map[alias] = primary_id
 
+        # Map ICD-10 inverted index
+        for primary_id, page in self.pages.items():
+            if page.icd10:
+                p_type = page.page_type.lower()
+                for sub_icd in re.split(r"[,;，；/]+", page.icd10):
+                    clean_icd = sub_icd.strip().upper()
+                    if clean_icd:
+                        if clean_icd not in self.icd_map:
+                            self.icd_map[clean_icd] = primary_id
+                        if p_type == "disease" and clean_icd not in self.disease_icd_map:
+                            self.disease_icd_map[clean_icd] = primary_id
+                        elif p_type == "protocol" and clean_icd not in self.protocol_icd_map:
+                            self.protocol_icd_map[clean_icd] = primary_id
+
+                        cat = clean_icd.split(".")[0]
+                        self.icd_prefix_map.setdefault(cat, [])
+                        if primary_id not in self.icd_prefix_map[cat]:
+                            self.icd_prefix_map[cat].append(primary_id)
+
         # Compute backlinks
         for node_id in self.pages:
             self.backlinks[node_id] = []
@@ -182,7 +210,71 @@ class WikiGraph:
         stem = Path(clean).stem
         if stem in self.alias_map:
             return self.alias_map[stem]
+
+        # Try ICD-10 resolution if link_text matches an ICD-10 pattern
+        clean_upper = clean.upper()
+        if re.match(r"^[A-Z][0-9]{2}(?:\.[0-9A-Z]{1,4})?$", clean_upper):
+            page = self._raw_resolve_by_icd(clean_upper)
+            if page:
+                return page.file_path.stem
         return None
+
+    def _raw_resolve_by_icd(self, icd_code: str, type_hint: Optional[str] = None) -> Optional[WikiPage]:
+        """Internal resolver for ICD-10 code to WikiPage with optional type preference."""
+        if not icd_code:
+            return None
+        from tools.cdss.icd_mapper import ICDMapper
+        candidates = ICDMapper.get_instance().resolve_candidates(icd_code)
+
+        hint = (type_hint or "").strip().lower()
+        if hint in ("disease", "concept", "entity"):
+            preferred_map = self.disease_icd_map
+            secondary_map = self.icd_map
+        elif hint in ("protocol", "guideline"):
+            preferred_map = self.protocol_icd_map
+            secondary_map = self.icd_map
+        else:
+            # Default: prefer disease entity for general wiki lookups, then fallback
+            preferred_map = self.disease_icd_map
+            secondary_map = self.icd_map
+
+        # Pass 1: exact/candidate match in preferred map
+        for cand in candidates:
+            if cand in preferred_map:
+                pid = preferred_map[cand]
+                if pid in self.pages:
+                    return self.pages[pid]
+
+        # Pass 2: exact/candidate match in secondary map
+        for cand in candidates:
+            if cand in secondary_map:
+                pid = secondary_map[cand]
+                if pid in self.pages:
+                    return self.pages[pid]
+
+        # Pass 3: category prefix match
+        for cand in candidates:
+            cat = cand.split(".")[0]
+            if cat in self.icd_prefix_map:
+                for pid in self.icd_prefix_map[cat]:
+                    if pid in self.pages:
+                        p = self.pages[pid]
+                        if hint in ("disease", "concept", "entity") and p.page_type == "disease":
+                            return p
+                        elif hint in ("protocol", "guideline") and p.page_type == "protocol":
+                            return p
+                # If no type-specific match, return first
+                for pid in self.icd_prefix_map[cat]:
+                    if pid in self.pages:
+                        return self.pages[pid]
+        return None
+
+    def resolve_by_icd(self, icd_code: str, type_hint: Optional[str] = None) -> Optional[WikiPage]:
+        """Resolves an ICD-10 code (exact, crosswalk, or hierarchical) to a WikiPage."""
+        if not icd_code:
+            return None
+        self._check_and_reload()
+        return self._raw_resolve_by_icd(icd_code, type_hint=type_hint)
 
     def _check_and_reload(self) -> None:
         """Dynamically reloads graph if markdown files in wiki/ were modified or added."""

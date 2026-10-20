@@ -362,18 +362,89 @@ class ProtocolRepository:
         self.root_dir = root_dir or Path(__file__).resolve().parent.parent.parent
         self.protocols_dir = self.root_dir / "wiki" / "protocols"
         self.protocols: Dict[str, ClinicalProtocol] = {}
+        self.icd_map: Dict[str, ClinicalProtocol] = {}
+        self.icd_prefix_map: Dict[str, List[ClinicalProtocol]] = {}
+        self.title_map: Dict[str, ClinicalProtocol] = {}
+        self.alias_map: Dict[str, ClinicalProtocol] = {}
         self.load_all()
 
     def load_all(self) -> None:
         self.protocols.clear()
+        self.icd_map.clear()
+        self.icd_prefix_map.clear()
+        self.title_map.clear()
+        self.alias_map.clear()
         if not self.protocols_dir.exists():
             return
         for md_path in sorted(self.protocols_dir.glob("*.md")):
             prot = ClinicalProtocol(md_path)
             self.protocols[prot.protocol_id] = prot
+            self.title_map[prot.title] = prot
+            for alias in prot.aliases:
+                if alias not in self.alias_map:
+                    self.alias_map[alias] = prot
+
+            if prot.icd10:
+                for sub_icd in re.split(r"[,;，；/]+", prot.icd10):
+                    clean_icd = sub_icd.strip().upper()
+                    if clean_icd:
+                        if clean_icd not in self.icd_map:
+                            self.icd_map[clean_icd] = prot
+                        cat = clean_icd.split(".")[0]
+                        self.icd_prefix_map.setdefault(cat, [])
+                        if prot not in self.icd_prefix_map[cat]:
+                            self.icd_prefix_map[cat].append(prot)
+
+    def get_by_icd(self, icd_code: str) -> Optional[ClinicalProtocol]:
+        """Resolves an ICD-10 code (exact, crosswalk, or hierarchical) to a ClinicalProtocol."""
+        if not icd_code:
+            return None
+        from tools.cdss.icd_mapper import ICDMapper
+        candidates = ICDMapper.get_instance().resolve_candidates(icd_code)
+        # Pass 1: exact/candidate match
+        for cand in candidates:
+            if cand in self.icd_map:
+                return self.icd_map[cand]
+        # Pass 2: category prefix match
+        for cand in candidates:
+            cat = cand.split(".")[0]
+            if cat in self.icd_prefix_map and self.icd_prefix_map[cat]:
+                return self.icd_prefix_map[cat][0]
+        return None
 
     def get(self, protocol_id: str) -> Optional[ClinicalProtocol]:
-        return self.protocols.get(protocol_id)
+        """Gets protocol by unique protocol ID (e.g. PROT-URI-005)."""
+        if not protocol_id:
+            return None
+        clean = protocol_id.strip()
+        if clean in self.protocols:
+            return self.protocols[clean]
+        for pid, prot in self.protocols.items():
+            if pid.upper() == clean.upper():
+                return prot
+        return None
+
+    def find_protocol(self, query: str) -> Optional[ClinicalProtocol]:
+        """Finds protocol by ID, title, alias, or ICD-10 code."""
+        if not query:
+            return None
+        clean = query.strip()
+        prot = self.get(clean)
+        if prot:
+            return prot
+        if clean in self.title_map:
+            return self.title_map[clean]
+        if clean in self.alias_map:
+            return self.alias_map[clean]
+        from tools.cdss.icd_mapper import ICDMapper
+        ext_icd = ICDMapper.extract_icd(clean)
+        if ext_icd:
+            prot = self.get_by_icd(ext_icd)
+            if prot:
+                return prot
+        if re.match(r"^[A-Z][0-9]{2}(?:\.[0-9A-Z]{1,4})?$", clean.upper()):
+            return self.get_by_icd(clean)
+        return None
 
     def list_all(self) -> List[ClinicalProtocol]:
         return list(self.protocols.values())
