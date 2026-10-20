@@ -85,6 +85,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -120,6 +121,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "盐酸拉贝洛尔片",
+          "specification": "100mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "BID",
+            "doseValue": 100,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "《妊娠期高血压疾病诊治指南》推荐妊娠期高血压一线首选α/β受体阻滞剂，不影响胎盘血流且无致畸毒性",
+          "sourceGuideline": "SRC-CMA-GYN-2020-02"
+        },
+        {
+          "name": "硝苯地平控释片",
+          "specification": "30mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 30,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "《中国高血压防治指南（2024年修订版）》推荐妊娠期安全长效二氢吡啶类CCB降压方案",
+          "sourceGuideline": "SRC-CMA-CARD-2024-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -144,6 +174,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "利格列汀片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "《中国2型糖尿病防治指南（2024版）》推荐主要经胆道粪便排泄（肾排泄<5%），CKD 1~5期均无需调整剂量且无乳酸酸中毒风险",
+          "sourceGuideline": "SRC-CDS-ENDO-2024-01"
+        },
+        {
+          "name": "门冬胰岛素注射液",
+          "specification": "3ml:300单位(笔芯)",
+          "orderDraft": {
+            "routeCode": "IH",
+            "frequencyCode": "TID",
+            "doseValue": 4,
+            "doseUnit": "U",
+            "durationValue": 30
+          },
+          "rationale": "重度肾功能不全(eGFR<30)患者安全控糖方案，按血糖监测个体化滴定剂量",
+          "sourceGuideline": "SRC-CDS-ENDO-2024-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -171,6 +230,35 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "盐酸二甲双胍片",
+          "specification": "0.5g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "BID",
+            "doseValue": 0.5,
+            "doseUnit": "g",
+            "durationValue": 30
+          },
+          "rationale": "eGFR 30~44 mL/min/1.73m² 患者下调日剂量至 ≤1000mg/d（0.5g bid），不新起始二甲双胍",
+          "sourceGuideline": "SRC-CDS-ENDO-2024-01"
+        },
+        {
+          "name": "利格列汀片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "中重度肾损伤患者可安全换用不经肾脏排泄的利格列汀 5mg qd",
+          "sourceGuideline": "SRC-CDS-ENDO-2024-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -207,6 +295,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "酒石酸美托洛尔片",
+          "specification": "25mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "BID",
+            "doseValue": 25,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "服用 PDE-5 抑制剂24~48小时洗脱期内严禁给予硝酸酯类，心绞痛控制首选β受体阻滞剂降低心肌耗氧",
+          "sourceGuideline": "SRC-CMA-CARD-2019-03"
+        },
+        {
+          "name": "苯磺酸氨氯地平片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 5,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "冠心病抗心绞痛二线替代，不与PDE-5抑制剂产生致死性cGMP级联低血压休克",
+          "sourceGuideline": "SRC-CMA-CARD-2019-03"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -242,6 +359,22 @@
       },
       "grade": "2A",
       "evidence_level": "弱推荐 (Weak recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "缬沙坦胶囊",
+          "specification": "80mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 80,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "《老年人多重用药指南》推荐联合ARB扩张静脉端毛细血管，平衡跨毛细血管静水压从而消除CCB所致踝部水肿，避免误加利尿剂",
+          "sourceGuideline": "SRC-CSGP-GERI-2023-02"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -275,6 +408,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "塞来昔布胶囊",
+          "specification": "0.2g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 0.2,
+            "doseUnit": "g",
+            "durationValue": 14
+          },
+          "rationale": "仅保留单一选择性COX-2抑制剂口服，避免双NSAIDs叠加诱发消化道穿孔与急性肾损伤",
+          "sourceGuideline": "SRC-CSGP-MSK-2023-01"
+        },
+        {
+          "name": "奥美拉唑肠溶胶囊",
+          "specification": "20mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 20,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "高危患者单用NSAID期间可联用质子泵抑制剂保护胃十二指肠黏膜",
+          "sourceGuideline": "SRC-CSG-PU-2022-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -311,6 +473,22 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "蒙脱石散",
+          "specification": "3g/袋",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 3,
+            "doseUnit": "g",
+            "durationValue": 3
+          },
+          "rationale": "医嘱用法备注强制标注：先服抗菌药/微生态制剂，间隔2小时后再冲服蒙脱石散",
+          "sourceGuideline": "SRC-CMA-PED-2022-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -338,6 +516,22 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "酒石酸唑吡坦片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QN",
+            "doseValue": 5,
+            "doseUnit": "mg",
+            "durationValue": 7
+          },
+          "rationale": "《中国成人失眠诊断与治疗指南（2023版）》推荐老年失眠若需药物干预，选用半衰期短的非苯二氮䓬类（Z-drugs）减半剂量(5mg)临睡前短程使用",
+          "sourceGuideline": "SRC-CMA-NEUR-2023-02"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -392,6 +586,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -449,6 +644,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -503,6 +699,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -537,6 +734,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "盐酸二甲双胍片",
+          "specification": "0.5g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "BID",
+            "doseValue": 0.5,
+            "doseUnit": "g",
+            "durationValue": 30
+          },
+          "rationale": "停用消渴丸，保留标准一线双胍类或单方格列美脲，严防格列本脲隐含成分重复叠加致死性低血糖",
+          "sourceGuideline": "SRC-NAT-TCM-2021-01"
+        },
+        {
+          "name": "达格列净片",
+          "specification": "10mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 10,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "换用非促泌剂类SGLT2抑制剂，单药不增加低血糖风险且具心肾保护获益",
+          "sourceGuideline": "SRC-CDS-ENDO-2024-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -602,6 +828,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -627,6 +854,22 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "盐酸伐昔洛韦片",
+          "specification": "0.3g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 0.3,
+            "doseUnit": "g",
+            "durationValue": 7
+          },
+          "rationale": "《中国带状疱疹诊疗专家共识（2023版）》肾功能不全患者下调给药频次为每日1次（0.3g qd）并嘱多饮水防结晶尿",
+          "sourceGuideline": "SRC-CMA-DERM-2023-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -695,6 +938,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -722,6 +966,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "骨化三醇胶丸",
+          "specification": "0.25μg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 0.25,
+            "doseUnit": "μg",
+            "durationValue": 30
+          },
+          "rationale": "《原发性骨质疏松症诊疗指南（2022）》推荐重度肾功能不全(eGFR<35)禁用双膦酸盐，改用无需肾脏1α-羟化酶活化的骨化三醇及钙剂",
+          "sourceGuideline": "SRC-CMA-ENDO-2022-01"
+        },
+        {
+          "name": "碳酸钙D3片",
+          "specification": "600mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 600,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "骨质疏松基础钙补充剂，配合活性维生素D维持骨代谢平衡",
+          "sourceGuideline": "SRC-CMA-ENDO-2022-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -749,6 +1022,35 @@
       },
       "grade": "2A",
       "evidence_level": "弱推荐 (Weak recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "乳果糖口服溶液",
+          "specification": "15ml/袋",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 15,
+            "doseUnit": "ml",
+            "durationValue": 14
+          },
+          "rationale": "《慢性便秘基层诊疗指南（2020年）》推荐首选乳果糖等渗透性泻药长期温和调理，避免刺激性泻药导致结肠黑变病",
+          "sourceGuideline": "SRC-CMA-GAST-2020-01"
+        },
+        {
+          "name": "枸橼酸莫沙必利片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 5,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "高选择性5-HT4受体激动剂，促进全胃肠道动力，适用于慢传输型便秘联合治疗",
+          "sourceGuideline": "SRC-CMA-GAST-2020-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -779,6 +1081,22 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "玻璃酸钠滴眼液(无防腐剂)",
+          "specification": "0.1%(0.4ml/支)",
+          "orderDraft": {
+            "routeCode": "OPHTH",
+            "frequencyCode": "QID",
+            "doseValue": 1,
+            "doseUnit": "滴",
+            "durationValue": 14
+          },
+          "rationale": "《中国干眼专家共识（2020年）》推荐单纯干眼症一线首选无防腐剂人工泪液润滑眼表，停用无指征抗生素滴眼液",
+          "sourceGuideline": "SRC-CMA-OPHTH-2020-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -834,6 +1152,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "阿莫西林胶囊",
+          "specification": "0.25g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 0.25,
+            "doseUnit": "g",
+            "durationValue": 7
+          },
+          "rationale": "合并QT间期延长风险或服用延长QT药物时，非支原体细菌感染改用无心脏复极抑制毒性的β-内酰胺类抗菌药",
+          "sourceGuideline": "SRC-NHC-PED-2023-01"
+        },
+        {
+          "name": "头孢呋辛酯片",
+          "specification": "0.25g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "BID",
+            "doseValue": 0.25,
+            "doseUnit": "g",
+            "durationValue": 7
+          },
+          "rationale": "二代头孢菌素，无hERG钾通道阻滞及尖端扭转型室速(TdP)风险",
+          "sourceGuideline": "SRC-NHC-PED-2023-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -861,6 +1208,22 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "阿奇霉素片",
+          "specification": "0.25g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 10,
+            "doseUnit": "mg/kg",
+            "durationValue": 3
+          },
+          "rationale": "《儿童肺炎支原体肺炎诊疗指南（2023年版）》8岁以下患儿首选大环内酯类（阿奇霉素 10mg/kg qd 连用3天），无牙釉质黄染及骨骺抑制毒性",
+          "sourceGuideline": "SRC-NHC-PED-2023-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -895,6 +1258,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "布地奈德福莫特罗吸入粉雾剂",
+          "specification": "80μg/4.5μg*60吸",
+          "orderDraft": {
+            "routeCode": "INH",
+            "frequencyCode": "BID",
+            "doseValue": 1,
+            "doseUnit": "吸",
+            "durationValue": 30
+          },
+          "rationale": "《儿童支气管哮喘诊断与防治指南》推荐维持期首选吸入性糖皮质激素(ICS)联合LABA，局部抗炎强且全身副作用极小",
+          "sourceGuideline": "SRC-CMA-PED-2020-01"
+        },
+        {
+          "name": "孟鲁司特钠片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QN",
+            "doseValue": 5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "白三烯受体拮抗剂，可作为儿童哮喘长期控制阶梯治疗的口服非激素选择",
+          "sourceGuideline": "SRC-CMA-PED-2020-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -929,6 +1321,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "雷贝拉唑钠肠溶胶囊",
+          "specification": "20mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 20,
+            "doseUnit": "mg",
+            "durationValue": 28
+          },
+          "rationale": "《2020年中国胃食管反流病专家共识》推荐联用氯吡格雷时换用主要经非酶途径代谢的雷贝拉唑，不抑制CYP2C19抗血小板活化",
+          "sourceGuideline": "SRC-CMA-GAST-2020-02"
+        },
+        {
+          "name": "泮托拉唑钠肠溶片",
+          "specification": "40mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 40,
+            "doseUnit": "mg",
+            "durationValue": 28
+          },
+          "rationale": "对CYP2C19竞争性抑制极弱，与氯吡格雷联用安全性高，不增加支架内血栓风险",
+          "sourceGuideline": "SRC-CMA-GAST-2020-02"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -966,6 +1387,22 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "阿托伐他汀钙片",
+          "specification": "20mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QN",
+            "doseValue": 20,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "《中国血脂管理指南（2023年）》严禁他汀联用吉非罗齐；建议停用吉非罗齐，单用中等强度他汀或必要时联用非诺贝特/ω-3脂肪酸",
+          "sourceGuideline": "SRC-CMA-CARD-2023-03"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -991,6 +1428,22 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "头孢克肟分散片",
+          "specification": "0.1g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "BID",
+            "doseValue": 0.1,
+            "doseUnit": "g",
+            "durationValue": 7
+          },
+          "rationale": "《尿路感染基层合理用药指南（2021年）》重度肾功能不全(eGFR<30)禁用呋喃妥因，推荐换用头孢克肟并按肾功能调整剂量",
+          "sourceGuideline": "SRC-CMA-NEPH-2021-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1025,11 +1478,28 @@
         ],
         "profile_flags": [
           "alt_above_3x",
-          "ast_above_3x"
+          "ast_above_3x",
+          "severe_liver_injury"
         ]
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "多烯磷脂酰胆碱胶囊",
+          "specification": "228mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 456,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "《中国血脂管理指南（2023年）》转氨酶>3倍ULN或活动性肝病时必须立即暂停他汀，优先给予肝细胞膜修复保肝治疗并2~4周复查肝功",
+          "sourceGuideline": "SRC-CMA-CARD-2023-03"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1055,6 +1525,22 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "硝酸咪康唑乳膏",
+          "specification": "20g:0.4g",
+          "orderDraft": {
+            "routeCode": "TOPICAL",
+            "frequencyCode": "BID",
+            "doseValue": 1,
+            "doseUnit": "次",
+            "durationValue": 7
+          },
+          "rationale": "《阴道炎症诊断与治疗规范（2021版）》妊娠期假丝酵母菌感染严禁口服唑类，仅限使用局部外用唑类制剂7日疗法",
+          "sourceGuideline": "SRC-CMA-GYN-2021-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1092,6 +1578,22 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "左甲状腺素钠片",
+          "specification": "50μg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 50,
+            "doseUnit": "μg",
+            "durationValue": 30
+          },
+          "rationale": "《成人甲状腺功能减退症诊治指南》调整给药时序：左甲状腺素清晨空腹顿服，碳酸钙/铁剂/铝碳酸镁安排在午餐或晚餐后服用（间隔≥4小时）",
+          "sourceGuideline": "SRC-CMA-ENDO-2017-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1128,6 +1630,22 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "左甲状腺素钠片",
+          "specification": "25μg(半片起始)",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 12.5,
+            "doseUnit": "μg",
+            "durationValue": 14
+          },
+          "rationale": "《成人甲状腺功能减退症诊治指南》合并冠心病或高龄患者必须以 12.5~25μg/d 小剂量起始，每2~4周缓慢递增12.5μg，严密监测心绞痛症状",
+          "sourceGuideline": "SRC-CMA-ENDO-2017-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1163,6 +1681,35 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "克拉霉素片",
+          "specification": "0.25g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "BID",
+            "doseValue": 0.25,
+            "doseUnit": "g",
+            "durationValue": 7
+          },
+          "rationale": "《急性咽峡炎/扁桃体炎基层诊疗指南》青霉素过敏患者首选大环内酯类抗菌药物替代，无β-内酰胺环交叉过敏风险",
+          "sourceGuideline": "SRC-CMA-ENT-2020-02"
+        },
+        {
+          "name": "阿奇霉素片",
+          "specification": "0.5g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 0.5,
+            "doseUnit": "g",
+            "durationValue": 3
+          },
+          "rationale": "青霉素过敏患者安全替代抗菌方案，组织浓度高且给药依从性好",
+          "sourceGuideline": "SRC-CMA-ENT-2020-02"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1228,6 +1775,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1284,6 +1832,7 @@
       ],
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1337,6 +1886,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1379,6 +1929,22 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "狂犬病人免疫球蛋白",
+          "specification": "200IU/瓶",
+          "orderDraft": {
+            "routeCode": "IM",
+            "frequencyCode": "ONCE",
+            "doseValue": 20,
+            "doseUnit": "IU/kg",
+            "durationValue": 1
+          },
+          "rationale": "《狂犬病暴露预防处置工作规范（2023年版）》III级暴露必须按 20 IU/kg 即刻在伤口周围充分浸润注射狂犬病人免疫球蛋白(HRIG)联合狂犬病疫苗",
+          "sourceGuideline": "SRC-NHC-DIS-2023-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1414,6 +1980,22 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "破伤风人免疫球蛋白(TIG)",
+          "specification": "250IU/支",
+          "orderDraft": {
+            "routeCode": "IM",
+            "frequencyCode": "ONCE",
+            "doseValue": 250,
+            "doseUnit": "IU",
+            "durationValue": 1
+          },
+          "rationale": "《非新生儿破伤风预防规范》不洁或污染深部创面且既往免疫史不全者，应同时肌注破伤风人免疫球蛋白250IU提供即时被动免疫保护",
+          "sourceGuideline": "SRC-NHC-DIS-2023-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1447,6 +2029,35 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "盐酸坦索罗辛缓释胶囊",
+          "specification": "0.2mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QN",
+            "doseValue": 0.2,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "《良性前列腺增生基层诊疗指南》固定于每晚睡前(QN)卧床前服用，并指导患者夜间起夜遵循“三个半分钟”防体位性低血压跌倒",
+          "sourceGuideline": "SRC-CMA-URO-2019-01"
+        },
+        {
+          "name": "非那雄胺片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "5α还原酶抑制剂缩小前列腺体积，无血管扩张作用，不引起体位性低血压",
+          "sourceGuideline": "SRC-CMA-URO-2019-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1496,6 +2107,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1538,6 +2150,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1567,6 +2180,22 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "骨化三醇胶丸",
+          "specification": "0.25μg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 0.25,
+            "doseUnit": "μg",
+            "durationValue": 30
+          },
+          "rationale": "肝功能异常患者停用含补骨脂的仙灵骨葆胶囊，改用无需肝脏25-羟化酶转化的活性维生素D（骨化三醇）联合钙剂抗骨质疏松",
+          "sourceGuideline": "SRC-CMA-ENDO-2022-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1628,6 +2257,7 @@
       ],
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1657,6 +2287,22 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "对乙酰氨基酚片",
+          "specification": "0.5g(按体重10-15mg/kg按需)",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "PRN",
+            "doseValue": 15,
+            "doseUnit": "mg/kg",
+            "durationValue": 3
+          },
+          "rationale": "《热性惊厥诊断与治疗专家共识（2021年实用版）》仅在体温≥38.5℃伴明显不适时按需使用单一退热药改善舒适度，严禁交替或超频次给药",
+          "sourceGuideline": "SRC-CMA-PED-2021-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1690,6 +2336,22 @@
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "华法林钠片",
+          "specification": "2.5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 2.5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "《心房颤动：目前的认识和治疗建议（2021）》机械心脏瓣膜置换术后或中重度风湿性二尖瓣狭窄患者唯一法定口服抗凝方案，根据INR(2.0~3.0)个体化调整剂量",
+          "sourceGuideline": "SRC-CMA-CARD-2021-02"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1720,6 +2382,22 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "普瑞巴林胶囊",
+          "specification": "75mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QN",
+            "doseValue": 75,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "《带状疱疹后神经痛诊疗中国专家共识（2020）》慢性肾脏病患者下调起始剂量至 75mg qn（重度肾损 25~50mg qd），缓慢滴定防中枢蓄积毒性",
+          "sourceGuideline": "SRC-CMA-PAIN-2020-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1747,10 +2425,42 @@
           "氨苯蝶啶",
           "阿米洛利",
           "复方利血平氨苯蝶啶片"
+        ],
+        "profile_flags": [
+          "has_hyperkalemia"
         ]
       },
       "grade": "1A",
       "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "alternatives": [
+        {
+          "name": "环硅酸锆钠散",
+          "specification": "5g/袋",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 10,
+            "doseUnit": "g",
+            "durationValue": 2
+          },
+          "rationale": "《中国慢性肾脏病早期筛查、诊断及治疗临床实践指南》立即停用螺内酯等保钾利尿剂，并启用高选择性胃肠道钾离子结合剂快速降钾",
+          "sourceGuideline": "SRC-CMA-NEPH-2024-01"
+        },
+        {
+          "name": "氢氯噻嗪片",
+          "specification": "25mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 25,
+            "doseUnit": "mg",
+            "durationValue": 14
+          },
+          "rationale": "若患者eGFR≥30且需利尿降压，可换用促进肾小管排钾的噻嗪类或袢利尿剂",
+          "sourceGuideline": "SRC-CMA-NEPH-2024-01"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",
@@ -1775,6 +2485,22 @@
       },
       "grade": "1B",
       "evidence_level": "强推荐 (Strong recommendation)，中等质量循证证据 (Moderate quality evidence)",
+      "alert_tier": "SOFT_NUDGE",
+      "alternatives": [
+        {
+          "name": "环硅酸锆钠散",
+          "specification": "5g/袋",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 5,
+            "doseUnit": "g",
+            "durationValue": 14
+          },
+          "rationale": "医嘱用法备注强制标注：与其他胃内pH依赖性口服药（如唑类抗真菌药、瑞舒伐他汀等）必须间隔至少2小时分开服用",
+          "sourceGuideline": "SRC-NMPA-DRUG-INSERT-2024"
+        }
+      ],
       "clinical_review": {
         "status": "pending",
         "reviewer": "",

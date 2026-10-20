@@ -3,6 +3,7 @@ Search and QA module for Medical LLM Wiki.
 Leverages SQLite FTS5 with CJK tokenization, clinical intent expansion,
 incremental indexing (mtime + SHA256 hashes), and graph centrality hybrid ranking
 for on-device BM25 full-text search, snippet generation, and multi-document clinical QA synthesis.
+Includes automatic fallback for filesystems without SQLite WAL mmap support (e.g. FUSE/NFS/Docker).
 """
 
 from __future__ import annotations
@@ -11,6 +12,7 @@ import hashlib
 import json
 import re
 import sqlite3
+import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from tools.compiler.compiler import WikiGraph
@@ -87,7 +89,6 @@ def extract_search_terms(query: str, vocab: Optional[Dict[str, Any]] = None) -> 
             elif piece:
                 results.append(piece)
 
-    # Clinical vocabulary expansion (synonyms & intents)
     if vocab:
         synonyms = vocab.get("synonyms", {})
         for standard_term, syn_list in synonyms.items():
@@ -121,8 +122,31 @@ class WikiSearcher:
         self.wiki_dir = self.root_dir / "wiki"
         self.db_path = db_path or (self.root_dir / ".search_index.db")
         self.vocab = self._load_clinical_vocab()
-        self.conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
-        self._init_fts()
+        self.conn = self._connect_with_fallback(self.db_path)
+
+    def _connect_with_fallback(self, target_db_path: Path) -> sqlite3.Connection:
+        """
+        Connects to SQLite database and initializes FTS5 tables.
+        Automatically falls back to /tmp or in-memory journal if the target filesystem
+        does not support SQLite WAL / file locking (e.g. FUSE, NFS, or container mounts).
+        """
+        try:
+            conn = sqlite3.connect(str(target_db_path), check_same_thread=False)
+            self._init_fts_on_conn(conn, use_wal=True)
+            return conn
+        except sqlite3.OperationalError:
+            try:
+                if "conn" in locals() and conn:
+                    conn.close()
+            except Exception:
+                pass
+            # Fallback to /tmp local filesystem with deterministic hash of root_dir
+            root_hash = hashlib.md5(str(self.root_dir).encode("utf-8")).hexdigest()[:10]
+            fallback_path = Path(tempfile.gettempdir()) / f"medical_wiki_fts_{root_hash}.db"
+            self.db_path = fallback_path
+            conn = sqlite3.connect(str(fallback_path), check_same_thread=False)
+            self._init_fts_on_conn(conn, use_wal=False)
+            return conn
 
     def close(self) -> None:
         """Closes the underlying SQLite connection."""
@@ -152,10 +176,13 @@ class WikiSearcher:
                 return {}
         return {}
 
-    def _init_fts(self) -> None:
-        """Initializes SQLite FTS5 table and metadata tracking table with WAL mode."""
-        cursor = self.conn.cursor()
-        cursor.execute("PRAGMA journal_mode=WAL")
+    def _init_fts_on_conn(self, conn: sqlite3.Connection, use_wal: bool = True) -> None:
+        """Initializes SQLite FTS5 table and metadata tracking table."""
+        cursor = conn.cursor()
+        if use_wal:
+            cursor.execute("PRAGMA journal_mode=WAL")
+        else:
+            cursor.execute("PRAGMA journal_mode=MEMORY")
         cursor.execute("PRAGMA synchronous=NORMAL")
         cursor.execute("CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT)")
         cursor.execute("""
@@ -178,7 +205,11 @@ class WikiSearcher:
                 raw_body UNINDEXED
             )
         """)
-        self.conn.commit()
+        conn.commit()
+
+    def _init_fts(self) -> None:
+        """Re-initializes FTS tables on current connection."""
+        self._init_fts_on_conn(self.conn, use_wal=False)
 
     def index_wiki(self, force: bool = False, incremental: bool = True) -> IndexResult:
         """
@@ -194,7 +225,6 @@ class WikiSearcher:
         graph = WikiGraph(self.root_dir)
         graph.load_graph()
 
-        # Query existing metadata
         cursor.execute("SELECT id, mtime, content_hash FROM page_meta")
         existing_meta = {row[0]: {"mtime": row[1], "hash": row[2]} for row in cursor.fetchall()}
 
@@ -219,7 +249,6 @@ class WikiSearcher:
                     skipped_count += 1
                     continue
 
-            # Need insert / update
             tags_str = " ".join(page.tags)
             sources_str = " ".join(page.sources)
             cjk_title = tokenize_cjk(page.title)
@@ -252,7 +281,6 @@ class WikiSearcher:
             ))
             updated_count += 1
 
-        # Purge deleted pages
         if incremental and not force:
             for old_pid in existing_meta:
                 if old_pid not in current_ids:
@@ -289,6 +317,10 @@ class WikiSearcher:
         cursor = self.conn.cursor()
         cursor.execute("SELECT id, title, page_type, rel_path, raw_body FROM wiki_fts")
         rows = cursor.fetchall()
+        if not rows:
+            self.index_wiki(incremental=True)
+            cursor.execute("SELECT id, title, page_type, rel_path, raw_body FROM wiki_fts")
+            rows = cursor.fetchall()
 
         scored = []
         for r in rows:
@@ -296,8 +328,6 @@ class WikiSearcher:
             page_obj = graph.pages.get(pid)
             title = page_obj.title if page_obj else pid
 
-            # If query contains distinct clinical disease stems (e.g. 阑尾炎) and is NOT a free-form QA query,
-            # disqualify candidate pages that do NOT match any core stem and only matched generic modifiers (e.g. 急性)
             if norm.core_stems and not norm.is_qa_query:
                 has_core_match = (
                     any(stem.lower() in title.lower() for stem in norm.core_stems)
@@ -307,11 +337,9 @@ class WikiSearcher:
                 if not has_core_match:
                     continue
 
-            # Base text score
             score = 0.0
             matched_terms = 0
 
-            # Boost canonical name in title
             if norm.canonical_name and norm.canonical_name.lower() in title.lower():
                 score += 50.0
             for stem in norm.core_stems:
@@ -333,19 +361,16 @@ class WikiSearcher:
                     matched_terms += 1
 
             if matched_terms > 1:
-                score += (matched_terms * 8.0)  # Multi-term bonus
+                score += (matched_terms * 8.0)
 
-            # Boost relevant page types
             if is_asking_drug and ptype in ("drug", "drug_insert", "synthesis"):
                 score += 8.0
             elif ptype in ("disease", "concept"):
                 score += 4.0
 
-            # Penalize utility index/log unless explicitly looking for them
             if pid in ("index", "log") and "索引" not in clean_q and "日志" not in clean_q:
                 score *= 0.1
 
-            # Graph Centrality Boost (higher in-degree hubs get an authority multiplier)
             in_degree = len(graph.backlinks.get(pid, []))
             centrality_multiplier = 1.0 + (min(in_degree, 30) * 0.02)
             score *= centrality_multiplier
@@ -370,7 +395,6 @@ class WikiSearcher:
         pos = -1
         matched_term = ""
 
-        # First try full query
         clean_no_punc = re.sub(r"[？?，,。！!；;、\s]+", "", full_query)
         if clean_no_punc and clean_no_punc in text:
             pos = text.find(clean_no_punc)
@@ -468,6 +492,10 @@ class WikiSearcher:
         cursor = self.conn.cursor()
         cursor.execute("SELECT id, title, page_type, rel_path, raw_body FROM wiki_fts WHERE page_type = 'drug_insert'")
         rows = cursor.fetchall()
+        if not rows:
+            self.index_wiki(incremental=True)
+            cursor.execute("SELECT id, title, page_type, rel_path, raw_body FROM wiki_fts WHERE page_type = 'drug_insert'")
+            rows = cursor.fetchall()
 
         scored = []
         for r in rows:
@@ -494,14 +522,20 @@ class WikiSearcher:
         if scored:
             return scored[:limit]
 
-        # Fallback direct scan over wiki/inserts/
+        # Fallback direct scan over wiki/inserts/ with full scoring (never truncating alphabetically)
         inserts_dir = self.wiki_dir / "inserts"
         drug_hits = []
         if inserts_dir.exists():
             from tools.compiler.compiler import WikiPage
             for p in sorted(inserts_dir.glob("*.md")):
                 raw_text = p.read_text(encoding="utf-8")
-                if any(t.lower() in p.stem.lower() or t.lower() in raw_text.lower() for t in terms):
+                score = 0.0
+                for t in terms:
+                    if t.lower() in p.stem.lower():
+                        score += 50.0
+                    if t.lower() in raw_text.lower():
+                        score += 5.0
+                if score > 0:
                     page = WikiPage(p, self.wiki_dir)
                     drug_hits.append({
                         "id": p.stem,
@@ -509,8 +543,7 @@ class WikiSearcher:
                         "type": page.page_type,
                         "rel_path": str(page.rel_path),
                         "snippet": page.body[:200],
-                        "score": 10.0,
+                        "score": round(score, 2),
                     })
-                    if len(drug_hits) >= limit:
-                        break
+        drug_hits.sort(key=lambda x: x["score"], reverse=True)
         return drug_hits[:limit]

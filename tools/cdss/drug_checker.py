@@ -3,6 +3,7 @@ Drug Monograph Repository and CDSS Contraindication Auditor.
 Provides structured drug monograph management, fast indexing,
 and rigorous rule-based contraindication & DDI auditing aligned with
 NMPA official package inserts and China Pharmacopoeia Clinical Formulary.
+Includes 100% Monograph Alternative Re-routing (Solution B) and Safe Alternative Filtering.
 """
 
 from __future__ import annotations
@@ -21,7 +22,7 @@ class DrugInsertRepository:
         self.root_dir = root_dir or Path(__file__).resolve().parent.parent.parent
         self.inserts_dir = self.root_dir / "wiki" / "inserts"
         self._drugs: Dict[str, Dict[str, Any]] = {}
-        self._index: Dict[str, str] = {}  # alias/generic/trade -> filename stem
+        self._index: Dict[str, str] = {}
         self.load_all()
 
     def load_all(self) -> None:
@@ -36,7 +37,6 @@ class DrugInsertRepository:
             stem = fpath.stem
             page = WikiPage(fpath, self.root_dir / "wiki")
             fm = page.frontmatter
-            
             aliases = fm.get("aliases", [])
             if isinstance(aliases, str):
                 aliases = [aliases]
@@ -63,16 +63,17 @@ class DrugInsertRepository:
             }
             self._drugs[stem] = drug_entry
 
-            # Index primary stem & generic name
             self._index[stem.lower()] = stem
             if drug_entry["generic_name"]:
                 self._index[drug_entry["generic_name"].lower()] = stem
-                # Index common simplified name (e.g. "二甲双胍" from "盐酸二甲双胍片", "连花清瘟" from "连花清瘟胶囊")
-                simplified = re.sub(r"(盐酸|硫酸|富马酸|马来酸|草酸|苯磺酸|酒石酸|枸橼酸|丙酸|微粉化|肠溶|缓释|控释|片|胶囊|气雾剂|散|软膏|乳膏|分散片|滴丸|胶丸|口服溶液|颗粒|口服液|糖浆|露|水|丸|膏|栓|注射液)", "", drug_entry["generic_name"])
+                simplified = re.sub(
+                    r"(盐酸|硫酸|富马酸|马来酸|草酸|苯磺酸|酒石酸|枸橼酸|丙酸|微粉化|肠溶|缓释|控释|片|胶囊|气雾剂|散|软膏|乳膏|分散片|滴丸|胶丸|口服溶液|颗粒|口服液|糖浆|露|水|丸|膏|栓|注射液)",
+                    "",
+                    drug_entry["generic_name"],
+                )
                 if len(simplified) >= 2:
                     self._index[simplified.lower()] = stem
 
-                # Also index generic_name with known specs, e.g. "连花清瘟胶囊 0.35g"
                 for spec in drug_entry.get("forms_and_specs", []):
                     spec_clean = spec.split("/")[0].strip()
                     if spec_clean:
@@ -176,7 +177,6 @@ class DrugInsertRepository:
             if cand in self._index:
                 return self._drugs.get(self._index[cand])
 
-        # Direct stem match with length prioritization
         exact_matches = []
         for stem, d in self._drugs.items():
             s_low = stem.lower()
@@ -234,16 +234,17 @@ class DrugContraindicationAuditor:
             from tools.cdss.rule_evaluator import RuleEvaluator
             self.evaluator = RuleEvaluator(rules_dir=self.root_dir / "rules")
 
-    def audit(self, drug_query: str, patient: Dict[str, Any]) -> Dict[str, Any]:
+    def audit(self, drug_query: str, patient: Dict[str, Any], _filter_alternatives: bool = True) -> Dict[str, Any]:
         """
         Audits a drug prescription against patient parameters.
         Returns:
             canPrescribe: bool
             level: 'PASS' | 'WARNING' | 'BLOCK'
-            alerts: List[Dict[str, str]]
+            alertTier: 'HARD_STOP' | 'SOFT_NUDGE' | 'PASSIVE_INFO'
+            alerts: List[Dict[str, Any]]
+            alternatives: List[Dict[str, Any]]
             renalGuidance: str
             specialPopulationNotes: List[str]
-            drugInteractions: List[str]
         """
         drug = self.repo.get(drug_query)
         if not drug:
@@ -252,7 +253,9 @@ class DrugContraindicationAuditor:
                 "error": f"未在权威药品说明书知识库中检索到药品: '{drug_query}'",
                 "canPrescribe": False,
                 "level": "UNKNOWN",
+                "alertTier": "PASSIVE_INFO",
                 "alerts": [],
+                "alternatives": [],
             }
 
         gname = drug["generic_name"]
@@ -266,20 +269,44 @@ class DrugContraindicationAuditor:
 
         alerts = self.evaluator.evaluate_monograph_audit(gname, patient)
 
-        # Determine overall recommendation
+        # Filter out alternatives that themselves trigger a BLOCK for the current patient
+        aggregated_alternatives: List[Dict[str, Any]] = []
+        seen_alts = set()
+        if _filter_alternatives and alerts:
+            for a in alerts:
+                raw_alts = a.get("alternatives", [])
+                safe_alts: List[Dict[str, Any]] = []
+                for alt in raw_alts:
+                    alt_name = str(alt.get("name") or "").strip()
+                    if not alt_name:
+                        continue
+                    # Only recursively check if alt is a different drug in repo
+                    if alt_name != gname and self.repo.get(alt_name):
+                        sub_audit = self.audit(alt_name, patient, _filter_alternatives=False)
+                        if sub_audit.get("success") and not sub_audit.get("canPrescribe"):
+                            continue
+                    safe_alts.append(alt)
+                    if alt_name not in seen_alts:
+                        seen_alts.add(alt_name)
+                        aggregated_alternatives.append(alt)
+                a["alternatives"] = safe_alts
+
         has_block = any(a["level"] == "BLOCK" for a in alerts)
         has_warn = any(a["level"] == "WARNING" for a in alerts)
 
         if has_block:
             level = "BLOCK"
+            alert_tier = "HARD_STOP"
             can_prescribe = False
             summary = "【拦截禁止处方】该处方触发了国家药品说明书或临床指南最高级别绝对禁忌或致死性药物相互作用红线，系统已强行阻断！"
         elif has_warn:
             level = "WARNING"
+            alert_tier = "SOFT_NUDGE"
             can_prescribe = True
             summary = "【黄色安全预警】该处方存在剂量滴定、特殊人群监护或潜在相互作用提示，临床医师应仔细核查并权衡利弊。"
         else:
             level = "PASS"
+            alert_tier = "PASSIVE_INFO"
             can_prescribe = True
             summary = "【审核通过】未检索到绝对禁忌证或高危药物相互作用，符合说明书常规规范。"
 
@@ -296,8 +323,10 @@ class DrugContraindicationAuditor:
             },
             "canPrescribe": can_prescribe,
             "level": level,
+            "alertTier": alert_tier,
             "summary": summary,
             "alerts": alerts,
+            "alternatives": aggregated_alternatives,
             "renalGuidance": renal_guidance,
             "specialPopulationNotes": notes,
         }
@@ -312,19 +341,22 @@ class DrugContraindicationAuditor:
                 "success": True,
                 "canPrescribe": True,
                 "level": "PASS",
+                "alertTier": "PASSIVE_INFO",
                 "summary": "处方中无药品项",
                 "items": [],
                 "alerts": [],
+                "alternatives": [],
             }
 
         patient_copy = dict(patient)
         existing_concurrent = list(patient_copy.get("concurrent_drugs", []))
 
         all_alerts: List[Dict[str, Any]] = []
+        all_alternatives: List[Dict[str, Any]] = []
+        seen_alts = set()
         item_results: List[Dict[str, Any]] = []
 
         for i, med in enumerate(medications):
-            # Other medications in prescription act as concurrent drugs
             other_meds = [m for j, m in enumerate(medications) if j != i]
             combined_concurrent = list(set(existing_concurrent + other_meds))
             patient_eval = dict(patient_copy)
@@ -337,23 +369,30 @@ class DrugContraindicationAuditor:
             })
             if res.get("success"):
                 for a in res.get("alerts", []):
-                    # Dedup alerts by rule
                     if not any(x.get("rule") == a.get("rule") for x in all_alerts):
                         all_alerts.append(a)
+                for alt in res.get("alternatives", []):
+                    alt_name = alt.get("name")
+                    if alt_name and alt_name not in seen_alts:
+                        seen_alts.add(alt_name)
+                        all_alternatives.append(alt)
 
         has_block = any(a["level"] == "BLOCK" for a in all_alerts)
         has_warn = any(a["level"] == "WARNING" for a in all_alerts)
 
         if has_block:
             overall_level = "BLOCK"
+            alert_tier = "HARD_STOP"
             can_prescribe = False
             summary = "【处方强行阻断】处方中包含国家药品说明书绝对禁忌或致死性配伍禁忌项！"
         elif has_warn:
             overall_level = "WARNING"
+            alert_tier = "SOFT_NUDGE"
             can_prescribe = True
             summary = "【处方用药预警】处方中存在剂量分级减量或特定人群监护提示。"
         else:
             overall_level = "PASS"
+            alert_tier = "PASSIVE_INFO"
             can_prescribe = True
             summary = "【处方审核通过】全部药品均符合国家说明书与临床规范。"
 
@@ -361,8 +400,9 @@ class DrugContraindicationAuditor:
             "success": True,
             "canPrescribe": can_prescribe,
             "level": overall_level,
+            "alertTier": alert_tier,
             "summary": summary,
             "alerts": all_alerts,
+            "alternatives": all_alternatives,
             "items": item_results,
         }
-

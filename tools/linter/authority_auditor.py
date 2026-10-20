@@ -5,7 +5,7 @@ Performs rigorous, quantitative multi-dimensional auditing on:
 2. Guideline currency & temporal distribution (last 5 years ratio)
 3. International coding standards (ICD-10 for diseases, ATC for drug monographs)
 4. Full evidence provenance closed loop (Protocols & CDSS Rules -> Guidelines)
-5. Alternative re-routing coverage on critical clinical safety rules
+5. Alternative re-routing coverage on both macro clinical safety rules (45) and micro monograph rules (63)
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ import json
 import re
 from datetime import date
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 
 class AuthorityAuditor:
@@ -25,6 +25,7 @@ class AuthorityAuditor:
         self.metadata_path = self.root_dir / "raw" / "metadata.json"
         self.wiki_dir = self.root_dir / "wiki"
         self.rules_path = self.root_dir / "rules" / "clinical_safety_rules.json"
+        self.monograph_rules_path = self.root_dir / "rules" / "monograph_rules.json"
 
     def audit(self) -> Dict[str, Any]:
         """Executes full authority audit and returns structured metrics."""
@@ -36,13 +37,6 @@ class AuthorityAuditor:
         symptom_metrics = self._audit_symptoms()
         calc_metrics = self._audit_calculators()
 
-        # Compute overall credibility index (0 - 100)
-        # Weighted factors:
-        # - Authority level tier 1 ratio: 30%
-        # - Provenance closed-loop ratio: 25%
-        # - ICD-10 & ATC coding ratio: 20%
-        # - Currency ratio (>=2020): 15%
-        # - Rule evidence & alternative ratio: 10%
         credibility_score = round(
             (source_metrics["national_tier_ratio"] * 30.0)
             + (protocol_metrics["provenance_ratio"] * 25.0)
@@ -176,22 +170,34 @@ class AuthorityAuditor:
 
     def _audit_rules(self) -> Dict[str, Any]:
         if not self.rules_path.exists():
-            return {"totalRules": 0, "evidence_grounding_ratio": 0.0, "alternativesCount": 0, "gradeCoveredCount": 0, "grade_coverage_ratio": 0.0}
+            return {
+                "totalRules": 0,
+                "evidence_grounding_ratio": 0.0,
+                "alternativesCount": 0,
+                "gradeCoveredCount": 0,
+                "grade_coverage_ratio": 0.0,
+                "monographRulesCount": 0,
+                "monographAlternativesCount": 0,
+                "monographGradeCoveredCount": 0,
+                "monograph_alternatives_ratio": 0.0,
+            }
 
         data = json.loads(self.rules_path.read_text(encoding="utf-8"))
         rules = data if isinstance(data, list) else data.get("rules", [])
         total = len(rules)
-        grounded = 0
-        with_alts = 0
-        with_grade = 0
+        grounded = sum(1 for r in rules if r.get("guideline") or r.get("evidence"))
+        with_alts = sum(1 for r in rules if r.get("alternatives") and len(r["alternatives"]) > 0)
+        with_grade = sum(1 for r in rules if r.get("grade"))
 
-        for r in rules:
-            if r.get("guideline") or r.get("evidence"):
-                grounded += 1
-            if r.get("alternatives") and len(r["alternatives"]) > 0:
-                with_alts += 1
-            if r.get("grade"):
-                with_grade += 1
+        mono_total = 0
+        mono_alts = 0
+        mono_grade = 0
+        if self.monograph_rules_path.exists():
+            mdata = json.loads(self.monograph_rules_path.read_text(encoding="utf-8"))
+            mrules = mdata if isinstance(mdata, list) else mdata.get("rules", [])
+            mono_total = len(mrules)
+            mono_alts = sum(1 for r in mrules if r.get("alternatives") and len(r["alternatives"]) > 0)
+            mono_grade = sum(1 for r in mrules if r.get("grade"))
 
         return {
             "totalRules": total,
@@ -200,6 +206,12 @@ class AuthorityAuditor:
             "alternativesCount": with_alts,
             "gradeCoveredCount": with_grade,
             "grade_coverage_ratio": (with_grade / total) if total else 0.0,
+            "monographRulesCount": mono_total,
+            "monographAlternativesCount": mono_alts,
+            "monographGradeCoveredCount": mono_grade,
+            "monograph_alternatives_ratio": (mono_alts / mono_total) if mono_total else 0.0,
+            "combinedTotalRules": total + mono_total,
+            "combinedAlternativesCount": with_alts + mono_alts,
         }
 
     def _audit_symptoms(self) -> Dict[str, Any]:
@@ -230,7 +242,6 @@ class AuthorityAuditor:
         }
 
     def _audit_calculators(self) -> Dict[str, Any]:
-        from tools.cdss.calculators import ClinicalCalculatorRegistry
         supported_names = [
             "cha2ds2_vasc", "has_bled", "curb_65", "centor", "renal_clearance",
             "child_pugh", "pediatric_fluid", "alvarado", "abcd2",

@@ -77,13 +77,19 @@ class WikiHTTPHandler(SourceIngestionMixin, KnowledgeApiMixin, ChatApiMixin, Bas
         elif path == "/api/health":
             sym_dir = self.root_dir / "wiki" / "symptoms"
             symptoms_count = len(list(sym_dir.glob("*.md"))) if sym_dir.exists() else 0
+            clin_rules = sum(r.get("domain") == "clinical" for r in self.cdss.evaluator.rules)
+            mono_rules = sum(r.get("domain") == "monograph" for r in self.cdss.evaluator.rules)
             self._send_json({
                 "status": "UP",
                 "version": "1.9.0",
+                "p3Version": "3.3.0",
                 "service": "Medical LLM Wiki & CDSS Intelligence Gateway",
                 "protocols": len(self.cdss.repo.list_all()),
-                "rules": sum(r.get("domain") == "clinical" for r in self.cdss.evaluator.rules),
-                "monograph_rules": sum(r.get("domain") == "monograph" for r in self.cdss.evaluator.rules),
+                "rules": clin_rules,
+                "monograph_rules": mono_rules,
+                "monographRules": mono_rules,
+                "combinedSafetyRules": clin_rules + mono_rules,
+                "calculators": 12,
                 "drug_inserts": len(self.drug_repo.list_all()),
                 "guidelines": len(self.collector.list_sources()),
                 "symptoms": symptoms_count,
@@ -352,14 +358,34 @@ class WikiHTTPHandler(SourceIngestionMixin, KnowledgeApiMixin, ChatApiMixin, Bas
         elif path in ("/api/cdss/calculate", "/api/calculator"):
             calc_name = payload.get("calculator") or payload.get("name") or ""
             params = payload.get("params") or payload.get("parameters") or payload
+            use_emr = bool(payload.get("hydrate") or payload.get("emr") or "chiefComplaint" in params)
             try:
-                res = ClinicalCalculatorRegistry.calculate(calc_name, params)
-                self._send_json({"success": True, "data": res})
+                if use_emr:
+                    res = ClinicalCalculatorRegistry.calculate_from_emr(calc_name, params)
+                else:
+                    res = ClinicalCalculatorRegistry.calculate(calc_name, params)
+                self._send_json({"success": True, "data": res, "result": res, "calculation": res})
+            except Exception as e:
+                self._send_json({"success": False, "error": str(e)}, status=400)
+        elif path in ("/api/cdss/calculators/hydrate", "/api/cdss/calculate-from-emr"):
+            calc_name = payload.get("calculator") or payload.get("name") or ""
+            emr_ctx = payload.get("patient") or payload.get("patientContext") or payload.get("emrContext") or payload.get("params") or payload
+            try:
+                res = ClinicalCalculatorRegistry.calculate_from_emr(calc_name, emr_ctx)
+                self._send_json({"success": True, "data": res, "result": res, "calculation": res})
+            except Exception as e:
+                self._send_json({"success": False, "error": str(e)}, status=400)
+        elif path in ("/api/cdss/calculators/recommend", "/api/cdss/recommend-calculators"):
+            emr_ctx = payload.get("patient") or payload.get("patientContext") or payload.get("emrContext") or payload
+            try:
+                recs = ClinicalCalculatorRegistry.recommend_calculators_for_encounter(emr_ctx)
+                self._send_json({"success": True, "total": len(recs), "count": len(recs), "calculators": recs})
             except Exception as e:
                 self._send_json({"success": False, "error": str(e)}, status=400)
         elif path == "/api/cdss/compile-rhn-plan":
             query = payload.get("input") or payload.get("naturalInput") or payload.get("protocolId") or ""
-            res = self.cdss.compile_rhn_plan(query)
+            patient_ctx = payload.get("patient_context") or payload.get("patientContext") or payload.get("patient")
+            res = self.cdss.compile_rhn_plan(query, patient_context=patient_ctx)
             status_code = 200 if res.get("success") else 404
             self._send_json(res, status=status_code)
         elif path == "/api/cdss/recommend":

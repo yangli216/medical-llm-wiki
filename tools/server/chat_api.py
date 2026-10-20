@@ -4,6 +4,7 @@ import json
 import re
 import time
 from typing import Any, Dict
+from tools.cdss.calculators import ClinicalCalculatorRegistry
 from tools.quality import audit_quality
 
 
@@ -121,6 +122,25 @@ class ChatApiMixin:
                 patient_profile["allergies"] = " ".join([
                     a.get("substanceDisplay", "") for a in allergies if isinstance(a, dict)
                 ])
+            # Merge clinical draft vitals and text into patient_profile for dynamic inference
+            if draft.get("systolic") is not None and "sbp" not in patient_profile:
+                patient_profile["sbp"] = draft.get("systolic")
+            if draft.get("diastolic") is not None and "dbp" not in patient_profile:
+                patient_profile["dbp"] = draft.get("diastolic")
+            if draft.get("pulseRate") is not None and "hr" not in patient_profile:
+                patient_profile["hr"] = draft.get("pulseRate")
+            if draft.get("respiratoryRate") is not None and "rr" not in patient_profile:
+                patient_profile["rr"] = draft.get("respiratoryRate")
+            if draft.get("temperature") is not None and "temp" not in patient_profile:
+                patient_profile["temp"] = draft.get("temperature")
+            if draft.get("weightKg") is not None and "weight" not in patient_profile:
+                patient_profile["weight"] = draft.get("weightKg")
+            for tk in ("chiefComplaint", "presentIllness", "medicalHistory", "physicalExam"):
+                if draft.get(tk) and not patient_profile.get(tk):
+                    patient_profile[tk] = draft.get(tk)
+            if not patient_profile.get("diagnosis") and kw:
+                patient_profile["diagnosis"] = kw
+
             # 1. Protocol-level prescription audit
             audit_res = self.cdss.audit_prescription(medications_to_audit, patient_profile)
             safety_alerts = []
@@ -128,6 +148,7 @@ class ChatApiMixin:
             for a in audit_res.get("alerts", []):
                 safety_alerts.append({
                     "level": "CRITICAL" if a.get("severity") == "RED" else "WARNING",
+                    "alertTier": a.get("alertTier", "HARD_STOP" if a.get("severity") == "RED" else "SOFT_NUDGE"),
                     "title": a.get("title", "处方安全预警"),
                     "detail": a.get("message", ""),
                     "alternatives": a.get("alternatives", []),
@@ -142,11 +163,19 @@ class ChatApiMixin:
                     if title not in seen_alert_titles:
                         safety_alerts.append({
                             "level": "CRITICAL" if da.get("level") == "BLOCK" else "WARNING",
+                            "alertTier": da.get("alertTier", "HARD_STOP" if da.get("level") == "BLOCK" else "SOFT_NUDGE"),
                             "title": title,
                             "detail": f"{da.get('reason', '')} (依据：{da.get('evidence', '')})",
                             "alternatives": da.get("alternatives", []),
                         })
                         seen_alert_titles.add(title)
+
+            encounter_calculators = ClinicalCalculatorRegistry.recommend_calculators_for_encounter({
+                **patient_profile,
+                "chiefComplaint": str(draft.get("chiefComplaint") or question or ""),
+                "presentIllness": str(draft.get("presentIllness") or ""),
+                "diagnosis": str(kw or question or "")
+            })
 
             if prot:
                 rec_draft = {
@@ -181,6 +210,8 @@ class ChatApiMixin:
                     "differentialDiagnoses": [],
                     "missingInformation": [],
                     "safetyAlerts": safety_alerts,
+                    "alertTierCounts": audit_res.get("alertTierCounts", {}),
+                    "recommendedCalculators": encounter_calculators,
                     "recommendedPlans": [{
                         "templateId": 1,
                         "name": prot.title,
@@ -199,6 +230,8 @@ class ChatApiMixin:
                     "differentialDiagnoses": [],
                     "missingInformation": ["请补充患者主要就诊不适症状及持续时间"],
                     "safetyAlerts": safety_alerts,
+                    "alertTierCounts": audit_res.get("alertTierCounts", {}),
+                    "recommendedCalculators": encounter_calculators,
                     "recommendedPlans": [],
                     "treatmentRecommendations": [],
                     "disclaimer": "本临床建议仅供注册医师参考核验。",

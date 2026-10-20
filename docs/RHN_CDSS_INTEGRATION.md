@@ -268,3 +268,24 @@ python3 -m tools.cli serve --port 8788
 # 运行真实集成联调测试套件（无 mock，真实验证）
 python3 -m unittest tests/test_rhn_live_integration.py
 ```
+
+---
+
+## 4. P3.1–P3.3 医院诊中高级 CDSS 赋能规范（108 条双层平替、三级警报与零手动量表）
+
+在 P3 阶段，网关面向三甲医院门诊与住院医生工作站（HIS/EMR）完成了四大诊中核心能力升级：
+
+### 4.1 双层 108 条安全规则与平替死循环过滤器
+- **宏观临床规则 (`rules/clinical_safety_rules.json`, 45 条)** + **微观法定说明书禁忌 (`rules/monograph_rules.json`, 63 条)** + **中成药活性/毒性成分字典 (`TCM_COMPONENT_DICTIONARY`)** 全面实现 **100% 一键合规平替 (`alternatives`) 与 GRADE 证据等级标注**。
+- **平替安全死循环过滤器 (`_filter_safe_alternatives`)**：所有规则推荐的备选平替药在返回给医生站前，均自动通过当前患者的过敏史、eGFR/CrCl 肾功能、Child-Pugh 肝功能及妊娠状态二次核验；若某备选药同样触发患者禁忌，将被自动剔除并记录于 `filteredUnsafeAlternatives` 字段。
+- **反“警报疲劳”三级交互分级 (`alertTier`)**：
+  - `HARD_STOP`：红灯强阻断模态框（致命配伍禁忌、过敏、器官衰竭绝对禁用），必须一键采纳平替医嘱或填写越权理由；
+  - `SOFT_NUDGE`：黄灯行内胶囊提示（中度肾损减量、服药间隔提醒、老年慎用）；
+  - `PASSIVE_INFO`：绿灯侧边栏静默卡片。
+
+### 4.2 零手动输入临床量表自动计算与最小化追问 (`POST /api/cdss/calculators/hydrate` & `/recommend`)
+- **诊中自动推荐与预计算 (`POST /api/cdss/calculators/recommend`)**：
+  传入患者 EMR 上下文（主诉、现病史、诊断、化验单 `labs`、生命体征 `vitals`），系统自动匹配并计算当前病种必需的临床量表（如房颤自动计算 `CHA2DS2-VASc` + `HAS-BLED`，肺炎自动计算 `CURB-65` / `CRB-65`，疑似肺栓塞计算 `Wells PE`，右下腹痛计算 `Alvarado`，TIA 计算 `ABCD2`）。
+- **单量表 EMR 自动水合计算 (`POST /api/cdss/calculators/hydrate`)**：
+  支持中文否定语义窗口识别（如自动识别“否认脑卒中及心力衰竭病史”），输出 `autoExtractedFields`（已从病历自动提取的指标）与 `minimalFollowUpQuestions`（仅针对病历未记载的主观体征生成的 1～2 个勾选框）。
+
