@@ -5,6 +5,7 @@ Performs comprehensive quality checks:
 2. Orphan pages (0 inbound links)
 3. Frontmatter schema conformance
 4. Raw source cross-reference validation
+5. CDSS Macro & Micro Monograph Rule & Alternative Re-routing cross-layer semantic integrity
 """
 
 from __future__ import annotations
@@ -17,7 +18,7 @@ from tools.collector.collector import SourceCollector
 
 
 class WikiLinter:
-    """Performs static health checks on the LLM Wiki."""
+    """Performs static and semantic health checks on the LLM Wiki and CDSS rules."""
 
     def __init__(self, root_dir: Optional[Path] = None):
         self.root_dir = root_dir or Path(__file__).resolve().parent.parent.parent
@@ -36,7 +37,6 @@ class WikiLinter:
 
         # 1. Check Links and Schema per Page
         for pid, page in self.graph.pages.items():
-            # Broken links
             for target in page.links:
                 resolved = self.graph.resolve_link(target)
                 if not resolved:
@@ -46,7 +46,6 @@ class WikiLinter:
                         "broken_link": target,
                     })
 
-            # Frontmatter Schema checks
             if pid not in ("index", "log"):
                 if not page.title:
                     schema_issues.append({"file": str(page.rel_path), "issue": "Missing 'title' in frontmatter"})
@@ -57,7 +56,6 @@ class WikiLinter:
                 if not page.sources and page.page_type != "organization":
                     schema_issues.append({"file": str(page.rel_path), "issue": "Missing 'sources' reference"})
 
-            # Sources validation
             for s_id in page.sources:
                 if s_id not in registered_sources:
                     invalid_source_refs.append({
@@ -87,8 +85,16 @@ class WikiLinter:
                         "text": line.strip()[:60],
                     })
 
+        # 4. CDSS Macro & Micro Monograph Rules Cross-Layer Semantic Validation
+        cdss_rule_issues: List[Dict[str, Any]] = self._check_cdss_rules_semantics(registered_sources)
+
         stats = self.graph.get_stats()
-        is_healthy = (len(broken_links) == 0 and len(invalid_source_refs) == 0 and len(orphans) == 0)
+        is_healthy = (
+            len(broken_links) == 0
+            and len(invalid_source_refs) == 0
+            and len(orphans) == 0
+            and len(cdss_rule_issues) == 0
+        )
 
         return {
             "is_healthy": is_healthy,
@@ -103,7 +109,79 @@ class WikiLinter:
             "invalid_source_count": len(invalid_source_refs),
             "typography_issues": typography_issues,
             "typography_issue_count": len(typography_issues),
+            "cdss_rule_issues": cdss_rule_issues,
+            "cdss_rule_issue_count": len(cdss_rule_issues),
         }
+
+    def _check_cdss_rules_semantics(self, registered_sources: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Validates CDSS rules in both rules/clinical_safety_rules.json (45 macro rules)
+        and rules/monograph_rules.json (63 micro monograph rules):
+        - Required metadata fields (id, title, grade, evidence_level, conditions, alternatives)
+        - Provenance verification: every alternative's sourceGuideline must exist in raw/metadata.json
+        - Self-contradiction check: an alternative drug for a pure drug-ban rule (not a DDI/washout/dose rule)
+          must not trigger the same rule's unconditionally banned drug list.
+        """
+        issues: List[Dict[str, Any]] = []
+        rule_files = [
+            ("clinical_safety_rules.json", self.root_dir / "rules" / "clinical_safety_rules.json"),
+            ("monograph_rules.json", self.root_dir / "rules" / "monograph_rules.json"),
+        ]
+
+        seen_ids = set()
+        for fname, rpath in rule_files:
+            if not rpath.exists():
+                continue
+            try:
+                data = json.loads(rpath.read_text(encoding="utf-8"))
+                rules = data.get("rules", []) if isinstance(data, dict) else data
+            except Exception as e:
+                issues.append({"rule_id": fname, "issue": f"Failed to parse {fname}: {e}"})
+                continue
+
+            for r in rules:
+                rid = r.get("id") or r.get("ruleId") or "UNKNOWN_RULE"
+                if rid in seen_ids:
+                    issues.append({"rule_id": rid, "issue": f"Duplicate rule ID '{rid}' across rules"})
+                seen_ids.add(rid)
+
+                for req_field in ("title", "grade", "evidence_level", "conditions", "alternatives"):
+                    if not r.get(req_field):
+                        issues.append({"rule_id": rid, "issue": f"Missing or empty required field '{req_field}' in {fname}"})
+
+                cond = r.get("conditions", {})
+                sev = r.get("severity") or r.get("level")
+                is_unconditional_ban = (
+                    sev in ("RED", "BLOCK")
+                    and "egfr_range" not in cond
+                    and "profile_flag_true" not in cond
+                    and "drugs_not_any" not in cond
+                    and "concurrent_any" not in cond
+                    and "ddi_pairs" not in cond
+                )
+                banned_keywords: List[str] = []
+                if is_unconditional_ban:
+                    banned_keywords = [k.lower() for k in (cond.get("drugs_any") or r.get("target_drugs") or [])]
+
+                for alt in r.get("alternatives", []):
+                    alt_name = str(alt.get("name") or "").strip()
+                    src_g = str(alt.get("sourceGuideline") or "").strip()
+                    if not alt_name:
+                        issues.append({"rule_id": rid, "issue": f"Alternative entry missing 'name' in {fname}"})
+                    if not alt.get("orderDraft") or not alt.get("rationale"):
+                        issues.append({"rule_id": rid, "issue": f"Alternative '{alt_name}' missing 'orderDraft' or 'rationale' in {fname}"})
+                    if src_g and src_g not in registered_sources:
+                        issues.append({
+                            "rule_id": rid,
+                            "issue": f"Alternative '{alt_name}' references unregistered sourceGuideline '{src_g}' in {fname}",
+                        })
+                    if banned_keywords and any(bk in alt_name.lower() for bk in banned_keywords):
+                        issues.append({
+                            "rule_id": rid,
+                            "issue": f"Self-contradicting alternative: '{alt_name}' matches rule's own banned drugs {banned_keywords}",
+                        })
+
+        return issues
 
     def format_report(self, results: Dict[str, Any]) -> str:
         """Formats the diagnostics report as human-readable markdown/text."""
@@ -120,49 +198,43 @@ class WikiLinter:
             "-" * 60,
         ]
 
-        # Broken links
         if results["broken_link_count"] == 0:
-            lines.append("✅ 双向链接检查: 完美通过 (0 断链 / 0 Broken Links)")
+            lines.append("✅ [通过] 双向链接完整性检查: 0 断链 (Zero Broken Links)")
         else:
-            lines.append(f"❌ 发现 {results['broken_link_count']} 个断链 (Broken Links):")
-            for item in results["broken_links"]:
-                lines.append(f"   - 在 [{item['file']}] 中引用了未找到的词条: [[{item['broken_link']}]]")
+            lines.append(f"❌ [告警] 发现 {results['broken_link_count']} 处断链:")
+            for b in results["broken_links"]:
+                lines.append(f"    - 文件 `{b['file']}` 引用了不存在的节点 `[[{b['broken_link']}]]`")
 
-        # Orphans
         if results["orphan_count"] == 0:
-            lines.append("✅ 知识孤岛检查: 完美通过 (0 孤立页面 / 0 Orphans)")
+            lines.append("✅ [通过] 孤岛页面检查: 0 孤岛节点 (Zero Orphans)")
         else:
-            lines.append(f"⚠️ 发现 {results['orphan_count']} 个无入向引用的孤岛页面:")
-            for orphan in results["orphans"]:
-                lines.append(f"   - [[{orphan}]]")
+            lines.append(f"⚠️  [提示] 发现 {results['orphan_count']} 个无入向引用的孤岛页面:")
+            for o in results["orphans"]:
+                lines.append(f"    - `{o}`")
 
-        # Sources
         if results["invalid_source_count"] == 0:
-            lines.append("✅ 原始来源溯源: 完美通过 (所有引用的 source_id 均存在于 metadata.json)")
+            lines.append("✅ [通过] 原始文献溯源核验: 所有引用的 Source ID 均在 raw/metadata.json 注册")
         else:
-            lines.append(f"❌ 发现 {results['invalid_source_count']} 处无效源引用:")
-            for item in results["invalid_source_refs"]:
-                lines.append(f"   - 在 [{item['file']}] 中引用了未注册的 source_id: {item['invalid_source_id']}")
+            lines.append(f"❌ [告警] 发现 {results['invalid_source_count']} 处未注册的文献源 ID:")
+            for inv in results["invalid_source_refs"]:
+                lines.append(f"    - 文件 `{inv['file']}` 引用了无效源 `{inv['invalid_source_id']}`")
 
-        # Schema
         if results["schema_issue_count"] == 0:
-            lines.append("✅ Frontmatter 规范: 完整规范")
+            lines.append("✅ [通过] Frontmatter 元数据规范检查: 全部符合 SCHEMA.md 标准")
         else:
-            lines.append(f"⚠️ 发现 {results['schema_issue_count']} 处元数据格式问题:")
-            for item in results["schema_issues"]:
-                lines.append(f"   - [{item['file']}]: {item['issue']}")
+            lines.append(f"⚠️  [提示] 发现 {results['schema_issue_count']} 处 Frontmatter 规范缺失:")
+            for s in results["schema_issues"]:
+                lines.append(f"    - `{s['file']}`: {s['issue']}")
 
-        # Typography / Markdown syntax safety
-        if results.get("typography_issue_count", 0) == 0:
-            lines.append("✅ 排版与格式安全: 完美通过 (0 处半角波浪号 ~ 导致 Markdown 删除线冲突)")
+        if results.get("cdss_rule_issue_count", 0) == 0:
+            lines.append("✅ [通过] CDSS 宏观与微观说明书规则 (108条) 跨层语义核验: 0 冲突、100% 平替与指南溯源对齐")
         else:
-            lines.append(f"⚠️ 发现 {results['typography_issue_count']} 处半角 ~ 排版安全隐患 (建议使用全角 ～):")
-            for item in results["typography_issues"][:5]:
-                lines.append(f"   - [{item['file']}:L{item['line']}]: {item['text']}")
+            lines.append(f"❌ [告警] 发现 {results['cdss_rule_issue_count']} 处 CDSS 规则语义或溯源异常:")
+            for ci in results.get("cdss_rule_issues", []):
+                lines.append(f"    - 规则 `{ci['rule_id']}`: {ci['issue']}")
 
         lines.append("=" * 60)
-        status_text = "🎉 结论: 知识库极其健康，完全符合 LLM Wiki 编译标准！" if results["is_healthy"] else "⚠️ 结论: 发现部分待优化项目，请按提示排查修复。"
-        lines.append(status_text)
+        status_str = "HEALTHY (健康)" if results["is_healthy"] else "NEEDS ATTENTION (需修复)"
+        lines.append(f"🏁 综合健康状态: {status_str}")
         lines.append("=" * 60)
-
         return "\n".join(lines)

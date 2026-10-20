@@ -2,13 +2,15 @@
 Declarative CDSS Rule Evaluator.
 Loads structured clinical safety rules and drug monograph contraindication rules from JSON/YAML,
 and performs high-performance, deterministic evaluation against patient and prescription profiles.
+Supports dynamic organ clearance (eGFR, CrCl), Child-Pugh hepatic grading, serum potassium (K+),
+and 3-tier clinical alert classification (HARD_STOP / SOFT_NUDGE / PASSIVE_INFO).
 """
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 
 class RuleEvaluator:
@@ -40,6 +42,18 @@ class RuleEvaluator:
             except Exception as e:
                 print(f"Warning: Failed to load rule file {rule_file}: {e}")
 
+    @staticmethod
+    def map_alert_tier(severity_or_level: str, explicit_tier: Optional[str] = None) -> str:
+        """Maps rule severity/level to in-consultation workstation UI alert tier."""
+        if explicit_tier in ("HARD_STOP", "SOFT_NUDGE", "PASSIVE_INFO"):
+            return explicit_tier
+        s = str(severity_or_level or "").upper()
+        if s in ("RED", "BLOCK", "BLOCKED"):
+            return "HARD_STOP"
+        if s in ("YELLOW", "WARNING", "WARN"):
+            return "SOFT_NUDGE"
+        return "PASSIVE_INFO"
+
     def evaluate_clinical_prescription(
         self,
         medications: List[str],
@@ -55,7 +69,6 @@ class RuleEvaluator:
 
         alerts: List[Dict[str, Any]] = []
 
-        # Extract patient features
         age = profile.get("age")
         try:
             age_val = int(age) if age is not None else None
@@ -68,6 +81,12 @@ class RuleEvaluator:
         except (ValueError, TypeError):
             egfr_val = None
 
+        crcl = profile.get("crcl")
+        try:
+            crcl_val = float(crcl) if crcl is not None else egfr_val
+        except (ValueError, TypeError):
+            crcl_val = egfr_val
+
         is_pregnant = bool(profile.get("is_pregnant") or profile.get("pregnancy"))
         is_lactating = bool(profile.get("is_lactating") or profile.get("lactation"))
 
@@ -77,35 +96,44 @@ class RuleEvaluator:
         else:
             diagnoses_str = str(diagnoses_list)
 
+        norm_diag = profile.get("normalized_diagnoses", [])
+        norm_diag_str = " ".join([str(x) for x in norm_diag]) if isinstance(norm_diag, list) else ""
+
         history_text = " ".join([
             str(profile.get("history", "")),
             str(profile.get("disease", "")),
             str(profile.get("diagnosis", "")),
             str(profile.get("conditions", "")),
             diagnoses_str,
+            norm_diag_str,
         ]).lower()
 
         allergy_text = " ".join([
             str(profile.get("allergy", "")),
             str(profile.get("allergies", "")),
+            " ".join([str(x) for x in profile.get("normalized_allergies", [])]),
         ]).lower()
 
         for rule in self.rules:
-            # Only evaluate clinical safety rules here
             if rule.get("domain") not in ("clinical", "prescription_safety"):
                 continue
 
             cond = rule.get("conditions", {})
-            if self._matches_condition(cond, meds_text, meds_list, profile, age_val, egfr_val, is_pregnant, is_lactating, history_text, allergy_text):
+            if self._matches_condition(
+                cond, meds_text, meds_list, profile, age_val, egfr_val, crcl_val,
+                is_pregnant, is_lactating, history_text, allergy_text
+            ):
+                sev = rule.get("severity", "RED")
                 alerts.append({
                     "ruleId": rule.get("id") or rule.get("ruleId"),
-                    "severity": rule.get("severity", "RED"),
+                    "severity": sev,
+                    "alertTier": self.map_alert_tier(sev, rule.get("alert_tier")),
                     "title": rule.get("title", ""),
                     "message": rule.get("message", ""),
                     "guideline": rule.get("guideline") or rule.get("evidence", ""),
-                    "grade": rule.get("grade", "1A" if rule.get("severity") == "RED" else "1B"),
+                    "grade": rule.get("grade", "1A" if sev == "RED" else "1B"),
                     "evidenceLevel": rule.get("evidence_level", "强推荐，国家权威指南/说明书法定标准"),
-                    "alternatives": rule.get("alternatives", []),
+                    "alternatives": list(rule.get("alternatives", [])),
                 })
 
         return alerts
@@ -134,17 +162,25 @@ class RuleEvaluator:
         except (ValueError, TypeError):
             egfr_val = None
 
+        crcl = profile.get("crcl")
+        try:
+            crcl_val = float(crcl) if crcl is not None else egfr_val
+        except (ValueError, TypeError):
+            crcl_val = egfr_val
+
         is_pregnant = bool(profile.get("is_pregnant") or profile.get("pregnancy"))
         is_lactating = bool(profile.get("is_lactating") or profile.get("lactation"))
 
         conditions = [str(c).lower() for c in profile.get("conditions", [])]
-        history_text = " ".join(conditions + [
+        norm_diag = [str(c).lower() for c in profile.get("normalized_diagnoses", [])]
+        history_text = " ".join(conditions + norm_diag + [
             str(profile.get("history", "")),
             str(profile.get("diagnosis", "")),
         ]).lower()
 
         allergies = [str(a).lower() for a in profile.get("allergies", [])]
-        allergy_text = " ".join(allergies + [str(profile.get("allergy", ""))]).lower()
+        norm_allergies = [str(a).lower() for a in profile.get("normalized_allergies", [])]
+        allergy_text = " ".join(allergies + norm_allergies + [str(profile.get("allergy", ""))]).lower()
 
         concurrent_drugs = [str(d).lower().strip() for d in profile.get("concurrent_drugs", [])]
         concurrent_text = " ".join(concurrent_drugs).lower()
@@ -155,7 +191,6 @@ class RuleEvaluator:
             if rule.get("domain") not in ("monograph", "drug_insert"):
                 continue
 
-            # Target drug must match
             target_keywords = rule.get("target_drugs", [])
             if target_keywords and not any(k in dname for k in target_keywords):
                 continue
@@ -163,15 +198,18 @@ class RuleEvaluator:
             cond = rule.get("conditions", {})
             if self._matches_monograph_condition(
                 cond, dname, concurrent_drugs, concurrent_text, profile,
-                age_val, egfr_val, is_pregnant, is_lactating, conditions, history_text, allergies, allergy_text
+                age_val, egfr_val, crcl_val, is_pregnant, is_lactating,
+                conditions, history_text, allergies, allergy_text
             ):
+                lvl = rule.get("level", "BLOCK")
                 alerts.append({
-                    "level": rule.get("level", "BLOCK"),
+                    "level": lvl,
+                    "alertTier": self.map_alert_tier(lvl, rule.get("alert_tier")),
                     "rule": rule.get("id"),
                     "title": rule.get("title", ""),
                     "reason": rule.get("reason") or rule.get("message", ""),
                     "evidence": rule.get("evidence", ""),
-                    "alternatives": rule.get("alternatives", []),
+                    "alternatives": list(rule.get("alternatives", [])),
                 })
 
         return alerts
@@ -184,6 +222,7 @@ class RuleEvaluator:
         profile: Dict[str, Any],
         age_val: Optional[int],
         egfr_val: Optional[float],
+        crcl_val: Optional[float],
         is_pregnant: bool,
         is_lactating: bool,
         history_text: str,
@@ -204,13 +243,35 @@ class RuleEvaluator:
             if age_val is None or age_val < cond["age_gte"]:
                 return False
 
-        # 3. eGFR constraints
+        # 3. Renal clearance (eGFR & CrCl) constraints
         if "egfr_lt" in cond:
             if egfr_val is None or egfr_val >= cond["egfr_lt"]:
                 return False
         if "egfr_range" in cond:
             min_e, max_e = cond["egfr_range"]
             if egfr_val is None or not (min_e <= egfr_val < max_e):
+                return False
+        if "crcl_lt" in cond:
+            if crcl_val is None or crcl_val >= cond["crcl_lt"]:
+                return False
+        if "crcl_range" in cond:
+            min_c, max_c = cond["crcl_range"]
+            if crcl_val is None or not (min_c <= crcl_val < max_c):
+                return False
+
+        # 3b. Hepatic Child-Pugh & Serum Potassium constraints
+        if "child_pugh_in" in cond:
+            cp_grade = str(profile.get("child_pugh_grade") or "").upper()
+            allowed_cp = [str(x).upper() for x in cond["child_pugh_in"]]
+            if cp_grade not in allowed_cp:
+                return False
+        if "serum_k_gt" in cond:
+            sk = profile.get("serum_k") or profile.get("potassium")
+            try:
+                sk_val = float(sk) if sk is not None else None
+            except (ValueError, TypeError):
+                sk_val = None
+            if (sk_val is None or sk_val <= float(cond["serum_k_gt"])) and not profile.get("has_hyperkalemia"):
                 return False
 
         # 4. Drug presence checks
@@ -283,7 +344,7 @@ class RuleEvaluator:
             if not (flag_hit or text_hit):
                 return False
 
-        # 9. Custom profile flag overrides (e.g., informed consent, alt_above_3x)
+        # 9. Custom profile flag overrides
         if "profile_flag_true" in cond:
             if not bool(profile.get(cond["profile_flag_true"])):
                 return False
@@ -302,6 +363,7 @@ class RuleEvaluator:
         profile: Dict[str, Any],
         age_val: Optional[int],
         egfr_val: Optional[float],
+        crcl_val: Optional[float],
         is_pregnant: bool,
         is_lactating: bool,
         conditions: List[str],
@@ -309,12 +371,10 @@ class RuleEvaluator:
         allergies: List[str],
         allergy_text: str,
     ) -> bool:
-        """Evaluates monograph-level condition (eGFR cutoffs, pregnancy, conditions, DDIs)."""
-        # Pregnancy
+        """Evaluates monograph-level condition (eGFR/CrCl cutoffs, Child-Pugh, pregnancy, conditions, DDIs)."""
         if cond.get("pregnancy") is True and not is_pregnant:
             return False
 
-        # Age
         if "age_lt" in cond:
             if age_val is None or age_val >= cond["age_lt"]:
                 return False
@@ -322,7 +382,6 @@ class RuleEvaluator:
             if age_val is None or age_val < cond["age_gte"]:
                 return False
 
-        # eGFR
         if "egfr_lt" in cond:
             if egfr_val is None or egfr_val >= cond["egfr_lt"]:
                 return False
@@ -330,27 +389,35 @@ class RuleEvaluator:
             min_e, max_e = cond["egfr_range"]
             if egfr_val is None or not (min_e <= egfr_val < max_e):
                 return False
+        if "crcl_lt" in cond:
+            if crcl_val is None or crcl_val >= cond["crcl_lt"]:
+                return False
+        if "crcl_range" in cond:
+            min_c, max_c = cond["crcl_range"]
+            if crcl_val is None or not (min_c <= crcl_val < max_c):
+                return False
 
-        # Allergy
+        if "child_pugh_in" in cond:
+            cp_grade = str(profile.get("child_pugh_grade") or "").upper()
+            allowed_cp = [str(x).upper() for x in cond["child_pugh_in"]]
+            if cp_grade not in allowed_cp:
+                return False
+
         if "allergy_any" in cond:
             if not any(k in allergy_text for k in cond["allergy_any"]):
                 return False
 
-        # Patient conditions / history
         if "conditions_any" in cond:
             if not any(k in history_text for k in cond["conditions_any"]):
                 return False
 
-        # Concurrent DDI drugs
         if "concurrent_any" in cond:
             matched_cd = False
             exclude_stems = cond.get("exclude_same_drug_stems", [])
             for cd in concurrent_drugs:
                 if any(k in cd for k in cond["concurrent_any"]):
-                    # If exclude_same_drug_stems is provided, avoid same stem collision (e.g. enalapril with enalapril)
                     if exclude_stems and any(k in cd and k in dname for k in exclude_stems):
                         continue
-                    # Avoid exact self match
                     if dname and (cd == dname or cd in dname or dname in cd):
                         continue
                     matched_cd = True

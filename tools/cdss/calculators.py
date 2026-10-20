@@ -414,8 +414,8 @@ class ClinicalCalculatorRegistry:
         - ascites: "none" / "mild" / "moderate_severe"
         - encephalopathy: "none" / "grade_1_2" / "grade_3_4"
         """
-        bili = float(p.get("bili", 15.0) or p.get("bilirubin", 15.0))
-        alb = float(p.get("alb", 40.0) or p.get("albumin", 40.0))
+        bili = float(p.get("bili") or p.get("tbil") or p.get("bilirubin") or 15.0)
+        alb = float(p.get("alb") or p.get("albumin") or 40.0)
         inr = float(p.get("inr", 1.0))
         ascites = str(p.get("ascites", "none")).lower()
         enc = str(p.get("encephalopathy", "none")).lower()
@@ -844,3 +844,255 @@ class ClinicalCalculatorRegistry:
             "grade": "1A",
             "guideline": "《中国成人社区获得性肺炎诊断和治疗指南》（SRC-CMA-RESP-2016-02）",
         }
+
+    # -------------------------------------------------------------------------
+    # 14. Zero-Manual-Input EMR Hydration & Minimal Follow-up Engine (P3.1)
+    # -------------------------------------------------------------------------
+    CALCULATOR_SCHEMA_SPECS = {
+        "cha2ds2_vasc": {
+            "title": "CHA2DS2-VASc 房颤卒中风险评分",
+            "fields": [
+                {"key": "age", "label": "年龄 (岁)", "type": "number", "auto_from": ["age"]},
+                {"key": "gender", "label": "性别", "type": "string", "auto_from": ["gender"]},
+                {"key": "chf", "label": "充血性心力衰竭或 LVEF≤40%", "type": "boolean", "points": 1, "keywords": ["心力衰竭", "心衰", "chf", "lvef≤40", "心功能不全"]},
+                {"key": "htn", "label": "高血压病史", "type": "boolean", "points": 1, "keywords": ["高血压", "htn", "原发性高血压"]},
+                {"key": "dm", "label": "糖尿病史", "type": "boolean", "points": 1, "keywords": ["糖尿病", "2型糖尿病", "dm", "高血糖"]},
+                {"key": "stroke", "label": "既往脑卒中 / TIA / 血栓栓塞史", "type": "boolean", "points": 2, "keywords": ["脑卒中", "脑梗", "脑梗死", "tia", "短暂性脑缺血", "血栓栓塞"]},
+                {"key": "vascular", "label": "血管疾病 (心肌梗死/外周动脉疾病/主动脉斑块)", "type": "boolean", "points": 1, "keywords": ["心肌梗死", "心梗", "冠心病", "外周动脉", "主动脉斑块", "支架术后"]},
+            ],
+        },
+        "has_bled": {
+            "title": "HAS-BLED 抗凝出血风险评分",
+            "fields": [
+                {"key": "age", "label": "年龄 (岁)", "type": "number", "auto_from": ["age"]},
+                {"key": "sbp", "label": "收缩压 (mmHg)", "type": "number", "auto_from": ["sbp"]},
+                {"key": "renal_disease", "label": "肾功能异常 (透析/肾移植/Scr≥200μmol/L)", "type": "boolean", "points": 1, "keywords": ["肾功能不全", "尿毒症", "透析", "慢性肾脏病"]},
+                {"key": "liver_disease", "label": "肝功能异常 (肝硬化/胆红素>2x/转氨酶>3x)", "type": "boolean", "points": 1, "keywords": ["肝硬化", "肝功能异常", "肝炎", "肝衰竭"]},
+                {"key": "stroke_history", "label": "既往卒中史", "type": "boolean", "points": 1, "keywords": ["脑卒中", "脑梗", "脑出血"]},
+                {"key": "bleeding_history", "label": "既往大出血史或出血倾向/贫血", "type": "boolean", "points": 1, "keywords": ["消化道出血", "出血史", "黑便", "呕血", "重度贫血"]},
+                {"key": "labile_inr", "label": "INR 不稳定 (TTR<60%)", "type": "boolean", "points": 1, "keywords": ["inr不稳定", "inr波动"]},
+                {"key": "drugs", "label": "合并使用抗血小板药或 NSAIDs", "type": "boolean", "points": 1, "keywords": ["阿司匹林", "氯吡格雷", "布洛芬", "塞来昔布", "双氯芬酸"]},
+                {"key": "alcohol", "label": "长期酗酒 (≥8杯/周)", "type": "boolean", "points": 1, "keywords": ["酗酒", "大量饮酒", "酒精依赖"]},
+            ],
+        },
+        "curb_65": {
+            "title": "CURB-65 社区获得性肺炎严重度评分",
+            "fields": [
+                {"key": "confusion", "label": "新发意识障碍 / 精神错乱", "type": "boolean", "points": 1, "keywords": ["意识障碍", "神志不清", "谵妄", "嗜睡", "精神错乱", "昏迷"]},
+                {"key": "bun", "label": "血尿素氮 BUN (mmol/L)", "type": "number", "auto_from": ["bun", "urea"]},
+                {"key": "rr", "label": "呼吸频率 (次/分)", "type": "number", "auto_from": ["rr", "respiratory_rate"]},
+                {"key": "sbp", "label": "收缩压 (mmHg)", "type": "number", "auto_from": ["sbp"]},
+                {"key": "dbp", "label": "舒张压 (mmHg)", "type": "number", "auto_from": ["dbp"]},
+                {"key": "age", "label": "年龄 (岁)", "type": "number", "auto_from": ["age"]},
+            ],
+        },
+        "crb_65": {
+            "title": "CRB-65 门诊肺炎快速评分",
+            "fields": [
+                {"key": "confusion", "label": "新发意识障碍 / 精神错乱", "type": "boolean", "points": 1, "keywords": ["意识障碍", "神志不清", "谵妄", "嗜睡", "精神错乱"]},
+                {"key": "rr", "label": "呼吸频率 (次/分)", "type": "number", "auto_from": ["rr", "respiratory_rate"]},
+                {"key": "sbp", "label": "收缩压 (mmHg)", "type": "number", "auto_from": ["sbp"]},
+                {"key": "dbp", "label": "舒张压 (mmHg)", "type": "number", "auto_from": ["dbp"]},
+                {"key": "age", "label": "年龄 (岁)", "type": "number", "auto_from": ["age"]},
+            ],
+        },
+        "wells_pe": {
+            "title": "Wells 肺栓塞 (PE) 临床概率评分",
+            "fields": [
+                {"key": "dvt_signs", "label": "下肢深静脉血栓 (DVT) 临床症状与体征 (单侧下肢肿胀+触痛)", "type": "boolean", "points": 3.0, "keywords": ["下肢肿胀", "单侧下肢水肿", "深静脉血栓", "dvt", "腓肠肌压痛"]},
+                {"key": "pe_most_likely", "label": "肺栓塞可能性大于或等于其他鉴别诊断", "type": "boolean", "points": 3.0, "keywords": ["疑诊肺栓塞", "考虑肺栓塞", "高度怀疑肺栓塞"]},
+                {"key": "hr", "label": "心率 (次/分)", "type": "number", "auto_from": ["hr", "heart_rate"]},
+                {"key": "immobilization_or_surgery", "label": "近4周内手术史或连续卧床制动≥3天", "type": "boolean", "points": 1.5, "keywords": ["术后", "手术史", "长期卧床", "制动", "骨折石膏"]},
+                {"key": "prior_dvt_pe", "label": "既往客观确诊的 DVT 或 PE 病史", "type": "boolean", "points": 1.5, "keywords": ["既往肺栓塞", "既往深静脉血栓", "肺栓塞史"]},
+                {"key": "hemoptysis", "label": "咯血症状", "type": "boolean", "points": 1.0, "keywords": ["咯血", "痰中带血"]},
+                {"key": "malignancy", "label": "活动性恶性肿瘤 (近6个月内治疗中或姑息治疗)", "type": "boolean", "points": 1.0, "keywords": ["恶性肿瘤", "肺癌", "胃癌", "结直肠癌", "乳腺癌", "化疗"]},
+            ],
+        },
+        "alvarado": {
+            "title": "Alvarado 急性阑尾炎临床危险评分",
+            "fields": [
+                {"key": "migration_pain", "label": "转移性右下腹痛", "type": "boolean", "points": 1, "keywords": ["转移性右下腹痛", "转移至右下腹"]},
+                {"key": "anorexia", "label": "厌食 / 食欲减退", "type": "boolean", "points": 1, "keywords": ["厌食", "纳差", "食欲减退", "食欲不振"]},
+                {"key": "nausea_vomiting", "label": "恶心或呕吐", "type": "boolean", "points": 1, "keywords": ["恶心", "呕吐"]},
+                {"key": "rlq_tenderness", "label": "右下腹麦氏点压痛", "type": "boolean", "points": 2, "keywords": ["麦氏点压痛", "右下腹压痛"]},
+                {"key": "rebound_pain", "label": "反跳痛", "type": "boolean", "points": 1, "keywords": ["反跳痛", "肌紧张"]},
+                {"key": "temp", "label": "体温 (℃)", "type": "number", "auto_from": ["temp", "temperature"]},
+                {"key": "wbc", "label": "白细胞计数 WBC (×10^9/L)", "type": "number", "auto_from": ["wbc"]},
+                {"key": "neutrophil_shift", "label": "中性粒细胞左移 (N% > 75%)", "type": "boolean", "points": 1, "keywords": ["中性粒细胞升高", "核左移", "中性粒细胞比例升高"]},
+            ],
+        },
+        "abcd2": {
+            "title": "ABCD2 短暂性脑缺血发作 (TIA) 卒中风险评分",
+            "fields": [
+                {"key": "age", "label": "年龄 (岁)", "type": "number", "auto_from": ["age"]},
+                {"key": "sbp", "label": "收缩压 (mmHg)", "type": "number", "auto_from": ["sbp"]},
+                {"key": "dbp", "label": "舒张压 (mmHg)", "type": "number", "auto_from": ["dbp"]},
+                {"key": "unilateral_weakness", "label": "单侧肢体无力", "type": "boolean", "points": 2, "keywords": ["单侧肢体无力", "偏瘫", "一侧肢体无力", "左侧肢体无力", "右侧肢体无力"]},
+                {"key": "speech_impairment", "label": "言语障碍但无肢体无力", "type": "boolean", "points": 1, "keywords": ["言语不清", "失语", "构音障碍", "吐字不清"]},
+                {"key": "duration_minutes", "label": "症状持续时间 (分钟)", "type": "number", "auto_from": ["duration_minutes"]},
+                {"key": "diabetes", "label": "糖尿病病史", "type": "boolean", "points": 1, "keywords": ["糖尿病", "2型糖尿病"]},
+            ],
+        },
+    }
+
+    @classmethod
+    def hydrate_params_from_emr(cls, calculator_name: str, emr_context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Automatically extracts calculator input parameters from raw HIS/EMR context
+        (vitals, lab results, demographics, chief complaint, present illness, physical exam, diagnoses)
+        and returns a minimal list of follow-up questions for unconfirmed bedside items.
+        """
+        from tools.cdss.parameter_normalizer import ClinicalParameterNormalizer
+        norm_p = ClinicalParameterNormalizer.normalize_patient(emr_context)
+        name = calculator_name.strip().lower().replace("-", "_")
+        if name in ("wells", "wells_score"):
+            name = "wells_pe"
+        elif name == "alvarado_score":
+            name = "alvarado"
+        elif name == "abcd2_score":
+            name = "abcd2"
+
+        text_corpus = " ".join([
+            str(norm_p.get("chiefComplaint", "")),
+            str(norm_p.get("presentIllness", "")),
+            str(norm_p.get("physicalExam", "")),
+            str(norm_p.get("history", "")),
+            str(norm_p.get("medicalHistory", "")),
+            str(norm_p.get("diagnosis", "")),
+            " ".join(norm_p.get("normalized_diagnoses", [])),
+            " ".join([str(m) for m in (norm_p.get("medications") or norm_p.get("concurrent_drugs") or [])]),
+        ]).lower()
+
+        hydrated: Dict[str, Any] = {}
+        auto_extracted: List[str] = []
+        missing_fields: List[str] = []
+        follow_up_questions: List[Dict[str, Any]] = []
+
+        # Copy all normalized direct keys first
+        for k, v in norm_p.items():
+            if not k.startswith("_") and v is not None:
+                hydrated[k] = v
+
+        spec = cls.CALCULATOR_SCHEMA_SPECS.get(name)
+        if spec:
+            for f in spec["fields"]:
+                fkey = f["key"]
+                ftype = f["type"]
+
+                # Check if already present in hydrated via auto_from or direct key
+                found_val = None
+                for src_k in f.get("auto_from", [fkey]):
+                    if norm_p.get(src_k) is not None:
+                        found_val = norm_p.get(src_k)
+                        break
+
+                if found_val is not None:
+                    hydrated[fkey] = found_val
+                    auto_extracted.append(fkey)
+                    continue
+
+                # For boolean fields, try keyword extraction from clinical text
+                if ftype == "boolean":
+                    keywords = f.get("keywords", [])
+                    import re as _re
+                    negated = any(bool(_re.search(rf"(?:无|否认|未见|排除)[^，。；,\.;]{{0,15}}{_re.escape(kw)}", text_corpus)) for kw in keywords)
+                    matched = any(kw in text_corpus for kw in keywords)
+                    if matched and not negated:
+                        hydrated[fkey] = True
+                        auto_extracted.append(fkey)
+                    elif negated:
+                        hydrated[fkey] = False
+                        auto_extracted.append(fkey)
+                    else:
+                        # Special derived logic for HAS-BLED renal/liver
+                        if fkey == "renal_disease" and (norm_p.get("egfr_lt_30") or (norm_p.get("scr") and float(norm_p["scr"]) >= 200)):
+                            hydrated[fkey] = True
+                            auto_extracted.append(fkey)
+                        elif fkey == "liver_disease" and norm_p.get("severe_liver_injury"):
+                            hydrated[fkey] = True
+                            auto_extracted.append(fkey)
+                        else:
+                            missing_fields.append(fkey)
+                            follow_up_questions.append({
+                                "field": fkey,
+                                "label": f["label"],
+                                "type": "boolean",
+                                "pointsImpact": f.get("points", 1),
+                            })
+                else:
+                    missing_fields.append(fkey)
+                    follow_up_questions.append({
+                        "field": fkey,
+                        "label": f["label"],
+                        "type": ftype,
+                    })
+
+        return {
+            "calculator": name,
+            "hydratedParams": hydrated,
+            "autoExtractedFields": auto_extracted,
+            "missingFields": missing_fields,
+            "minimalFollowUpQuestions": follow_up_questions,
+        }
+
+    @classmethod
+    def calculate_from_emr(cls, calculator_name: str, emr_context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Zero-manual-input execution: hydrates parameters automatically from EMR context,
+        runs the clinical calculator, and attaches autoExtractedFields and minimalFollowUpQuestions.
+        """
+        hydration = cls.hydrate_params_from_emr(calculator_name, emr_context)
+        calc_result = cls.calculate(calculator_name, hydration["hydratedParams"])
+        calc_result["emrHydration"] = {
+            "autoExtractedFields": hydration["autoExtractedFields"],
+            "missingFields": hydration["missingFields"],
+            "minimalFollowUpQuestions": hydration["minimalFollowUpQuestions"],
+            "isFullyHydrated": len(hydration["missingFields"]) == 0,
+        }
+        return calc_result
+
+    @classmethod
+    def recommend_calculators_for_encounter(cls, emr_context: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Inspects the patient's encounter context (chief complaint, diagnosis, labs)
+        and automatically triggers and pre-computes relevant clinical scales for the doctor's sidebar.
+        """
+        from tools.cdss.parameter_normalizer import ClinicalParameterNormalizer
+        norm_p = ClinicalParameterNormalizer.normalize_patient(emr_context)
+        corpus = " ".join([
+            str(norm_p.get("chiefComplaint", "")),
+            str(norm_p.get("presentIllness", "")),
+            str(norm_p.get("diagnosis", "")),
+            " ".join(norm_p.get("normalized_diagnoses", [])),
+        ]).lower()
+
+        triggered_calcs: List[str] = []
+        if any(k in corpus for k in ["房颤", "心房颤动", "af"]):
+            triggered_calcs.extend(["cha2ds2_vasc", "has_bled"])
+        if any(k in corpus for k in ["肺炎", "肺部感染", "cap"]):
+            triggered_calcs.append("curb_65" if (norm_p.get("bun") is not None) else "crb_65")
+        if any(k in corpus for k in ["肺栓塞", "深静脉血栓", "胸痛伴呼吸困难", "咯血", "dvt"]):
+            triggered_calcs.append("wells_pe")
+        if any(k in corpus for k in ["阑尾炎", "右下腹痛", "转移性腹痛"]):
+            triggered_calcs.append("alvarado")
+        if any(k in corpus for k in ["短暂性脑缺血", "tia", "一过性肢体无力"]):
+            triggered_calcs.append("abcd2")
+        if any(k in corpus for k in ["慢阻肺", "慢性阻塞性肺疾病", "copd"]):
+            triggered_calcs.append("mmrc")
+        if any(k in corpus for k in ["扁桃体炎", "急性咽峡炎", "咽痛"]):
+            triggered_calcs.append("centor")
+        if norm_p.get("scr") is not None and norm_p.get("age") is not None:
+            triggered_calcs.append("renal_clearance")
+
+        results = []
+        seen = set()
+        for cname in triggered_calcs:
+            if cname in seen:
+                continue
+            seen.add(cname)
+            try:
+                results.append(cls.calculate_from_emr(cname, emr_context))
+            except Exception:
+                pass
+        return results
+

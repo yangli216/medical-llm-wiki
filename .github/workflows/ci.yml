@@ -1,0 +1,33 @@
+name: Medical LLM Wiki & CDSS CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint-and-test:
+    name: Wiki Static Lint, Authority Audit & CDSS Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 1. Run Wiki & CDSS Semantic Linter
+        run: python3 -m tools.cli lint
+
+      - name: 2. Run Clinical Authority & Provenance Audit
+        run: python3 -m tools.cli authority
+
+      - name: 3. Build SQLite FTS5 Knowledge Index
+        run: python3 -m tools.cli index
+
+      - name: 4. Run Full Unit & Integration Test Suite
+        run: python3 -m unittest discover -v tests

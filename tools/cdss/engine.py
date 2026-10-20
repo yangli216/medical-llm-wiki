@@ -1,7 +1,8 @@
 """
 CDSS Decision Support Engine for Outpatient Clinical Plan Recommendation.
 Empowers RHN (Clinical Assistant / Plan Compiler) with authoritative evidence,
-structured order compilation, and prescription safety auditing.
+structured order compilation, zero-manual-input clinical calculator recommendations,
+and 108-rule (45 macro + 63 micro monograph + TCM component) prescription safety auditing.
 """
 
 from __future__ import annotations
@@ -13,6 +14,7 @@ from tools.cdss.protocol_loader import ProtocolRepository, ClinicalProtocol
 from tools.cdss.rule_evaluator import RuleEvaluator
 from tools.cdss.parameter_normalizer import ClinicalParameterNormalizer
 from tools.cdss.safety_auditor import ComprehensiveSafetyAuditor
+from tools.cdss.calculators import ClinicalCalculatorRegistry
 
 
 class CdssEngine:
@@ -28,11 +30,9 @@ class CdssEngine:
         if not q:
             return []
 
-        # Clinical diagnosis normalization
         from tools.cdss.diagnosis_normalizer import ClinicalDiagnosisNormalizer, GENERIC_CLINICAL_MODIFIERS
         norm = ClinicalDiagnosisNormalizer.normalize(query)
 
-        # Generate tokens
         tokens = [q]
         if norm.canonical_name and norm.canonical_name.lower() not in tokens:
             tokens.append(norm.canonical_name.lower())
@@ -46,7 +46,6 @@ class CdssEngine:
             if w and w not in tokens and w not in GENERIC_CLINICAL_MODIFIERS:
                 tokens.append(w)
 
-        # Expand clinical synonyms
         synonyms_map = {
             "阑尾炎": ["急性阑尾炎", "阑尾炎门诊决策", "急腹症与急性阑尾炎"],
             "胆囊炎": ["急性胆囊炎", "胆囊结石", "胆石症"],
@@ -89,16 +88,12 @@ class CdssEngine:
 
         scored: List[tuple[float, ClinicalProtocol]] = []
         for prot in self.repo.list_all():
-            # Core disease compatibility check:
-            # If query has core disease stems, the candidate MUST be clinically compatible!
-            # Never match purely on generic qualifiers like '急性' or '门诊'.
             diag_items = [it.name for it in prot.items if it.kind == "DIAGNOSIS"]
             if not norm.is_compatible_with(prot.title, prot.aliases, prot.icd10, diag_items):
                 continue
 
             score = 0.0
 
-            # 0. Canonical name / full query match in title or aliases
             if norm.canonical_name and norm.canonical_name.lower() in prot.title.lower():
                 score += 80.0
             elif q.lower() in prot.title.lower():
@@ -114,14 +109,12 @@ class CdssEngine:
                 elif q.lower() in alias.lower() or alias.lower() in q.lower():
                     score += 40.0
 
-            # 1. Exact ICD-10 match
             if norm.icd_code and prot.icd10:
                 if norm.icd_code.upper() == prot.icd10.upper():
                     score += 100.0
                 elif norm.icd_category and prot.icd10.upper().startswith(norm.icd_category.upper()):
                     score += 60.0
 
-            # 2. Core stem match
             for stem in norm.core_stems:
                 if stem.lower() in prot.title.lower():
                     score += 40.0
@@ -129,7 +122,6 @@ class CdssEngine:
                     if stem.lower() in alias.lower():
                         score += 30.0
 
-            # 3. Diagnoses items match
             for item in prot.items:
                 if item.kind == "DIAGNOSIS":
                     if norm.canonical_name and norm.canonical_name.lower() in item.name.lower():
@@ -138,7 +130,6 @@ class CdssEngine:
                         if stem.lower() in item.name.lower():
                             score += 25.0
 
-            # 4. Token overlap (excluding purely generic clinical modifiers)
             for t in tokens:
                 if t in GENERIC_CLINICAL_MODIFIERS or len(t) < 2:
                     continue
@@ -148,7 +139,6 @@ class CdssEngine:
                     if t in alias.lower():
                         score += 10.0
 
-            # Require minimum confidence score
             if score >= 30.0:
                 scored.append((score, prot))
 
@@ -166,12 +156,14 @@ class CdssEngine:
             })
         return results
 
-    def compile_rhn_plan(self, query_or_id: str) -> Dict[str, Any]:
+    def compile_rhn_plan(
+        self,
+        query_or_id: str,
+        patient_context: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
         """Compiles a clinical plan intent compatible with RHN PlanIntent and PlanTextDraft."""
-        # Try direct ID lookup first
         prot = self.repo.get(query_or_id)
         if not prot:
-            # Fallback to search
             matches = self.search_protocols(query_or_id, limit=1)
             if matches:
                 prot = self.repo.get(matches[0]["protocolId"])
@@ -184,6 +176,13 @@ class CdssEngine:
             }
 
         plan_intent = prot.to_rhn_plan_intent()
+
+        # Automatically recommend and pre-calculate clinical calculators for this encounter
+        emr_ctx = dict(patient_context) if isinstance(patient_context, dict) else {}
+        if not emr_ctx.get("diagnosis"):
+            emr_ctx["diagnosis"] = prot.title
+        recommended_calcs = ClinicalCalculatorRegistry.recommend_calculators_for_encounter(emr_ctx)
+
         return {
             "success": True,
             "protocolId": prot.protocol_id,
@@ -192,6 +191,7 @@ class CdssEngine:
             "planIntent": plan_intent,
             "candidate": prot.to_rhn_plan_candidate(1),
             "treatmentRecommendations": prot.to_rhn_treatment_recommendations(),
+            "recommendedCalculators": recommended_calcs,
         }
 
     def audit_prescription(
@@ -200,17 +200,13 @@ class CdssEngine:
         patient_profile: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        Audits a proposed prescription list against declarative CDSS rules in rules/clinical_safety_rules.json:
-        - Contraindications (pregnancy, renal thresholds, allergy)
-        - Dual RAS blockade
-        - Prescribing cascades
-        - Dosage and duration boundaries
+        Audits a proposed prescription list against declarative CDSS rules in rules/clinical_safety_rules.json
+        and TCM active/toxic component decomposition, with Safe Alternative Re-routing filtering.
         """
         norm_profile = ClinicalParameterNormalizer.normalize_patient(patient_profile)
         profile = dict(norm_profile)
         meds_text = " ".join(medications).lower()
 
-        # Clinical parameter normalization
         alt_val = profile.get("alt")
         if alt_val is not None:
             try:
@@ -222,8 +218,14 @@ class CdssEngine:
         if any(x in meds_text for x in ["50μg", "100μg", "75μg", "50ug", "100ug", "75ug"]):
             profile["lt4_dose_above_25"] = True
 
-        # Evaluate rules declaratively via RuleEvaluator
+        # 1. Evaluate macro clinical rules
         alerts = self.evaluator.evaluate_clinical_prescription(medications, profile)
+
+        # 2. Evaluate TCM active/hidden component overlap rules
+        tcm_alerts = self.safety_auditor._audit_tcm_component_overlaps(medications, profile)
+        for ta in tcm_alerts:
+            if not any(x.get("ruleId") == ta.get("ruleId") for x in alerts):
+                alerts.append(ta)
 
         # Handle contextual informed-consent override for off-label pediatric tetracyclines
         has_consent = bool(profile.get("off_label_consent") or profile.get("informed_consent"))
@@ -231,6 +233,7 @@ class CdssEngine:
             for a in alerts:
                 if a.get("ruleId") == "RULE-PED-TETRACYCLINE-AGE":
                     a["severity"] = "YELLOW"
+                    a["alertTier"] = "SOFT_NUDGE"
                     a["title"] = "8岁以下儿童使用新型四环素类超说明书告知与监测"
                     a["message"] = "患者年龄 <8 岁，多西环素/米诺环素用于大环内酯耐药重症支原体肺炎属于超说明书用药。已记录监护人知情同意，请严格按照指南疗程用药，并密切监测牙齿黄染釉质发育及胃肠道反应。"
 
@@ -260,12 +263,49 @@ class CdssEngine:
                 elif a.get("ruleId") == "RULE-PEDIATRIC-LOPERAMIDE":
                     a["message"] = f"患者年龄 {age} 岁 (<12)，洛哌丁胺等强效止泻药在儿童中极易引发麻痹性肠梗阻、中毒性巨结肠及中枢神经抑制，严禁使用！儿童补液首选口服补液盐散(III)。"
 
+        # 3. Filter alternatives via Safe Alternative Re-routing Filter
+        filtered_unsafe: List[Dict[str, Any]] = []
+        dedup_alternatives: List[Dict[str, Any]] = []
+        seen_alt_names = set()
+
+        for a in alerts:
+            if not a.get("alertTier"):
+                a["alertTier"] = RuleEvaluator.map_alert_tier(a.get("severity", "RED"))
+            raw_alts = a.get("alternatives", [])
+            if raw_alts:
+                safe_alts, rejected_alts = self.safety_auditor._filter_safe_alternatives(
+                    raw_alts, profile, medications
+                )
+                a["alternatives"] = safe_alts
+                if rejected_alts:
+                    a["filteredUnsafeAlternatives"] = rejected_alts
+                    filtered_unsafe.extend(rejected_alts)
+                for sa in safe_alts:
+                    aname = sa.get("name")
+                    if aname and aname not in seen_alt_names:
+                        seen_alt_names.add(aname)
+                        dedup_alternatives.append(sa)
+
+        red_count = len([a for a in alerts if a["severity"] == "RED"])
+        yellow_count = len([a for a in alerts if a["severity"] == "YELLOW"])
+        overall_tier = "HARD_STOP" if red_count > 0 else ("SOFT_NUDGE" if yellow_count > 0 else "PASSIVE_INFO")
+
         return {
-            "is_safe": len([a for a in alerts if a["severity"] == "RED"]) == 0,
+            "is_safe": red_count == 0,
+            "canPrescribe": (red_count == 0),
+            "alertTier": overall_tier,
             "total_alerts": len(alerts),
-            "red_count": len([a for a in alerts if a["severity"] == "RED"]),
-            "yellow_count": len([a for a in alerts if a["severity"] == "YELLOW"]),
+            "red_count": red_count,
+            "yellow_count": yellow_count,
+            "alertTierCounts": {
+                "HARD_STOP": red_count,
+                "SOFT_NUDGE": yellow_count,
+                "PASSIVE_INFO": 0,
+            },
             "alerts": alerts,
+            "alternatives": dedup_alternatives,
+            "filteredUnsafeAlternatives": filtered_unsafe,
+            "inferredPatientParameters": profile.get("_inferred_parameters", {}),
         }
 
     def audit_preflight_safety(
@@ -278,4 +318,3 @@ class CdssEngine:
         Outputs structured evaluation boundaries and preflight checks aligned with RHN contract.
         """
         return self.safety_auditor.audit_preflight_safety(medications, patient_profile)
-

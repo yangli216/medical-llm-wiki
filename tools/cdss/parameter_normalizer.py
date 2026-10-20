@@ -2,13 +2,14 @@
 Clinical Parameter Normalization and Dynamic Inference Middleware.
 Standardizes heterogeneous patient clinical contexts (vitals, demographics, labs, diagnoses)
 and dynamically calculates derived parameters (e.g. eGFR via 2021 CKD-EPI, CrCl via Cockcroft-Gault,
-pediatric/elderly flags, gestational status, hepatic impairment) for production-grade CDSS evaluation.
+Child-Pugh hepatic grade, serum potassium / hyperkalemia flags, pediatric/elderly flags,
+gestational status) for production-grade CDSS evaluation.
 """
 
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 from tools.cdss.calculators import ClinicalCalculatorRegistry
 
 
@@ -19,12 +20,28 @@ class ClinicalParameterNormalizer:
     def normalize_patient(cls, raw: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Produces a rich, normalized patient profile dictionary with derived clinical flags.
-        Ensures strict robustness against missing, null, or heterogeneously typed values.
+        Ensures strict robustness against missing, null, or heterogeneously typed values,
+        and automatically unpacks nested HIS/EMR 'labs', 'vitals', and 'patient' structures.
         """
         if not raw:
             return cls._empty_profile()
 
         profile: Dict[str, Any] = dict(raw)
+        # Unpack nested EMR structures if present (e.g. {"patient": {...}, "labs": {...}, "vitals": {...}})
+        if isinstance(profile.get("patient"), dict):
+            for k, v in profile["patient"].items():
+                if k not in profile or profile[k] is None:
+                    profile[k] = v
+
+        labs = {}
+        for lab_key in ("labs", "labResults", "laboratory", "lab_results"):
+            if isinstance(profile.get(lab_key), dict):
+                labs.update(profile[lab_key])
+
+        for lk, lv in labs.items():
+            if lk not in profile or profile[lk] is None:
+                profile[lk] = lv
+
         inferred: Dict[str, Any] = {}
 
         # 1. Demographics & Life Stages
@@ -33,6 +50,7 @@ class ClinicalParameterNormalizer:
             profile["age"] = age_val
             profile["is_pediatric"] = age_val < 18
             profile["is_child_under_14"] = age_val < 14
+            profile["is_child_under_12"] = age_val < 12
             profile["is_child_under_8"] = age_val < 8
             profile["is_elderly"] = age_val >= 65
             profile["is_very_elderly"] = age_val >= 80
@@ -89,6 +107,7 @@ class ClinicalParameterNormalizer:
             or profile.get("cr")
         )
         egfr_existing = cls._parse_float(profile.get("egfr"))
+        crcl_existing = cls._parse_float(profile.get("crcl") or profile.get("crcl_ml_min"))
 
         if scr_val is not None and scr_val > 0 and age_val is not None:
             try:
@@ -100,47 +119,115 @@ class ClinicalParameterNormalizer:
                 egfr_res = ClinicalCalculatorRegistry.calc_egfr_ckd_epi(calc_params)
                 derived_egfr = egfr_res.get("eGFR")
                 if derived_egfr is not None:
-                    # In case user didn't provide explicit egfr, use derived
                     if egfr_existing is None:
                         profile["egfr"] = derived_egfr
                         inferred["derived_egfr"] = derived_egfr
                         inferred["derived_ckd_stage"] = egfr_res.get("ckdStage")
                     profile["derived_ckd_stage"] = egfr_res.get("ckdStage")
 
-                # If weight exists, calculate CrCl as well
                 if weight_val is not None and weight_val > 0:
                     calc_params["weight"] = weight_val
                     cg_res = ClinicalCalculatorRegistry.calc_cockcroft_gault(calc_params)
-                    profile["crcl"] = cg_res.get("crcl")
+                    if crcl_existing is None:
+                        profile["crcl"] = cg_res.get("crcl")
                     inferred["derived_crcl"] = cg_res.get("crcl")
             except Exception as e:
                 profile["_renal_calc_error"] = str(e)
         elif egfr_existing is not None:
             profile["egfr"] = egfr_existing
 
-        # Set standard eGFR thresholds
+        if crcl_existing is not None:
+            profile["crcl"] = crcl_existing
+
+        # Set standard eGFR / CrCl thresholds
         curr_egfr = cls._parse_float(profile.get("egfr"))
         if curr_egfr is not None:
+            profile["egfr_lt_15"] = curr_egfr < 15.0
+            profile["egfr_lt_20"] = curr_egfr < 20.0
             profile["egfr_lt_30"] = curr_egfr < 30.0
             profile["egfr_lt_35"] = curr_egfr < 35.0
             profile["egfr_lt_45"] = curr_egfr < 45.0
             profile["egfr_lt_60"] = curr_egfr < 60.0
 
-        # 4. Hepatic Parameters
+        # 4. Hepatic Parameters & Dynamic Child-Pugh Inference
         alt_val = cls._parse_float(profile.get("alt") or profile.get("alanine_aminotransferase"))
         ast_val = cls._parse_float(profile.get("ast") or profile.get("aspartate_aminotransferase"))
-        tbil_val = cls._parse_float(profile.get("tbil") or profile.get("total_bilirubin"))
+        tbil_val = cls._parse_float(profile.get("tbil") or profile.get("total_bilirubin") or profile.get("bilirubin"))
+        alb_val = cls._parse_float(profile.get("albumin") or profile.get("alb"))
+        inr_val = cls._parse_float(profile.get("inr"))
 
-        if (alt_val is not None and alt_val >= 120.0) or (ast_val is not None and ast_val >= 120.0):
+        if alt_val is not None:
+            profile["alt"] = alt_val
+            if alt_val >= 120.0:
+                profile["alt_above_3x"] = True
+        if ast_val is not None:
+            profile["ast"] = ast_val
+            if ast_val >= 120.0:
+                profile["ast_above_3x"] = True
+
+        if profile.get("alt_above_3x") or profile.get("ast_above_3x"):
             profile["alt_above_3x"] = True
             profile["severe_liver_injury"] = True
             inferred["severe_liver_injury"] = True
 
-        # 5. Vitals & Blood Pressure
+        # Dynamic Child-Pugh Grade inference
+        cp_grade_raw = str(profile.get("child_pugh") or profile.get("child_pugh_grade") or "").strip().upper()
+        if cp_grade_raw in ("A", "B", "C", "CHILD-PUGH A", "CHILD-PUGH B", "CHILD-PUGH C"):
+            grade_letter = cp_grade_raw[-1]
+            profile["child_pugh_grade"] = grade_letter
+        elif any(x is not None for x in (tbil_val, alb_val, inr_val)) or profile.get("ascites") or profile.get("encephalopathy"):
+            try:
+                cp_res = ClinicalCalculatorRegistry.calc_child_pugh({
+                    "bili": tbil_val if tbil_val is not None else 15.0,
+                    "alb": alb_val if alb_val is not None else 38.0,
+                    "inr": inr_val if inr_val is not None else 1.1,
+                    "ascites": profile.get("ascites", "none"),
+                    "encephalopathy": profile.get("encephalopathy", 0),
+                })
+                cp_g = str(cp_res.get("grade", "A")).replace("级", "").strip().upper()
+                profile["child_pugh_grade"] = cp_g
+                profile["child_pugh_score"] = cp_res.get("score")
+                inferred["derived_child_pugh_grade"] = cp_g
+                inferred["derived_child_pugh_score"] = cp_res.get("score")
+                if cp_g in ("B", "C"):
+                    profile["severe_liver_injury"] = True
+            except Exception:
+                pass
+        elif any(k in diagnoses_text for k in ["child-pugh c", "child c", "肝功能c级", "失代偿期肝硬化", "肝衰竭"]):
+            profile["child_pugh_grade"] = "C"
+            profile["severe_liver_injury"] = True
+            inferred["derived_child_pugh_grade"] = "C"
+        elif any(k in diagnoses_text for k in ["child-pugh b", "child b", "肝功能b级"]):
+            profile["child_pugh_grade"] = "B"
+            profile["severe_liver_injury"] = True
+            inferred["derived_child_pugh_grade"] = "B"
+
+        # 5. Serum Potassium (Electrolyte) Inference
+        k_val = cls._parse_float(
+            profile.get("serum_k")
+            or profile.get("potassium")
+            or profile.get("k")
+            or profile.get("blood_potassium")
+        )
+        if k_val is not None and k_val > 0:
+            profile["serum_k"] = k_val
+            if k_val >= 5.0:
+                profile["has_hyperkalemia"] = True
+                inferred["derived_hyperkalemia"] = True
+                inferred["serum_k_mmol_l"] = k_val
+            if k_val >= 5.5:
+                profile["severe_hyperkalemia"] = True
+            elif k_val < 3.5:
+                profile["has_hypokalemia"] = True
+                inferred["derived_hypokalemia"] = True
+
+        # 6. Vitals & Blood Pressure
         vitals = profile.get("vitals") if isinstance(profile.get("vitals"), dict) else {}
         sbp_val = cls._parse_float(profile.get("sbp") or vitals.get("sbp") or profile.get("systolic_bp"))
         dbp_val = cls._parse_float(profile.get("dbp") or vitals.get("dbp") or profile.get("diastolic_bp"))
         hr_val = cls._parse_float(profile.get("hr") or vitals.get("hr") or profile.get("heart_rate") or vitals.get("heart_rate"))
+        rr_val = cls._parse_float(profile.get("rr") or vitals.get("rr") or profile.get("respiratory_rate"))
+        temp_val = cls._parse_float(profile.get("temp") or vitals.get("temp") or profile.get("temperature"))
 
         if sbp_val is not None:
             profile["sbp"] = sbp_val
@@ -164,24 +251,34 @@ class ClinicalParameterNormalizer:
                 profile["bradycardia"] = True
             elif hr_val > 100:
                 profile["tachycardia"] = True
+        if rr_val is not None:
+            profile["rr"] = rr_val
+        if temp_val is not None:
+            profile["temp"] = temp_val
 
-        # 6. Structured Allergies Normalization
+        # 7. Structured Allergies Normalization
         allergies_list = cls._normalize_string_list(profile.get("allergies") or profile.get("allergy"))
         profile["normalized_allergies"] = allergies_list
-        profile["has_penicillin_allergy"] = any(k in " ".join(allergies_list).lower() for k in ["青霉素", "阿莫西林", "penicillin"])
-        profile["has_sulfa_allergy"] = any(k in " ".join(allergies_list).lower() for k in ["磺胺", "磺胺嘧啶", "sulfonamide"])
-        profile["has_cephalosporin_allergy"] = any(k in " ".join(allergies_list).lower() for k in ["头孢", "先锋", "cephalosporin"])
+        allergy_joined = " ".join(allergies_list).lower()
+        profile["has_penicillin_allergy"] = any(k in allergy_joined for k in ["青霉素", "阿莫西林", "氨苄西林", "哌拉西林", "penicillin"])
+        if profile["has_penicillin_allergy"]:
+            profile["penicillin_allergy"] = True
+        profile["has_sulfa_allergy"] = any(k in allergy_joined for k in ["磺胺", "磺胺嘧啶", "复方新诺明", "sulfonamide"])
+        profile["has_cephalosporin_allergy"] = any(k in allergy_joined for k in ["头孢", "先锋", "cephalosporin"])
 
-        # 7. Diagnoses & Comorbidities Normalization
+        # 8. Diagnoses & Comorbidities Normalization
         diagnoses_list = cls._normalize_string_list(profile.get("diagnoses") or profile.get("conditions") or profile.get("diagnosis"))
+        if profile.get("has_hyperkalemia") and "高钾血症" not in diagnoses_list:
+            diagnoses_list.append("高钾血症")
         profile["normalized_diagnoses"] = diagnoses_list
         all_diag_text = (diagnoses_text + " " + " ".join(diagnoses_list)).lower()
 
         # Mark clinical domain flags
         profile["has_htn"] = any(k in all_diag_text for k in ["高血压", "原发性高血压", "hypertension", "i10"])
         profile["has_dm"] = any(k in all_diag_text for k in ["糖尿病", "2型糖尿病", "diabetes", "e11", "高血糖", "gdm"])
-        profile["has_cad"] = any(k in all_diag_text for k in ["冠心病", "心绞痛", "心肌梗死", "stemi", "cad", "i25"])
+        profile["has_cad"] = any(k in all_diag_text for k in ["冠心病", "心绞痛", "心肌梗死", "stemi", "cad", "i25", "心肌缺血", "支架"])
         profile["has_chf"] = any(k in all_diag_text for k in ["心力衰竭", "心衰", "chf", "hftef", "hfpef", "i50"])
+        profile["has_af"] = any(k in all_diag_text for k in ["心房颤动", "房颤", "af", "i48"])
         profile["has_asthma"] = any(k in all_diag_text for k in ["哮喘", "支气管哮喘", "asthma", "j45"])
         profile["has_copd"] = any(k in all_diag_text for k in ["慢阻肺", "慢性阻塞性肺疾病", "copd", "j44"])
         profile["has_gout"] = any(k in all_diag_text for k in ["痛风", "高尿酸", "痛风性关节炎", "gout", "m10"])
@@ -234,13 +331,11 @@ class ClinicalParameterNormalizer:
                 if isinstance(item, str):
                     res.append(item.strip())
                 elif isinstance(item, dict):
-                    # e.g. [{ name: "青霉素", code: "..." }]
                     name = item.get("name") or item.get("display") or item.get("title") or item.get("code")
                     if name:
                         res.append(str(name).strip())
             return res
         if isinstance(val, str):
-            # Split by comma or semicolon
             return [s.strip() for s in re.split(r"[,;，；、\n]+", val) if s.strip()]
         return [str(val).strip()]
 

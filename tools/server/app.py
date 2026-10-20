@@ -23,6 +23,7 @@ from tools.cdss.engine import CdssEngine
 from tools.cdss.drug_checker import DrugInsertRepository, DrugContraindicationAuditor
 from tools.cdss.evidence_chain import EvidenceChainEngine
 from tools.cdss.calculators import ClinicalCalculatorRegistry
+from tools.cdss.parameter_normalizer import ClinicalParameterNormalizer
 
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -575,14 +576,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="topbar-left" id="topbarTitle" style="display:flex;align-items:center;">
                 <span>📚</span> <span id="currentTitleText">主索引目录</span>
                 <div class="topbar-stats" id="topbarStats">
-                    <span class="stat-badge" onclick="switchNavTab('src')" title="点击查看所有国家权威指南">🏛️ 51 指南</span>
-                    <span class="stat-badge" onclick="loadPage('index')" title="点击查看高发疾病实体">🫀 48 疾病</span>
-                    <span class="stat-badge" onclick="loadPage('index')" title="点击查看门诊方案协议">📋 42 门诊协议</span>
+                    <span class="stat-badge" onclick="switchNavTab('src')" title="点击查看所有国家权威指南">🏛️ 61 指南</span>
+                    <span class="stat-badge" onclick="loadPage('index')" title="点击查看高发疾病实体">🫀 56 疾病</span>
+                    <span class="stat-badge" onclick="loadPage('index')" title="点击查看门诊方案协议">📋 50 门诊协议</span>
                     <span class="stat-badge" onclick="loadPage('index')" title="点击查看国家法定说明书">📖 140 说明书</span>
-                    <span class="stat-badge" onclick="loadPage('index')" title="点击查看临床安全规则">🛡️ 45 CDSS规则</span>
+                    <span class="stat-badge" onclick="openCdssSandboxModal()" title="点击打开诊中CDSS审方与量表沙盘">🛡️ 108 双层安全规则</span>
                 </div>
             </div>
             <div class="topbar-actions">
+                <button onclick="openCdssSandboxModal()" style="background:rgba(239,68,68,0.22);border:1px solid #ef4444;color:#fca5a5;">🩺 诊中CDSS沙盘</button>
                 <button onclick="openImportModal()" style="background:rgba(5,150,105,0.25);border:1px solid #059669;color:#34d399;">➕ 导入标准</button>
                 <button onclick="toggleView('doc')" id="btnDocView" style="background:#0284c7;color:#fff;">📄 阅读文档</button>
                 <button onclick="toggleView('graph')" id="btnGraphView">🕸️ 知识图谱</button>
@@ -1301,6 +1303,181 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
     </div>
 
+
+    <!-- Modal for In-Consultation CDSS Live Sandbox (P3.3) -->
+    <div class="modal-overlay" id="cdssSandboxModal">
+        <div class="modal-box" style="max-width: 820px;">
+            <div class="modal-header">
+                <h2><span>🩺</span> 医院诊中 CDSS 实时审方、一键平替与零手动量表沙盘 (P3.3)</h2>
+                <button class="modal-close" onclick="closeCdssSandboxModal()">&times;</button>
+            </div>
+            <div style="font-size:0.78rem;color:#94a3b8;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+                <span>联合运行 45 条宏观规则 + 63 条说明书禁忌 + 中成药成分拆解 + 死循环平替过滤 + EMR 量表自动推导：</span>
+                <div style="display:flex;gap:6px;">
+                    <button type="button" class="btn-demo" onclick="fillCdssDemoCase(1)">案例1: 房颤+高钾+肾损</button>
+                    <button type="button" class="btn-demo" onclick="fillCdssDemoCase(2)">案例2: 骨关节炎+消化道出血死循环过滤</button>
+                    <button type="button" class="btn-demo" onclick="fillCdssDemoCase(3)">案例3: 中成药麻黄碱重叠</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>患者年龄 / 性别 / 体重(kg)</label>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                        <input type="number" id="cdssAge" value="76" placeholder="年龄">
+                        <select id="cdssGender"><option value="女">女</option><option value="男">男</option></select>
+                        <input type="number" id="cdssWeight" value="60" placeholder="体重kg">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>化验与体征: 血肌酐Scr(μmol/L) / 血钾K+(mmol/L) / 收缩压SBP</label>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                        <input type="number" step="0.1" id="cdssScr" value="210" placeholder="Scr">
+                        <input type="number" step="0.1" id="cdssK" value="5.6" placeholder="血钾K+">
+                        <input type="number" id="cdssSbp" value="168" placeholder="收缩压">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>主诉 / 临床诊断 / 既往史 (自动提取量表参数与禁忌)</label>
+                    <input type="text" id="cdssHistory" value="心房颤动，高血压病史10年，2型糖尿病5年，否认心力衰竭及卒中">
+                </div>
+                <div class="form-group">
+                    <label>过敏史 (逗号分隔)</label>
+                    <input type="text" id="cdssAllergy" value="" placeholder="例如：青霉素, 磺胺">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>拟开处方药品清单 (逗号或换行分隔)</label>
+                <input type="text" id="cdssMeds" value="盐酸二甲双胍片 0.5g bid, 螺内酯片 20mg qd, 达比加群酯胶囊 150mg bid">
+            </div>
+            <div class="modal-actions" style="margin-top:8px;padding-top:10px;">
+                <button type="button" class="btn-submit" onclick="runCdssSandboxAudit()">⚡ 执行诊中 CDSS 预检与量表自动评估</button>
+            </div>
+            <div id="cdssSandboxResult" style="margin-top:14px;font-size:0.82rem;line-height:1.5;"></div>
+        </div>
+    </div>
+    <script>
+        function openCdssSandboxModal() {
+            document.getElementById('cdssSandboxModal').classList.add('active');
+            runCdssSandboxAudit();
+        }
+        function closeCdssSandboxModal() {
+            document.getElementById('cdssSandboxModal').classList.remove('active');
+        }
+        function fillCdssDemoCase(n) {
+            if (n === 1) {
+                document.getElementById('cdssAge').value = 76;
+                document.getElementById('cdssGender').value = '女';
+                document.getElementById('cdssWeight').value = 60;
+                document.getElementById('cdssScr').value = 210;
+                document.getElementById('cdssK').value = 5.6;
+                document.getElementById('cdssSbp').value = 168;
+                document.getElementById('cdssHistory').value = '心房颤动，高血压病史10年，2型糖尿病5年，否认心力衰竭及卒中';
+                document.getElementById('cdssAllergy').value = '';
+                document.getElementById('cdssMeds').value = '盐酸二甲双胍片 0.5g bid, 螺内酯片 20mg qd, 达比加群酯胶囊 150mg bid';
+            } else if (n === 2) {
+                document.getElementById('cdssAge').value = 72;
+                document.getElementById('cdssGender').value = '女';
+                document.getElementById('cdssWeight').value = 58;
+                document.getElementById('cdssScr').value = 220;
+                document.getElementById('cdssK').value = 4.2;
+                document.getElementById('cdssSbp').value = 135;
+                document.getElementById('cdssHistory').value = '双膝骨关节炎，活动性消化道大出血';
+                document.getElementById('cdssAllergy').value = '磺胺';
+                document.getElementById('cdssMeds').value = '地塞米松片 0.75mg qd';
+            } else if (n === 3) {
+                document.getElementById('cdssAge').value = 62;
+                document.getElementById('cdssGender').value = '男';
+                document.getElementById('cdssWeight').value = 72;
+                document.getElementById('cdssScr').value = 88;
+                document.getElementById('cdssK').value = 4.1;
+                document.getElementById('cdssSbp').value = 172;
+                document.getElementById('cdssHistory').value = '急性上呼吸道感染，原发性高血压，心房颤动';
+                document.getElementById('cdssAllergy').value = '';
+                document.getElementById('cdssMeds').value = '连花清瘟胶囊 1.4g tid, 急支糖浆 20ml tid';
+            }
+            runCdssSandboxAudit();
+        }
+        async function runCdssSandboxAudit() {
+            const box = document.getElementById('cdssSandboxResult');
+            box.innerHTML = '<div style="color:#38bdf8;">⏳ 正在执行 108 条双层安全规则核查与零手动输入量表评估...</div>';
+            const patient = {
+                age: parseInt(document.getElementById('cdssAge').value) || 60,
+                gender: document.getElementById('cdssGender').value,
+                weight: parseFloat(document.getElementById('cdssWeight').value) || 65,
+                scr: parseFloat(document.getElementById('cdssScr').value) || null,
+                k: parseFloat(document.getElementById('cdssK').value) || null,
+                sbp: parseFloat(document.getElementById('cdssSbp').value) || null,
+                history: document.getElementById('cdssHistory').value,
+                diagnosis: document.getElementById('cdssHistory').value,
+                allergies: document.getElementById('cdssAllergy').value
+            };
+            const meds = document.getElementById('cdssMeds').value.split(/[,，\n]+/).map(s => s.trim()).filter(Boolean);
+            try {
+                const [preflightResp, calcResp] = await Promise.all([
+                    fetch('/api/cdss/preflight-safety', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({medications: meds, patient: patient})
+                    }),
+                    fetch('/api/cdss/calculators/recommend', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({patient: patient})
+                    })
+                ]);
+                const pf = await preflightResp.json();
+                const calcsData = await calcResp.json();
+                const calcs = calcsData.calculators || [];
+
+                const tierColor = pf.alertTier === 'HARD_STOP' ? '#ef4444' : (pf.alertTier === 'SOFT_NUDGE' ? '#f59e0b' : '#10b981');
+                let html = `<div style="border:1px solid ${tierColor};background:rgba(15,23,42,0.9);padding:12px;border-radius:8px;margin-bottom:10px;">
+                    <div style="font-weight:700;color:${tierColor};font-size:0.92rem;">[${pf.alertTier}] ${pf.summary}</div>
+                    <div style="color:#94a3b8;font-size:0.76rem;margin-top:4px;">动态生理推导: <code>${JSON.stringify(pf.inferredPatientParameters || {})}</code></div>
+                </div>`;
+
+                if (pf.allAlerts && pf.allAlerts.length > 0) {
+                    html += '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;">';
+                    for (const al of pf.allAlerts) {
+                        const c = al.severity === 'RED' ? '#f87171' : '#fbbf24';
+                        const altsHtml = (al.alternatives || []).map(a =>
+                            `<span style="display:inline-block;background:rgba(16,185,129,0.18);border:1px solid #10b981;color:#34d399;padding:2px 8px;border-radius:4px;margin-right:6px;margin-top:4px;">✅ 平替: <b>${a.name}</b> (${a.specification || ''}) - ${a.rationale} [${a.sourceGuideline || ''}]</span>`
+                        ).join('');
+                        const unsafeHtml = (al.filteredUnsafeAlternatives || []).map(u =>
+                            `<div style="color:#f87171;font-size:0.74rem;margin-top:3px;">🛡️ 死循环过滤器已剔除禁忌备选药: ${u.filterReason}</div>`
+                        ).join('');
+                        html += `<div style="background:rgba(30,41,59,0.75);border-left:4px solid ${c};padding:8px 12px;border-radius:4px;">
+                            <div style="color:${c};font-weight:600;">[${al.alertTier || al.severity}] ${al.title} <span style="font-size:0.72rem;color:#38bdf8;">(GRADE ${al.grade || '1A'})</span></div>
+                            <div style="color:#cbd5e1;font-size:0.78rem;margin-top:2px;">${al.message}</div>
+                            ${altsHtml}
+                            ${unsafeHtml}
+                        </div>`;
+                    }
+                    html += '</div>';
+                }
+
+                if (calcs.length > 0) {
+                    html += '<div style="border-top:1px solid #334155;padding-top:8px;"><div style="color:#38bdf8;font-weight:600;margin-bottom:6px;">🧮 诊中零手动输入自动触发量表 (' + calcs.length + ' 项):</div>';
+                    for (const c of calcs) {
+                        const cname = c.calculator || '临床量表';
+                        const scoreStr = c.score !== undefined ? `得分: <b>${c.score}</b> (${c.riskLevel || c.riskStratum || c.grade || ''})` : (c.egfr ? `eGFR: <b>${c.egfr.eGFR}</b> mL/min (${c.egfr.ckdStage})` : '');
+                        const followUps = (c.emrHydration && c.emrHydration.minimalFollowUpQuestions || []).map(q => q.label).join('；');
+                        html += `<div style="background:rgba(2,132,199,0.12);border:1px solid rgba(56,189,248,0.3);padding:6px 10px;border-radius:6px;margin-bottom:6px;">
+                            <div><b>${cname}</b> — ${scoreStr}</div>
+                            <div style="color:#94a3b8;font-size:0.76rem;">${c.recommendation || c.triageRecommendation || ''}</div>
+                            ${followUps ? `<div style="color:#fbbf24;font-size:0.74rem;margin-top:2px;">❓ 最小化待追问项: ${followUps}</div>` : ''}
+                        </div>`;
+                    }
+                    html += '</div>';
+                }
+                box.innerHTML = html;
+            } catch (e) {
+                box.innerHTML = `<div style="color:#ef4444;">请求失败: ${e.message}</div>`;
+            }
+        }
+    </script>
+
 </body>
 </html>
 """
@@ -1339,9 +1516,13 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
             self._send_json({
                 "status": "UP",
                 "version": "1.9.0",
+                "p3Version": "3.3.0",
                 "service": "Medical LLM Wiki & CDSS Intelligence Gateway",
                 "protocols": len(self.cdss.repo.list_all()),
                 "rules": 45,
+                "monographRules": 63,
+                "combinedSafetyRules": 108,
+                "calculators": 12,
                 "drug_inserts": len(self.drug_repo.list_all()),
                 "guidelines": len(self.collector.list_sources()),
                 "symptoms": symptoms_count,
@@ -1593,14 +1774,34 @@ class WikiHTTPHandler(BaseHTTPRequestHandler):
         elif path in ("/api/cdss/calculate", "/api/calculator"):
             calc_name = payload.get("calculator") or payload.get("name") or ""
             params = payload.get("params") or payload.get("parameters") or payload
+            use_emr = bool(payload.get("hydrate") or payload.get("emr") or "chiefComplaint" in params or "history" in params or "labs" in params)
             try:
-                res = ClinicalCalculatorRegistry.calculate(calc_name, params)
-                self._send_json({"success": True, "data": res})
+                if use_emr:
+                    res = ClinicalCalculatorRegistry.calculate_from_emr(calc_name, params)
+                else:
+                    res = ClinicalCalculatorRegistry.calculate(calc_name, params)
+                self._send_json({"success": True, "data": res, "result": res, "calculation": res})
+            except Exception as e:
+                self._send_json({"success": False, "error": str(e)}, status=400)
+        elif path in ("/api/cdss/calculators/hydrate", "/api/cdss/calculate-from-emr"):
+            calc_name = payload.get("calculator") or payload.get("name") or ""
+            emr_ctx = payload.get("patient") or payload.get("patientContext") or payload.get("emrContext") or payload.get("params") or payload
+            try:
+                res = ClinicalCalculatorRegistry.calculate_from_emr(calc_name, emr_ctx)
+                self._send_json({"success": True, "data": res, "result": res, "calculation": res})
+            except Exception as e:
+                self._send_json({"success": False, "error": str(e)}, status=400)
+        elif path in ("/api/cdss/calculators/recommend", "/api/cdss/recommend-calculators"):
+            emr_ctx = payload.get("patient") or payload.get("patientContext") or payload.get("emrContext") or payload
+            try:
+                recs = ClinicalCalculatorRegistry.recommend_calculators_for_encounter(emr_ctx)
+                self._send_json({"success": True, "total": len(recs), "count": len(recs), "calculators": recs})
             except Exception as e:
                 self._send_json({"success": False, "error": str(e)}, status=400)
         elif path == "/api/cdss/compile-rhn-plan":
             query = payload.get("input") or payload.get("naturalInput") or payload.get("protocolId") or ""
-            res = self.cdss.compile_rhn_plan(query)
+            patient_ctx = payload.get("patient") or payload.get("patientContext")
+            res = self.cdss.compile_rhn_plan(query, patient_context=patient_ctx)
             status_code = 200 if res.get("success") else 404
             self._send_json(res, status=status_code)
         elif path == "/api/cdss/recommend":
@@ -2196,36 +2397,70 @@ status: verified
             prot = self.cdss.repo.get(res["protocolId"]) if (res and res.get("success")) else None
 
             patient_profile = dict(patient)
+            # Merge clinical draft vitals and text into patient_profile for dynamic inference
+            if draft.get("systolic") is not None and "sbp" not in patient_profile:
+                patient_profile["sbp"] = draft.get("systolic")
+            if draft.get("diastolic") is not None and "dbp" not in patient_profile:
+                patient_profile["dbp"] = draft.get("diastolic")
+            if draft.get("pulseRate") is not None and "hr" not in patient_profile:
+                patient_profile["hr"] = draft.get("pulseRate")
+            if draft.get("respiratoryRate") is not None and "rr" not in patient_profile:
+                patient_profile["rr"] = draft.get("respiratoryRate")
+            if draft.get("temperature") is not None and "temp" not in patient_profile:
+                patient_profile["temp"] = draft.get("temperature")
+            if draft.get("weightKg") is not None and "weight" not in patient_profile:
+                patient_profile["weight"] = draft.get("weightKg")
+            for tk in ("chiefComplaint", "presentIllness", "medicalHistory", "physicalExam"):
+                if draft.get(tk) and not patient_profile.get(tk):
+                    patient_profile[tk] = draft.get(tk)
+            if not patient_profile.get("diagnosis") and kw:
+                patient_profile["diagnosis"] = kw
+
             if allergies:
                 patient_profile["allergies"] = " ".join([
-                    a.get("substanceDisplay", "") for a in allergies if isinstance(a, dict)
+                    a.get("substanceDisplay", "") if isinstance(a, dict) else str(a) for a in allergies
                 ])
-            # 1. Protocol-level prescription audit
+
+            # 1. Protocol & TCM Component prescription audit (45 macro rules + TCM decomposition)
             audit_res = self.cdss.audit_prescription(medications_to_audit, patient_profile)
             safety_alerts = []
             seen_alert_titles = set()
             for a in audit_res.get("alerts", []):
                 safety_alerts.append({
                     "level": "CRITICAL" if a.get("severity") == "RED" else "WARNING",
+                    "alertTier": a.get("alertTier", "HARD_STOP" if a.get("severity") == "RED" else "SOFT_NUDGE"),
+                    "grade": a.get("grade", "1A"),
                     "title": a.get("title", "处方安全预警"),
                     "detail": a.get("message", ""),
                     "alternatives": a.get("alternatives", []),
+                    "filteredUnsafeAlternatives": a.get("filteredUnsafeAlternatives", []),
                 })
                 seen_alert_titles.add(a.get("title"))
 
-            # 2. Monograph-level CDSS contraindication & DDI audit (covering 100 essential drugs)
+            # 2. Monograph-level CDSS contraindication & DDI audit (63 micro rules across 140 inserts)
             if medications_to_audit:
-                drug_audit = self.drug_auditor.audit_prescription(medications_to_audit, patient_profile)
+                norm_p = ClinicalParameterNormalizer.normalize_patient(patient_profile)
+                drug_audit = self.drug_auditor.audit_prescription(medications_to_audit, norm_p)
                 for da in drug_audit.get("alerts", []):
                     title = da.get("title", "药品说明书安全阻断")
                     if title not in seen_alert_titles:
                         safety_alerts.append({
                             "level": "CRITICAL" if da.get("level") == "BLOCK" else "WARNING",
+                            "alertTier": da.get("alertTier", "HARD_STOP" if da.get("level") == "BLOCK" else "SOFT_NUDGE"),
+                            "grade": da.get("grade", "1A" if da.get("level") == "BLOCK" else "1B"),
                             "title": title,
                             "detail": f"{da.get('reason', '')} (依据：{da.get('evidence', '')})",
                             "alternatives": da.get("alternatives", []),
                         })
                         seen_alert_titles.add(title)
+
+            # 3. Zero-manual-input Encounter Clinical Calculators & Minimal Follow-up Prompts
+            encounter_calculators = ClinicalCalculatorRegistry.recommend_calculators_for_encounter(patient_profile)
+            calc_follow_ups = []
+            for ec in encounter_calculators:
+                cname = ec.get("calculator", "量表")
+                for fq in ec.get("emrHydration", {}).get("minimalFollowUpQuestions", [])[:2]:
+                    calc_follow_ups.append(f"【{cname} 追问】请确认是否存在：{fq.get('label')}")
 
             if prot:
                 rec_draft = {
@@ -2258,8 +2493,10 @@ status: verified
                     "recordDraft": rec_draft,
                     "diagnosisCandidates": diag_candidates,
                     "differentialDiagnoses": [],
-                    "missingInformation": [],
+                    "missingInformation": calc_follow_ups,
                     "safetyAlerts": safety_alerts,
+                    "recommendedCalculators": encounter_calculators,
+                    "inferredPatientParameters": audit_res.get("inferredPatientParameters", {}),
                     "recommendedPlans": [{
                         "templateId": 1,
                         "name": prot.title,
@@ -2278,6 +2515,8 @@ status: verified
                     "differentialDiagnoses": [],
                     "missingInformation": ["请补充患者主要就诊不适症状及持续时间"],
                     "safetyAlerts": safety_alerts,
+                    "alertTierCounts": audit_res.get("alertTierCounts", {}),
+                    "recommendedCalculators": ClinicalCalculatorRegistry.recommend_calculators_for_encounter({**patient_profile, "chiefComplaint": str(draft.get("chiefComplaint") or question or ""), "presentIllness": str(draft.get("presentIllness") or ""), "diagnosis": str(question or "")}),
                     "recommendedPlans": [],
                     "treatmentRecommendations": [],
                     "disclaimer": "本临床建议仅供注册医师参考核验。",
