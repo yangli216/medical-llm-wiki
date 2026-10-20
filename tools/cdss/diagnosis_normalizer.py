@@ -245,8 +245,8 @@ class ClinicalDiagnosisNormalizer:
                         if "阑尾炎" not in core_stems:
                             core_stems.append("阑尾炎")
 
-            # If compound disease name (e.g. 阑尾炎 -> 阑尾)
-            for suffix in ["炎", "病", "症", "综合征", "结石", "绞痛", "麻痹", "溃疡"]:
+            # If compound disease name (e.g. 阑尾炎 -> 阑尾, 上呼吸道疾病 -> 上呼吸道)
+            for suffix in sorted(["综合征", "综合症", "疾病", "感染", "炎症", "炎", "病", "症", "结石", "绞痛", "麻痹", "溃疡"], key=len, reverse=True):
                 if core_candidate.endswith(suffix) and len(core_candidate) > len(suffix) + 1:
                     stem_root = core_candidate[:-len(suffix)]
                     # Strip any trailing conjunctions or modifiers from stem_root

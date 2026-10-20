@@ -158,6 +158,9 @@ class KnowledgeApiMixin:
             lookup_targets.append(norm.canonical_name)
         if norm.clean and norm.clean not in lookup_targets:
             lookup_targets.append(norm.clean)
+        for stem in norm.core_stems:
+            if stem and stem not in lookup_targets:
+                lookup_targets.append(stem)
 
         for base in list(lookup_targets):
             # 1. Strip brackets prefix (e.g. [检验], 【放射】)
@@ -230,6 +233,12 @@ class KnowledgeApiMixin:
         if doc_type in ("", "wiki", "concept", "source", "guideline", "test", "exam", "examination", "lab", "imaging"):
             search_query = norm.canonical_name or target
             search_hits = self.searcher.search(search_query, limit=5)
+            if not search_hits and norm.core_stems:
+                for stem in norm.core_stems:
+                    if len(stem) >= 2:
+                        search_hits = self.searcher.search(stem, limit=5)
+                        if search_hits:
+                            break
             compatible_page = None
             for hit in search_hits:
                 hit_page = self.graph.pages.get(hit["id"])
