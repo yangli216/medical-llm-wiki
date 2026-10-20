@@ -13,6 +13,10 @@ from typing import Any, Dict, List, Optional, Set
 
 # Common administrative noise suffixes in Chinese ICD-10 / hospital electronic medical records
 ICD_ADMIN_NOISE_PATTERNS = [
+    r"^[，,、\s]*(?:未特指的|未特指|其他特指的|其他特指|特指的|特指|某种|某些)",
+    r"[，,、\s]*(?:其他和未特指|其他及未特指|其他与未特指|其他|未特指|不可归类在他处者|伴并发症|无并发症|部分|特指的|特指|急性发作|慢性加重)[，,、\s]*$",
+    r"^[（\(](?:其他和未特指|其他及未特指|其他|未特指)[）\)]",
+    r"[（\(](?:其他和未特指|其他及未特指|其他|未特指)[）\)]",
     r"，其他和未特指",
     r"，其他及未特指",
     r"，其他与未特指",
@@ -210,10 +214,15 @@ class ClinicalDiagnosisNormalizer:
         for mod in sorted(GENERIC_CLINICAL_MODIFIERS, key=len, reverse=True):
             if core_candidate.startswith(mod) and len(core_candidate) > len(mod) + 1:
                 core_candidate = core_candidate[len(mod):].strip()
+                core_candidate = re.sub(r"^[的的之]+", "", core_candidate).strip()
+
+        core_candidate = re.sub(r"^[的的之]+", "", core_candidate).strip()
 
         core_stems: List[str] = []
         if core_candidate and core_candidate not in GENERIC_CLINICAL_MODIFIERS:
-            core_stems.append(core_candidate)
+            clean_stem = re.sub(r"^[的的之]+", "", core_candidate).strip()
+            if clean_stem and clean_stem not in GENERIC_CLINICAL_MODIFIERS:
+                core_stems.append(clean_stem)
 
             # Check for conjunction patterns: 伴, 伴发, 伴有, 合并
             m_conj = re.search(r"^(.*?)(伴发|伴有|伴|合并)(.*)$", core_candidate)

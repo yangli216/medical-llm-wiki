@@ -248,8 +248,12 @@ class KnowledgeApiMixin:
             prot = self.cdss.repo.get(target)
             if not prot and raw_icd:
                 prot = self.cdss.repo.get_by_icd(raw_icd)
-            if not prot and raw_name and doc_type in ("protocol", "guideline"):
-                matches = self.cdss.search_protocols(raw_name, limit=1)
+            if not prot:
+                prot = self.cdss.repo.find_protocol(target) or self.cdss.repo.find_protocol(norm.canonical_name)
+            if not prot and (raw_name or norm.canonical_name) and doc_type in ("protocol", "guideline"):
+                matches = self.cdss.search_protocols(raw_name or norm.canonical_name, limit=1)
+                if not matches and norm.canonical_name and norm.canonical_name != raw_name:
+                    matches = self.cdss.search_protocols(norm.canonical_name, limit=1)
                 if matches:
                     prot = self.cdss.repo.get(matches[0]["protocolId"])
             if prot:
