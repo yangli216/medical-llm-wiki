@@ -105,6 +105,17 @@ class NormalizedDiagnosis:
         all_candidate_texts = [target_title_clean] + aliases + diagnoses
         candidate_blob = " ".join(all_candidate_texts).lower()
 
+        # Demographic contradiction check (e.g. 儿童/小儿 vs 成人)
+        is_ped = any(m in self.generic_modifiers for m in ("儿童", "小儿", "婴儿", "新生儿"))
+        cand_is_adult = "成人" in target_title_clean
+        if is_ped and cand_is_adult:
+            return False
+
+        is_adult = "成人" in self.generic_modifiers
+        cand_is_ped = any(m in target_title_clean for m in ("儿童", "小儿", "婴儿", "新生儿"))
+        if is_adult and cand_is_ped:
+            return False
+
         # 1. Exact ICD-10 or 3-character category match
         if self.icd_code and target_icd:
             cand_icd = target_icd.strip().upper()

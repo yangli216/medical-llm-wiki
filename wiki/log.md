@@ -11,6 +11,30 @@ status: draft
 
 本文档是本项目知识库的时间线操作流水记录，严格遵循 Karpathy LLM Wiki 规范，记录所有文献 Ingest、知识编译、实体更新、质检 Lint 与综合专题沉淀事件。
 
+## [2026-10-21] clinical-knowledge-round-2 | 成人支气管哮喘阶梯控制与SMART策略知识库落库 (中华医学会2020年版指南)
+
+- **动作类型**: 权威临床知识点深度考证与系统落库（第二轮）
+- **循证来源依据**:
+  - 中华医学会呼吸病学分会哮喘学组《支气管哮喘防治指南（2020年版）》（《中华结核和呼吸杂志》2020年第43卷第12期，DOI: `10.3760/cma.j.cn112147-20200618-00721`）。
+- **核心完成项**:
+  1. **权威来源登记与提取文本归档**:
+     - 在 `raw/metadata.json` 注册新来源 `SRC-CMA-RESP-2020-01`，绑定官方期刊刊期、DOI、SHA-256 与版本时效；
+     - 整理归档核心章节条款至 `raw/docs/SRC-CMA-RESP-2020-01.md`，深度编译研读导读页 `wiki/sources/SRC-CMA-RESP-2020-01.md`（包含 5 条 I 类 A 级推荐条款）。
+  2. **核心实体与阶梯诊疗标准精编**:
+     - 新建核心疾病实体 `wiki/entities/diseases/支气管哮喘.md`（ICD-10: `J45.9`），全面阐述气道慢性微炎症病理机制、肺功能可变气流受限标准（支气管舒张试验阳性：$\text{FEV}_1$增加$\ge 12\%$且绝对值$\ge 200\text{ mL}$；PEF昼夜变异率$\ge 20\%$）、发作期哮鸣音特征及长期阶梯控制；
+     - 新建概念规范 `wiki/concepts/支气管哮喘五级阶梯治疗与控制水平评估.md`，规范五级阶梯用药矩阵（第1～2级按需低剂量ICS-福莫特罗，第3～4级ICS-LABA维持缓解SMART策略，第5级附加靶向生物制剂）、ACT哮喘控制测试评分标准（25分完全控制、20～24分良好控制、<20分未控制）与安全降级时机（稳定完全控制$\ge 3$个月，剂量递减25%～50%）；
+     - 新建用药实体 `wiki/entities/drugs/哮喘吸入制剂与抗炎平喘药物.md`，详解ICS-LABA复合制剂、LTRA孟鲁司特钠机制、SMART单装置合一策略、都保/准纳器快速用力深吸气操作规范与吸后必须清水深部漱口吐出白念珠菌（鹅口疮）防护红线。
+  3. **门诊决策协议与 CDSS 安全拦截规则升级**:
+     - 编译落地第 52 套标准化门诊诊疗决策协议 `wiki/protocols/PROT-ASTHMA-052 门诊成人支气管哮喘阶梯控制与急性发作防范方案.md`，包含规范门诊病历范文、推荐医嘱集（FeNO测定、肺功能BDT、过敏原筛查、信必可都保、孟鲁司特钠）与三级拦截预警；
+     - 在 `rules/clinical_safety_rules.json` 扩增 `RULE-SAFETY-ASTHMA-NONSELECTIVE-BETA`（支气管哮喘患者绝对禁用普萘洛尔等非选择性$\beta$阻滞剂）；
+     - 在 `rules/monograph_rules.json` 扩增 `PROPRANOLOL_ASTHMA_CONTRAINDICATION`（盐酸普萘洛尔说明书禁忌：支气管哮喘绝对禁用）；
+     - 在 `rules/icd_crosswalk.json` 补齐 `J45`、`J45.0`、`J45.1` 等向 `J45.9` 的标准映射归约；
+     - 在 `tools/cdss/calculators.py` 扩建 `calc_act_score` 计算器与 `CALCULATOR_SCHEMA_SPECS`，实现门诊病历上下文智能推荐；
+     - 在 `tools/cdss/engine.py` 补充“哮喘”、“喘息”同义词映射。
+  4. **主索引与自动化测试保障**:
+     - 在 `wiki/index.md` 来源、疾病、药物、概念、协议各章节挂载新词条；
+     - 扩充测试套件 `tests/test_calculators.py` 与 `tests/test_diagnosis_matching.py`，全库体检 Lint 与自动化测试 100% 保持通过。
+
 ## [2026-10-21] clinical-knowledge-round-1 | 成人超重与肥胖症临床诊疗规范与阶梯减重知识库落库 (首部国家级指南2024年版)
 
 - **动作类型**: 权威临床知识点深度考证与系统落库（第一轮）

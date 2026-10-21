@@ -2554,6 +2554,68 @@
         "content_sha256": "",
         "evidence_refs": []
       }
+    },
+    {
+      "id": "RULE-SAFETY-ASTHMA-NONSELECTIVE-BETA",
+      "domain": "clinical",
+      "title": "支气管哮喘绝对禁用非选择性β受体阻滞剂",
+      "severity": "RED",
+      "message": "支气管哮喘患者严禁使用非选择性β受体阻滞剂（普萘洛尔、索他洛尔、噻吗洛尔等）！强力阻断气道平滑肌β2受体可诱发致死性急性支气管严重痉挛与窒息！",
+      "guideline": "《支气管哮喘防治指南（2020年版）》",
+      "conditions": {
+        "drugs_any": [
+          "普萘洛尔",
+          "盐酸普萘洛尔",
+          "索他洛尔",
+          "噻吗洛尔",
+          "吲哚洛尔"
+        ],
+        "diagnoses_any": [
+          "支气管哮喘",
+          "哮喘",
+          "变应性哮喘",
+          "咳嗽变异性哮喘"
+        ]
+      },
+      "alternatives": [
+        {
+          "name": "富马酸比索洛尔片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 2.5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "高选择性β1受体阻滞剂（β1:β2选择性达19.6倍），对呼吸道平滑肌阻断效应极低，心血管合并症必要时慎用",
+          "sourceGuideline": "SRC-CMA-RESP-2020-01"
+        },
+        {
+          "name": "布地奈德福莫特罗吸入粉雾剂(II)",
+          "specification": "160/4.5μg",
+          "orderDraft": {
+            "routeCode": "INH",
+            "frequencyCode": "BID",
+            "doseValue": 1,
+            "doseUnit": "吸",
+            "durationValue": 30
+          },
+          "rationale": "哮喘一线长期维持药物，强力抗炎并激动β2受体平喘",
+          "sourceGuideline": "SRC-CMA-RESP-2020-01"
+        }
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     }
   ]
 }

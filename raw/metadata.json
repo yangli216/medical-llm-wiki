@@ -2383,6 +2383,38 @@
         ],
         "note": "2024年10月国家卫健委办公厅正式印发首部国家级指南；未核验到更新版本。"
       }
+    },
+    {
+      "id": "SRC-CMA-RESP-2020-01",
+      "title": "支气管哮喘防治指南（2020年版）",
+      "authority": "中华医学会呼吸病学分会哮喘学组",
+      "publication": "中华结核和呼吸杂志, 2020, 43(12): 1023-1048",
+      "year": 2020,
+      "category": "呼吸系统",
+      "level": "中华医学会专科临床指南",
+      "file_path": "raw/docs/SRC-CMA-RESP-2020-01.md",
+      "key_scope": "中国成人支气管哮喘定义、发病机制、肺功能可逆气流受限标准（支气管舒张试验FEV1改善≥12%且绝对值≥200ml）、五级阶梯药物治疗、SMART单一吸入器策略、ACT控制评分、急性发作救治与禁忌拦截",
+      "status": "active",
+      "content_kind": "curated_summary",
+      "official_url": "https://rs.yiigle.com/cmaid/1271101",
+      "doi": "10.3760/cma.j.cn112147-20200618-00721",
+      "retrieved_at": "2026-10-21T08:00:00.000000+00:00",
+      "content_sha256": "f0779b49e35e6bacf869f86e04e3a52852e1cf5b69ba9589d15a3ea15ca6da57",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-21",
+        "status": "no_newer_verified",
+        "scope": "中华医学会呼吸病学分会哮喘学组系列指南；现行版为2020年修订版",
+        "search_queries": [
+          "\"支气管哮喘防治指南\" \"中华医学会\" \"2024\" site:yiigle.com"
+        ],
+        "evidence_urls": [
+          "https://rs.yiigle.com/cmaid/1271101"
+        ],
+        "note": "现行权威版本为2020年修订版，未核验到中华医学会呼吸分会更新版。"
+      }
     }
   ]
 }

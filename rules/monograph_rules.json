@@ -3271,6 +3271,52 @@
         "content_sha256": "",
         "evidence_refs": []
       }
+    },
+    {
+      "id": "PROPRANOLOL_ASTHMA_CONTRAINDICATION",
+      "domain": "monograph",
+      "target_drugs": [
+        "普萘洛尔",
+        "盐酸普萘洛尔片"
+      ],
+      "level": "BLOCK",
+      "title": "支气管哮喘绝对禁用普萘洛尔",
+      "reason": "说明书黑体【禁忌】明确列出！非选择性阻断气道平滑肌β2受体，可诱发支气管强烈痉挛收缩，导致急性严重哮喘发作甚至窒息致死！",
+      "evidence": "《国家药品监督管理局官方核准盐酸普萘洛尔片说明书》【禁忌】与《支气管哮喘防治指南（2020年版）》",
+      "conditions": {
+        "conditions_any": [
+          "支气管哮喘",
+          "哮喘",
+          "变应性哮喘",
+          "咳嗽变异性哮喘"
+        ]
+      },
+      "alert_tier": "HARD_STOP",
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，国家药监局法定核准说明书【禁忌】与权威临床指南标准",
+      "alternatives": [
+        {
+          "name": "富马酸比索洛尔片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 2.5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "高度选择性β1受体阻滞剂，心率或降压治疗必要时在医师严密监护下小剂量慎用",
+          "sourceGuideline": "SRC-CMA-RESP-2020-01"
+        }
+      ],
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     }
   ]
 }

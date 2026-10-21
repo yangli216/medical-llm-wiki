@@ -82,10 +82,16 @@ class CdssEngine:
             "肥胖": ["肥胖症", "成人超重与肥胖症", "减重", "超重"],
             "超重": ["肥胖症", "成人超重与肥胖症", "减重", "超重"],
             "减重": ["肥胖症", "成人超重与肥胖症", "减重", "超重"],
+            "哮喘": ["支气管哮喘", "成人支气管哮喘", "成人哮喘"],
+            "喘息": ["支气管哮喘", "成人哮喘"],
         }
         for k, syn_list in synonyms_map.items():
             if k in q or (norm.core_stems and any(k in s for s in norm.core_stems)):
                 for syn in syn_list:
+                    if ("儿童" in q or "小儿" in q) and "成人" in syn:
+                        continue
+                    if "成人" in q and ("儿童" in syn or "小儿" in syn):
+                        continue
                     if syn not in tokens:
                         tokens.append(syn)
 

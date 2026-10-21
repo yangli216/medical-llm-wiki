@@ -224,6 +224,16 @@ class TestDiagnosisMatchingAndPrecisionGuard(unittest.TestCase):
         self.assertTrue(len(prot_stem) > 0)
         self.assertEqual(prot_stem[0]["protocolId"], "PROT-OBES-051")
 
+    def test_adult_asthma_protocol_search_and_icd_resolution(self):
+        """Verify that adult asthma query and ICD-10 J45.9 map to PROT-ASTHMA-052."""
+        prots = self.cdss.search_protocols("支气管哮喘，未特指 J45.9")
+        self.assertTrue(len(prots) > 0)
+        self.assertEqual(prots[0]["protocolId"], "PROT-ASTHMA-052")
+
+        prot_stem = self.cdss.search_protocols("成人哮喘发作与维持阶梯方案")
+        self.assertTrue(len(prot_stem) > 0)
+        self.assertEqual(prots[0]["protocolId"], "PROT-ASTHMA-052")
+
 
 if __name__ == "__main__":
     unittest.main()

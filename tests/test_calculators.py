@@ -189,6 +189,30 @@ class TestClinicalCalculators(unittest.TestCase):
         self.assertTrue(res["surgery_indicated"])
         self.assertIn("减重与代谢外科手术", res["recommendation"])
 
+    def test_act_score_controlled(self):
+        """Test ACT score: all 5s -> Score 25 -> CONTROLLED."""
+        res = ClinicalCalculatorRegistry.calculate("act", {
+            "q1": 5, "q2": 5, "q3": 5, "q4": 5, "q5": 5,
+        })
+        self.assertEqual(res["score"], 25)
+        self.assertEqual(res["controlStatus"], "CONTROLLED")
+        self.assertIn("完全控制", res["controlStatus_cn"])
+        self.assertIn("梯度降级", res["recommendation"])
+
+    def test_act_score_uncontrolled(self):
+        """Test ACT score: 2+3+2+2+3 = 12 (<20) -> UNCONTROLLED."""
+        res = ClinicalCalculatorRegistry.calculate("act_score", {
+            "activity_limitation": 2,
+            "shortness_of_breath": 3,
+            "night_waking": 2,
+            "reliever_usage": 2,
+            "self_assessment": 3,
+        })
+        self.assertEqual(res["score"], 12)
+        self.assertEqual(res["controlStatus"], "UNCONTROLLED")
+        self.assertIn("未控制", res["controlStatus_cn"])
+        self.assertIn("向上提升 1 级", res["recommendation"])
+
 
 if __name__ == "__main__":
     unittest.main()

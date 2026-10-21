@@ -40,6 +40,8 @@ class ClinicalCalculatorRegistry:
             "crb_65": cls.calc_crb_65,
             "bmi": cls.calc_bmi_obesity,
             "bmi_obesity": cls.calc_bmi_obesity,
+            "act": cls.calc_act_score,
+            "act_score": cls.calc_act_score,
         }
         fn = dispatch.get(name)
         if not fn:
@@ -977,6 +979,62 @@ class ClinicalCalculatorRegistry:
         }
 
     # -------------------------------------------------------------------------
+    # 15. ACT: 哮喘控制测试评分 (Asthma Control Test)
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def calc_act_score(p: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        哮喘控制测试 (Asthma Control Test, ACT) 评分计算器
+        依据《支气管哮喘防治指南（2020年版）》（SRC-CMA-RESP-2020-01）
+        5项临床指标，每项 1~5 分，总分 5~25 分。
+        """
+        q1 = int(p.get("q1") or p.get("activity_limitation") or 5)
+        q2 = int(p.get("q2") or p.get("shortness_of_breath") or 5)
+        q3 = int(p.get("q3") or p.get("night_waking") or 5)
+        q4 = int(p.get("q4") or p.get("reliever_usage") or 5)
+        q5 = int(p.get("q5") or p.get("self_assessment") or 5)
+
+        q1 = max(1, min(5, q1))
+        q2 = max(1, min(5, q2))
+        q3 = max(1, min(5, q3))
+        q4 = max(1, min(5, q4))
+        q5 = max(1, min(5, q5))
+
+        total_score = q1 + q2 + q3 + q4 + q5
+
+        if total_score == 25:
+            control_status = "CONTROLLED"
+            control_cn = "完全控制"
+            recommendation = "哮喘达到完全控制（25分）。建议维持当前治疗方案；若持续完全控制达到 3 个月以上且肺功能稳定，可在医师指导下谨慎尝试梯度降级（如 ICS 剂量下调 25%～50%）。"
+        elif total_score >= 20:
+            control_status = "WELL_CONTROLLED"
+            control_cn = "良好控制"
+            recommendation = "哮喘达到良好控制（20～24分）。偶有轻微症状，大部分日常生活不受限；建议维持当前维持剂量方案，规律随访，定期每 1～3 个月评估肺功能与吸药技术。"
+        else:
+            control_status = "UNCONTROLLED"
+            control_cn = "未控制"
+            recommendation = "【预警】哮喘处于未控制状态（<20分）！存在急性加重高危风险。建议：①立即核查患者干粉吸入装置吸气深度与屏气技术；②核查规律吸药依从性与环境过敏原规避；③依从性良好者建议在呼吸专科指导下将治疗阶梯向上提升 1 级（Step-Up）；④若有突发严重喘憋立即启用急救平喘药物。"
+
+        return {
+            "calculator": "act_score",
+            "name": "哮喘控制测试 (ACT) 评分",
+            "score": total_score,
+            "maxScore": 25,
+            "minScore": 5,
+            "controlStatus": control_status,
+            "controlStatus_cn": control_cn,
+            "subScores": {
+                "activity_limitation": q1,
+                "shortness_of_breath": q2,
+                "night_waking": q3,
+                "reliever_usage": q4,
+                "self_assessment": q5,
+            },
+            "recommendation": recommendation,
+            "guideline": "《支气管哮喘防治指南（2020年版）》（SRC-CMA-RESP-2020-01）",
+        }
+
+    # -------------------------------------------------------------------------
     # 14. Zero-Manual-Input EMR Hydration & Minimal Follow-up Engine (P3.1)
     # -------------------------------------------------------------------------
     CALCULATOR_SCHEMA_SPECS = {
@@ -1075,6 +1133,16 @@ class ClinicalCalculatorRegistry:
                 {"key": "dm", "label": "糖尿病史/糖代谢异常", "type": "boolean", "keywords": ["糖尿病", "高血糖", "dm", "t2dm"]},
                 {"key": "dyslipidemia", "label": "血脂异常/高甘油三酯", "type": "boolean", "keywords": ["高脂血症", "血脂异常", "高甘油三酯"]},
                 {"key": "masld", "label": "脂肪肝 (MASLD/NAFLD)", "type": "boolean", "keywords": ["脂肪肝", "masld", "nafld"]},
+            ],
+        },
+        "act_score": {
+            "title": "哮喘控制测试 (ACT) 评分",
+            "fields": [
+                {"key": "q1", "label": "工作/学习活动受限程度 (1~5)", "type": "number", "auto_from": ["q1", "activity_limitation"]},
+                {"key": "q2", "label": "气短/喘息频率 (1~5)", "type": "number", "auto_from": ["q2", "shortness_of_breath"]},
+                {"key": "q3", "label": "夜间憋醒/早醒频率 (1~5)", "type": "number", "auto_from": ["q3", "night_waking"]},
+                {"key": "q4", "label": "急救药物使用频率 (1~5)", "type": "number", "auto_from": ["q4", "reliever_usage"]},
+                {"key": "q5", "label": "哮喘控制自评 (1~5)", "type": "number", "auto_from": ["q5", "self_assessment"]},
             ],
         },
     }
@@ -1227,6 +1295,8 @@ class ClinicalCalculatorRegistry:
             triggered_calcs.append("centor")
         if any(k in corpus for k in ["肥胖", "超重", "体质指数", "bmi", "减重"]):
             triggered_calcs.append("bmi_obesity")
+        if any(k in corpus for k in ["哮喘", "支气管哮喘", "喘息", "哮鸣音", "asthma"]):
+            triggered_calcs.append("act_score")
         if norm_p.get("scr") is not None and norm_p.get("age") is not None:
             triggered_calcs.append("renal_clearance")
 
