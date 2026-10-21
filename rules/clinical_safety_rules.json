@@ -2738,6 +2738,95 @@
         "content_sha256": "",
         "evidence_refs": []
       }
+    },
+    {
+      "id": "RULE-SAFETY-HYPERTHY-PREGNANCY-FIRST-TRIMESTER",
+      "domain": "clinical",
+      "title": "妊娠早期合并甲亢绝对禁用甲巯咪唑致畸防范",
+      "severity": "RED",
+      "message": "妊娠早期（前12周）合并甲状腺功能亢进症绝对禁用甲巯咪唑！该药具有明确胚胎致畸毒性（可致先天性头皮缺损、食管闭锁、后鼻孔闭锁及面容畸形）。孕早期必须换用丙硫氧嘧啶（PTU）最小有效剂量控制甲亢。",
+      "guideline": "《中国甲状腺功能亢进症和其他原因所致甲状腺毒症诊治指南》",
+      "conditions": {
+        "drugs_any": [
+          "甲巯咪唑",
+          "赛治",
+          "他巴唑"
+        ],
+        "pregnancy": true
+      },
+      "alternatives": [
+        {
+          "name": "丙硫氧嘧啶片",
+          "specification": "50mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 50,
+            "doseUnit": "mg",
+            "durationValue": 28
+          },
+          "rationale": "《中国甲状腺功能亢进症指南》明确推荐妊娠早期首选PTU替代MMI以阻断致畸风险",
+          "sourceGuideline": "SRC-CMA-THY-2022-01"
+        }
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
+    },
+    {
+      "id": "RULE-SAFETY-HYPERTHY-AGRANULOCYTOSIS",
+      "domain": "clinical",
+      "title": "抗甲状腺药物粒细胞缺乏症绝对立即停药",
+      "severity": "RED",
+      "message": "使用抗甲状腺药物（甲巯咪唑、丙硫氧嘧啶）期间若血常规中性粒细胞绝对值低于0.5×10^9/L（或白细胞总数低于1.5×10^9/L），确诊为致死性粒细胞缺乏症！必须绝对立即停用抗甲状腺药物并入住无菌隔离病房注射G-CSF抢救，严禁再次使用任何硫脲类药物！",
+      "guideline": "《中国甲状腺功能亢进症和其他原因所致甲状腺毒症诊治指南》",
+      "conditions": {
+        "drugs_any": [
+          "甲巯咪唑",
+          "丙硫氧嘧啶",
+          "赛治",
+          "他巴唑"
+        ],
+        "diagnoses_any": [
+          "粒细胞缺乏",
+          "粒细胞缺乏症",
+          "白细胞减少症"
+        ]
+      },
+      "alternatives": [
+        {
+          "name": "重组人粒细胞刺激因子注射液",
+          "specification": "100μg",
+          "orderDraft": {
+            "routeCode": "IH",
+            "frequencyCode": "QD",
+            "doseValue": 100,
+            "doseUnit": "μg",
+            "durationValue": 3
+          },
+          "rationale": "中性粒细胞缺乏症紧急升白急救方案，严禁重新使用任何抗甲状腺药物",
+          "sourceGuideline": "SRC-CMA-THY-2022-01"
+        }
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     }
   ]
 }

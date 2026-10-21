@@ -11,6 +11,31 @@ status: draft
 
 本文档是本项目知识库的时间线操作流水记录，严格遵循 Karpathy LLM Wiki 规范，记录所有文献 Ingest、知识编译、实体更新、质检 Lint 与综合专题沉淀事件。
 
+## [2026-10-21] clinical-knowledge-round-4 | 中国甲状腺功能亢进症阶梯抗甲状腺与致命不良反应防范知识库落库 (中华医学会指南)
+
+- **动作类型**: 权威临床知识点深度考证与系统落库（第四轮）
+- **循证来源依据**:
+  - 中华医学会内分泌学分会《中国甲状腺功能亢进症和其他原因所致甲状腺毒症诊治指南》（《中华内分泌代谢杂志》2022年第38卷第8期，第700–731页，DOI: `10.3760/cma.j.cn311282-20220615-00388`）。
+- **核心完成项**:
+  1. **权威来源登记与提取文本归档**:
+     - 在 `raw/metadata.json` 注册新来源 `SRC-CMA-THY-2022-01`，绑定官方期刊刊期、DOI、SHA-256 与版本时效；
+     - 整理归档核心章节条款至 `raw/docs/SRC-CMA-THY-2022-01.md`，深度编译研读导读页 `wiki/sources/SRC-CMA-THY-2022-01.md`（包含 5 条 I 类 A 级推荐条款）。
+  2. **核心实体与阶梯诊疗标准精编**:
+     - 新建核心疾病实体 `wiki/entities/diseases/甲状腺功能亢进症.md`（ICD-10: `E05.9` / `E05.0` Graves病），全面阐述 Graves 病发病机制、高代谢症候群、弥漫性甲状腺肿大伴血管杂音、浸润性突眼体征、TSH 受抑与 FT3/FT4 升高确诊切点、TRAb 特异性免疫指标及亚甲炎分离现象鉴别；
+     - 新建概念规范 `wiki/concepts/甲状腺毒症病因鉴别与抗甲状腺药物阶梯方案.md`，规范 ATD 三阶段阶梯疗程（初始期 1～3个月、减量期 2～3个月、维持期 18～24个月）、安全停药三大指征（TRAb 转阴为核心标准）、三大致命不良反应防范规制（粒缺停药、肝酶切点、孕早期 MMI 致畸换 PTU）及 Burch-Wartofsky 甲状腺危象量化评分（BWPS）；
+     - 更新既有用药实体 `wiki/entities/drugs/甲状腺激素与抗甲状腺药物.md`，挂载指南推荐与 MMI 阶梯用法用量及维持期防复发底线；
+     - 更新关联检验实体 `wiki/entities/tests/血清甲状腺功能测定(TSH与FT3与FT4).md` 的双向链接互联。
+  3. **门诊决策协议与 CDSS 安全拦截规则升级**:
+     - 编译落地第 54 套标准化门诊诊疗决策协议 `wiki/protocols/PROT-HYPERTHY-054 门诊甲状腺功能亢进症阶梯抗甲状腺与不良反应防范方案.md`，包含规范门诊病历范文、推荐医嘱集（甲功五项、TRAb、血常规、肝功能、甲状腺彩超、心电图、甲巯咪唑片、酒石酸美托洛尔片）与三级拦截预警；
+     - 在 `rules/clinical_safety_rules.json` 扩增 `RULE-SAFETY-HYPERTHY-PREGNANCY-FIRST-TRIMESTER`（妊娠早期绝对禁用甲巯咪唑致畸防范）与 `RULE-SAFETY-HYPERTHY-AGRANULOCYTOSIS`（抗甲状腺药物粒细胞缺乏症绝对立即停药）；
+     - 在 `rules/monograph_rules.json` 扩增 `METHIMAZOLE_PANCREATITIS_CONTRAINDICATION`（既往甲巯咪唑诱发急性胰腺炎病史者绝对禁用）；
+     - 在 `rules/icd_crosswalk.json` 补齐 `E05`、`E05.0`、`E05.1`、`E05.2`、`E05.900` 等向 `E05.9` 的标准映射归约；
+     - 在 `tools/cdss/calculators.py` 扩建 `calc_burch_wartofsky_thyroid_storm`（BWPS 甲状腺危象评分引擎）与 `CALCULATOR_SCHEMA_SPECS`，实现门诊病历上下文智能推荐。
+  4. **主索引与全栈测试保障**:
+     - 在 `wiki/index.md` 来源、疾病、药物、概念、协议各章节挂载新词条；
+     - 运行 `tools.cli sync-readme` 保持资产统计精准一致；
+     - 全库体检 Lint 0 断链、0 孤岛，自动化测试套件保持 100% 通过。
+
 ## [2026-10-21] clinical-knowledge-round-3 | 成人缺铁性贫血阶梯补铁与病因筛查知识库落库 (中华医学会2023年版指南)
 
 - **动作类型**: 权威临床知识点深度考证与系统落库（第三轮）

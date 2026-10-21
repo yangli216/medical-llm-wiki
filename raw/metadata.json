@@ -2447,6 +2447,38 @@
         ],
         "note": "2023年1月首发于中华血液学杂志第44卷第1期；未核验到更新同系列成人版本。"
       }
+    },
+    {
+      "id": "SRC-CMA-THY-2022-01",
+      "title": "中国甲状腺功能亢进症和其他原因所致甲状腺毒症诊治指南",
+      "authority": "中华医学会内分泌学分会",
+      "publication": "中华内分泌代谢杂志, 2022, 38(8): 700-731",
+      "year": 2022,
+      "category": "内分泌代谢",
+      "level": "中华医学会专科临床指南",
+      "file_path": "raw/docs/SRC-CMA-THY-2022-01.md",
+      "key_scope": "中国甲状腺功能亢进症与甲状腺毒症定义、病因鉴别(Graves病 vs 亚急性甲状腺炎分离现象)、高代谢症候群与特征体征、TRAb分子标记、甲巯咪唑与丙硫氧嘧啶阶梯药物治疗三阶段(18-24月维持期)、致命粒细胞缺乏症与严重肝毒性监测红线、早孕期致畸防范与Burch-Wartofsky危象评分",
+      "status": "active",
+      "content_kind": "curated_summary",
+      "official_url": "https://rs.yiigle.com/cmaid/1415512",
+      "doi": "10.3760/cma.j.cn311282-20220615-00388",
+      "retrieved_at": "2026-10-21T08:30:00.000000+00:00",
+      "content_sha256": "cc911eb240c6953ed7229ff47d2f0afd69211748b9271e55b6195214371cd8be",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-21",
+        "status": "no_newer_verified",
+        "scope": "中华医学会内分泌学分会甲状腺学组指南系列；现行版为2022年系统修订指南",
+        "search_queries": [
+          "\"中国甲状腺功能亢进症和其他原因所致甲状腺毒症诊治指南\" site:yiigle.com"
+        ],
+        "evidence_urls": [
+          "https://rs.yiigle.com/cmaid/1415512"
+        ],
+        "note": "2022年8月正式发布于中华内分泌代谢杂志；未核验到更新同系列专科版本。"
+      }
     }
   ]
 }

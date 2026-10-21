@@ -233,6 +233,41 @@ class TestClinicalCalculators(unittest.TestCase):
         self.assertIn("Ganzoni 公式", res["recommendation"])
         self.assertIn("蔗糖铁注射液", res["recommendation"])
 
+    def test_burch_wartofsky_thyroid_storm_crisis(self):
+        """
+        Test BWPS Thyroid Storm:
+        Temp 39.6C -> 25
+        CNS agitation -> 10
+        GI diarrhea -> 10
+        HR 145 bpm -> 25
+        AF present -> 10
+        Precipitating infection -> 10
+        Total Score: 25 + 10 + 10 + 25 + 10 + 10 = 90 (>= 45) -> THYROID_STORM.
+        """
+        res = ClinicalCalculatorRegistry.calculate("bwps", {
+            "temp": 39.6,
+            "cns_effects": "烦躁激惹",
+            "gi_dysfunction": "腹泻恶心",
+            "hr": 145,
+            "af": True,
+            "precipitating_event": True,
+        })
+        self.assertEqual(res["score"], 90)
+        self.assertEqual(res["stormStatus"], "THYROID_STORM")
+        self.assertIn("甲状腺危象", res["stormStatus_cn"])
+        self.assertIn("丙硫氧嘧啶", res["recommendation"])
+        self.assertIn("重症监护室", res["recommendation"])
+
+    def test_burch_wartofsky_thyroid_storm_unlikely(self):
+        """Test BWPS: Normal vitals -> Score 0 (< 25) -> UNLIKELY."""
+        res = ClinicalCalculatorRegistry.calculate("burch_wartofsky", {
+            "temp": 36.8,
+            "hr": 78,
+        })
+        self.assertEqual(res["score"], 0)
+        self.assertEqual(res["stormStatus"], "UNLIKELY")
+        self.assertIn("危象可能性小", res["stormStatus_cn"])
+
 
 if __name__ == "__main__":
     unittest.main()

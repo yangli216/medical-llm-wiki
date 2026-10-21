@@ -248,6 +248,20 @@ class TestDiagnosisMatchingAndPrecisionGuard(unittest.TestCase):
         self.assertTrue(len(prot_stem) > 0)
         self.assertEqual(prot_stem[0]["protocolId"], "PROT-IDA-053")
 
+    def test_hyperthyroidism_protocol_search_and_icd_resolution(self):
+        """Verify that hyperthyroidism query and ICD-10 E05.9 map to PROT-HYPERTHY-054."""
+        prots = self.cdss.search_protocols("甲状腺功能亢进症，未特指 E05.9")
+        self.assertTrue(len(prots) > 0)
+        self.assertEqual(prots[0]["protocolId"], "PROT-HYPERTHY-054")
+
+        prot_icd = self.cdss.repo.get_by_icd("E05.900")
+        self.assertIsNotNone(prot_icd)
+        self.assertEqual(prot_icd.protocol_id, "PROT-HYPERTHY-054")
+
+        prot_stem = self.cdss.search_protocols("甲亢阶梯抗甲状腺方案")
+        self.assertTrue(len(prot_stem) > 0)
+        self.assertEqual(prot_stem[0]["protocolId"], "PROT-HYPERTHY-054")
+
 
 if __name__ == "__main__":
     unittest.main()

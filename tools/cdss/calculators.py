@@ -45,6 +45,9 @@ class ClinicalCalculatorRegistry:
             "ganzoni": cls.calc_ganzoni_iron,
             "ganzoni_iron": cls.calc_ganzoni_iron,
             "iron_deficit": cls.calc_ganzoni_iron,
+            "burch_wartofsky": cls.calc_burch_wartofsky_thyroid_storm,
+            "bwps": cls.calc_burch_wartofsky_thyroid_storm,
+            "thyroid_storm": cls.calc_burch_wartofsky_thyroid_storm,
         }
         fn = dispatch.get(name)
         if not fn:
@@ -1141,7 +1144,161 @@ class ClinicalCalculatorRegistry:
         }
 
     # -------------------------------------------------------------------------
-    # 15. Zero-Manual-Input EMR Hydration & Minimal Follow-up Engine (P3.1)
+    # 15. Burch-Wartofsky 甲状腺危象评分 (BWPS) 计算引擎
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def calc_burch_wartofsky_thyroid_storm(p: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Burch-Wartofsky Point Scale (BWPS) 甲状腺危象量化评分引擎
+        依据《中国甲状腺功能亢进症和其他原因所致甲状腺毒症诊治指南》（SRC-CMA-THY-2022-01）
+        评估 7 个临床维度，总分 0~140 分。
+        """
+        # 1. 体温调节障碍 (Temperature °C)
+        temp_val = None
+        try:
+            temp_val = float(p.get("temp") or p.get("temperature") or 37.0)
+        except (ValueError, TypeError):
+            temp_val = 37.0
+
+        if temp_val >= 40.0:
+            temp_score = 30
+        elif temp_val >= 39.5:
+            temp_score = 25
+        elif temp_val >= 38.9:
+            temp_score = 20
+        elif temp_val >= 38.3:
+            temp_score = 15
+        elif temp_val >= 37.8:
+            temp_score = 10
+        elif temp_val >= 37.2:
+            temp_score = 5
+        else:
+            temp_score = 0
+
+        # 2. 中枢神经系统效应 (CNS effects)
+        cns_raw = str(p.get("cns_effects") or p.get("cns") or "").strip().lower()
+        if any(k in cns_raw for k in ["昏迷", "癫痫", "抽搐", "coma", "seizure"]):
+            cns_score = 30
+            cns_desc = "重度（癫痫发作、昏迷）"
+        elif any(k in cns_raw for k in ["谵妄", "精神错乱", "极度嗜睡", "delirium", "psychosis"]):
+            cns_score = 20
+            cns_desc = "中度（谵妄、精神错乱、极度嗜睡）"
+        elif any(k in cns_raw for k in ["烦躁", "焦虑", "激惹", "agitation", "mild"]):
+            cns_score = 10
+            cns_desc = "轻度（烦躁、焦虑、易激惹）"
+        else:
+            cns_score = int(p.get("cns_score") or 0)
+            cns_desc = "无明显中枢神经系统异常"
+
+        # 3. 胃肠道与肝功能障碍 (GI/Hepatic dysfunction)
+        gi_raw = str(p.get("gi_dysfunction") or p.get("gi") or "").strip().lower()
+        if any(k in gi_raw for k in ["黄疸", "jaundice"]):
+            gi_score = 20
+            gi_desc = "重度（不明原因明显黄疸）"
+        elif any(k in gi_raw for k in ["腹泻", "恶心", "呕吐", "腹痛", "diarrhea", "vomiting"]):
+            gi_score = 10
+            gi_desc = "中度（腹泻、恶心、呕吐、腹痛）"
+        else:
+            gi_score = int(p.get("gi_score") or 0)
+            gi_desc = "无胃肠道与肝功能异常"
+
+        # 4. 心血管心动过速 (Heart Rate bpm)
+        hr_val = 0
+        try:
+            hr_val = int(p.get("hr") or p.get("heart_rate") or 80)
+        except (ValueError, TypeError):
+            hr_val = 80
+
+        if hr_val >= 140:
+            hr_score = 25
+        elif hr_val >= 130:
+            hr_score = 20
+        elif hr_val >= 120:
+            hr_score = 15
+        elif hr_val >= 110:
+            hr_score = 10
+        elif hr_val >= 90:
+            hr_score = 5
+        else:
+            hr_score = 0
+
+        # 5. 充血性心力衰竭 (CHF)
+        chf_raw = str(p.get("chf_stage") or p.get("chf") or "").strip().lower()
+        if any(k in chf_raw for k in ["肺水肿", "急性左心衰", "pulmonary edema", "severe"]):
+            chf_score = 15
+            chf_desc = "重度（急性肺水肿）"
+        elif any(k in chf_raw for k in ["双肺底湿啰音", "啰音", "rales", "moderate"]):
+            chf_score = 10
+            chf_desc = "中度（双肺底湿啰音）"
+        elif any(k in chf_raw for k in ["下肢水肿", "浮肿", "edema", "mild"]):
+            chf_score = 5
+            chf_desc = "轻度（双下肢凹陷性水肿）"
+        else:
+            chf_score = int(p.get("chf_score") or 0)
+            chf_desc = "无心力衰竭体征"
+
+        # 6. 心房颤动 (Atrial Fibrillation)
+        af_present = bool(p.get("af") or p.get("atrial_fibrillation") or p.get("has_af"))
+        af_score = 10 if af_present else 0
+
+        # 7. 促发/诱发病史 (Precipitating event)
+        precip_event = bool(p.get("precipitating_event") or p.get("precipitating_history") or p.get("has_trigger"))
+        precip_score = 10 if precip_event else 0
+
+        total_score = temp_score + cns_score + gi_score + hr_score + chf_score + af_score + precip_score
+
+        if total_score >= 45:
+            storm_status = "THYROID_STORM"
+            storm_status_cn = "甲状腺危象 (确诊)"
+            recommendation = (
+                f"【危急抢救】BWPS 评分 {total_score} 分（≥45分），高度提示甲状腺危象！立即启动重症抢救：\n"
+                f"1. 立即收入重症监护室（ICU）或急诊抢救室，密切监护心率、呼吸、体温与血压；\n"
+                f"2. 丙硫氧嘧啶（PTU）首剂 500～1000 mg 口服或胃管注入，后 200 mg q4h；\n"
+                f"3. 服用 PTU 1 小时后加用复方碘溶液（Lugol液）5～10 滴 q8h 封闭甲状腺释放；\n"
+                f"4. 静脉滴注氢化可的松 100 mg q8h 拮抗应激反应并抑制外周 T4 转 T3；\n"
+                f"5. 物理降温，严禁使用阿司匹林类退热药（竞争血浆蛋白结合致游离甲状腺素剧增）。"
+            )
+        elif total_score >= 25:
+            storm_status = "IMPENDING_STORM"
+            storm_status_cn = "临界危象 (即将发生危象)"
+            recommendation = (
+                f"【黄色预警】BWPS 评分 {total_score} 分（25～44分），提示即将发生甲状腺危象！\n"
+                f"建议严密卧床监护，积极纠治发热或感染诱因，加大抗甲状腺药物与心脏高选择性 β 受体阻滞剂剂量，防范病情向暴发性危象恶化。"
+            )
+        else:
+            storm_status = "UNLIKELY"
+            storm_status_cn = "危象可能性小"
+            recommendation = (
+                f"BWPS 评分 {total_score} 分（<25分），发生甲状腺危象可能性极小。\n"
+                f"继续维持门诊规范甲巯咪唑阶梯治疗，定期监测甲功三项与血常规白细胞计数。"
+            )
+
+        return {
+            "calculator": "bwps",
+            "name": "Burch-Wartofsky 甲状腺危象评分 (BWPS)",
+            "score": total_score,
+            "maxScore": 140,
+            "minScore": 0,
+            "stormStatus": storm_status,
+            "stormStatus_cn": storm_status_cn,
+            "subScores": {
+                "thermoregulatory_score": temp_score,
+                "cns_score": cns_score,
+                "cns_description": cns_desc,
+                "gi_hepatic_score": gi_score,
+                "gi_hepatic_description": gi_desc,
+                "tachycardia_score": hr_score,
+                "chf_score": chf_score,
+                "chf_description": chf_desc,
+                "af_score": af_score,
+                "precipitating_event_score": precip_score,
+            },
+            "recommendation": recommendation,
+            "guideline": "《中国甲状腺功能亢进症和其他原因所致甲状腺毒症诊治指南》（SRC-CMA-THY-2022-01）",
+        }
+
+    # -------------------------------------------------------------------------
+    # 16. Zero-Manual-Input EMR Hydration & Minimal Follow-up Engine (P3.1)
     # -------------------------------------------------------------------------
     CALCULATOR_SCHEMA_SPECS = {
         "cha2ds2_vasc": {
@@ -1258,6 +1415,18 @@ class ClinicalCalculatorRegistry:
                 {"key": "hb", "label": "实际血红蛋白 (g/L 或 g/dL)", "type": "number", "auto_from": ["hb", "hemoglobin", "hgb", "current_hb"]},
                 {"key": "target_hb", "label": "目标血红蛋白 (g/dL, 默认15.0)", "type": "number", "auto_from": ["target_hb"]},
                 {"key": "iron_depot", "label": "机体储存铁量 (mg, 默认500)", "type": "number", "auto_from": ["iron_depot", "iron_depot_mg"]},
+            ],
+        },
+        "bwps": {
+            "title": "Burch-Wartofsky 甲状腺危象评分 (BWPS)",
+            "fields": [
+                {"key": "temp", "label": "体温 (°C)", "type": "number", "auto_from": ["temp", "temperature"]},
+                {"key": "hr", "label": "静息心率 (bpm)", "type": "number", "auto_from": ["hr", "heart_rate"]},
+                {"key": "cns_effects", "label": "中枢神经系统症状 (轻度/中度/重度)", "type": "string", "keywords": ["谵妄", "昏迷", "烦躁", "精神错乱", "极度嗜睡"]},
+                {"key": "gi_dysfunction", "label": "胃肠道与肝损害表现 (恶心/呕吐/腹泻/黄疸)", "type": "string", "keywords": ["黄疸", "腹泻", "恶心", "呕吐", "腹痛"]},
+                {"key": "chf_stage", "label": "心力衰竭程度 (轻度/中度/重度肺水肿)", "type": "string", "keywords": ["肺水肿", "下肢水肿", "双肺底湿啰音"]},
+                {"key": "af", "label": "合并心房颤动", "type": "boolean", "keywords": ["心房颤动", "房颤", "af"]},
+                {"key": "precipitating_event", "label": "存在感染/手术/创伤/停药诱因", "type": "boolean", "keywords": ["感染", "手术", "创伤", "停药", "应激"]},
             ],
         },
     }
@@ -1414,6 +1583,8 @@ class ClinicalCalculatorRegistry:
             triggered_calcs.append("act_score")
         if any(k in corpus for k in ["缺铁", "贫血", "ida", "血红蛋白低", "小细胞低色素", "铁蛋白", "乏力伴苍白"]):
             triggered_calcs.append("ganzoni_iron")
+        if any(k in corpus for k in ["甲亢", "甲状腺功能亢进", "甲状腺毒症", "graves", "突眼伴心悸", "怕热多汗消瘦"]):
+            triggered_calcs.append("bwps")
         if norm_p.get("scr") is not None and norm_p.get("age") is not None:
             triggered_calcs.append("renal_clearance")
 

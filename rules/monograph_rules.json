@@ -3366,6 +3366,52 @@
         "content_sha256": "",
         "evidence_refs": []
       }
+    },
+    {
+      "id": "METHIMAZOLE_PANCREATITIS_CONTRAINDICATION",
+      "domain": "monograph",
+      "target_drugs": [
+        "甲巯咪唑",
+        "甲巯咪唑片",
+        "赛治",
+        "他巴唑"
+      ],
+      "level": "BLOCK",
+      "title": "既往甲巯咪唑诱发急性胰腺炎病史者绝对禁用",
+      "reason": "官方药品说明书黑体【禁忌】明确规定：既往应用甲巯咪唑出现急性胰腺炎病史者绝对禁用！再次使用可诱发致死性暴发性坏死性胰腺炎！",
+      "evidence": "国家药监局法定核准《甲巯咪唑片说明书》【禁忌】与《中国甲状腺功能亢进症和其他原因所致甲状腺毒症诊治指南》",
+      "conditions": {
+        "conditions_any": [
+          "急性胰腺炎",
+          "坏死性胰腺炎"
+        ]
+      },
+      "alert_tier": "HARD_STOP",
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，国家药监局法定核准说明书【禁忌】与权威临床指南标准",
+      "alternatives": [
+        {
+          "name": "丙硫氧嘧啶片",
+          "specification": "50mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 50,
+            "doseUnit": "mg",
+            "durationValue": 28
+          },
+          "rationale": "甲巯咪唑诱发胰腺炎者如必须药物抗甲状腺，可在专科密切监护下权衡选用丙硫氧嘧啶或准备131碘治疗",
+          "sourceGuideline": "SRC-CMA-THY-2022-01"
+        }
+      ],
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     }
   ]
 }
