@@ -2509,6 +2509,51 @@
         "content_sha256": "",
         "evidence_refs": []
       }
+    },
+    {
+      "id": "RULE-SAFETY-OBESITY-NORMAL-BMI",
+      "domain": "clinical",
+      "title": "严禁正常体重人群非医学目的滥用减重处方药",
+      "severity": "RED",
+      "message": "严厉拦截正常体重人群开具处方减重药物！《肥胖症诊疗指南（2024年版）》严格规定减重药物仅限用于BMI≥28或BMI≥24伴并发症且生活方式干预3个月未达标患者，严防药物不良反应与滥用危害！",
+      "guideline": "《肥胖症诊疗指南（2024年版）》（国卫办医政函〔2024〕382号）",
+      "conditions": {
+        "drugs_any": [
+          "奥利司他",
+          "奥利司他胶囊"
+        ],
+        "diagnoses_any": [
+          "偏瘦",
+          "体重过低",
+          "正常体重"
+        ]
+      },
+      "alternatives": [
+        {
+          "name": "营养科膳食指导与运动处方",
+          "specification": "门诊宣教",
+          "orderDraft": {
+            "routeCode": "EDUCATION",
+            "frequencyCode": "ONCE",
+            "doseValue": 1,
+            "doseUnit": "次",
+            "durationValue": 1
+          },
+          "rationale": "正常体重人群应以平衡饮食及规律有氧运动维持体态，严禁非适应证使用减重药物",
+          "sourceGuideline": "SRC-NHC-OBES-2024-01"
+        }
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，国家卫生健康委法定临床诊疗指南标准",
+      "alert_tier": "HARD_STOP",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     }
   ]
 }

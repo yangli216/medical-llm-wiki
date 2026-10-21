@@ -145,6 +145,50 @@ class TestClinicalCalculators(unittest.TestCase):
         self.assertIn("高危", res["riskStratum"])
         self.assertIn("卒中单元", res["recommendation"])
 
+    def test_bmi_obesity_normal_weight(self):
+        """Test normal weight adult (Height 175cm, Weight 68kg -> BMI 22.2) -> Normal, no pharmacotherapy."""
+        res = ClinicalCalculatorRegistry.calculate("bmi_obesity", {
+            "height": 175,
+            "weight": 68,
+            "waist": 80,
+            "gender": "男",
+        })
+        self.assertEqual(res["bmi"], 22.2)
+        self.assertEqual(res["category"], "NORMAL")
+        self.assertFalse(res["central_obesity"])
+        self.assertFalse(res["pharmacotherapy_indicated"])
+        self.assertIn("严禁以非医学减重目的开具处方减重药", res["recommendation"])
+
+    def test_bmi_obesity_overweight_with_comorbidity(self):
+        """Test overweight with hypertension (Height 170cm, Weight 76kg -> BMI 26.3) -> Overweight, pharmacotherapy eligible."""
+        res = ClinicalCalculatorRegistry.calculate("bmi", {
+            "height": 170,
+            "weight": 76,
+            "waist": 92,
+            "gender": "男",
+            "htn": True,
+        })
+        self.assertEqual(res["bmi"], 26.3)
+        self.assertEqual(res["category"], "OVERWEIGHT")
+        self.assertTrue(res["central_obesity"])
+        self.assertTrue(res["pharmacotherapy_indicated"])
+        self.assertIn("奥利司他或GLP-1RA药物", res["recommendation"])
+
+    def test_bmi_obesity_class_2_with_surgery_indication(self):
+        """Test Class 2 obesity with diabetes (Height 165cm, Weight 92kg -> BMI 33.8) -> Surgery eligible."""
+        res = ClinicalCalculatorRegistry.calculate("bmi_obesity", {
+            "height": 165,
+            "weight": 92,
+            "waist": 102,
+            "gender": "女",
+            "dm": True,
+        })
+        self.assertEqual(res["bmi"], 33.8)
+        self.assertEqual(res["category"], "OBESE")
+        self.assertEqual(res["severity"], "CLASS_2")
+        self.assertTrue(res["surgery_indicated"])
+        self.assertIn("减重与代谢外科手术", res["recommendation"])
+
 
 if __name__ == "__main__":
     unittest.main()

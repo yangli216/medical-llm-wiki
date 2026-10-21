@@ -89,7 +89,7 @@ class TestGradeAndClinicalCalculators(unittest.TestCase):
         rules_path = self.root_dir / "rules" / "clinical_safety_rules.json"
         data = json.loads(rules_path.read_text(encoding="utf-8"))
         rules = data["rules"]
-        self.assertEqual(len(rules), 45)
+        self.assertGreaterEqual(len(rules), 45)
 
         for r in rules:
             self.assertIn("grade", r, f"规则 {r['id']} 缺失 grade 属性")

@@ -11,6 +11,32 @@ status: draft
 
 本文档是本项目知识库的时间线操作流水记录，严格遵循 Karpathy LLM Wiki 规范，记录所有文献 Ingest、知识编译、实体更新、质检 Lint 与综合专题沉淀事件。
 
+## [2026-10-21] clinical-knowledge-round-1 | 成人超重与肥胖症临床诊疗规范与阶梯减重知识库落库 (首部国家级指南2024年版)
+
+- **动作类型**: 权威临床知识点深度考证与系统落库（第一轮）
+- **循证来源依据**:
+  1. 国家卫生健康委办公厅《肥胖症诊疗指南（2024年版）》（国卫办医政函〔2024〕382号，2024年10月17日正式发布）；
+  2. 国家卫生健康委《成人肥胖食养指南（2024年版）》（国卫办食品函〔2024〕40号，已归档 `SRC-NHC-NUT-2024-01`）。
+- **核心完成项**:
+  1. **权威来源登记与提取文本归档**:
+     - 在 `raw/metadata.json` 注册新来源 `SRC-NHC-OBES-2024-01`（《肥胖症诊疗指南（2024年版）》），记录官方发布发文文号、官方发布URL及 `content_sha256`；
+     - 提炼核心临床规范至 `raw/docs/SRC-NHC-OBES-2024-01.md`，深度编译研读导读页 `wiki/sources/SRC-NHC-OBES-2024-01.md`。
+  2. **疾病实体与诊断标准概念精编**:
+     - 新建核心疾病实体 `wiki/entities/diseases/肥胖症.md`（ICD-10: `E66.9`），全面阐述病因、中国成人四度BMI切点、腹型肥胖腰围切点、并发症筛查谱及生活方式、药物、手术阶梯干预策略；
+     - 新建概念规范 `wiki/concepts/中国成人超重与肥胖症诊断与BMI分级标准.md`，给出完整的 BMI 分级矩阵（超重 24～27.9、轻度 28～32.4、中度 32.5～37.4、重度 37.5～42.4、极重度 ≥42.5）、腰围切点（男≥90cm、女≥85cm）及代谢紊乱分层。
+  3. **用药实体与安全拦截规则升级**:
+     - 新建用药实体 `wiki/entities/drugs/奥利司他与抗肥胖药物.md`，详解脂肪酶抑制机制、用法用量及慢性吸收不良综合征/胆汁淤积绝对禁忌；
+     - 更新既有用药实体 `wiki/entities/drugs/GLP-1受体激动剂.md`，挂载《肥胖症诊疗指南（2024年版）》减重适应证、周制剂司美格鲁肽起始滴定规范与甲状腺髓样癌（MTC）/MEN2强阻断禁忌；
+     - 在 `rules/clinical_safety_rules.json` 扩增 `RULE-SAFETY-OBESITY-NORMAL-BMI`（严禁正常体重人群非医学目的滥用减重药）；
+     - 在 `rules/monograph_rules.json` 扩增 `CONDITION_ORLISTAT_MALABSORPTION`（奥利司他慢性吸收不良与胆汁淤积绝对禁用）；
+     - 在 `rules/icd_crosswalk.json` 增补 `E66`、`E66.0`、`E66.900` 映射归约至 `E66.9`。
+  4. **门诊临床决策协议与计算器微引擎升级**:
+     - 编译落地第 51 套标准化门诊诊疗决策协议 `wiki/protocols/PROT-OBES-051 门诊成人超重与肥胖症生活方式干预与阶梯减重方案.md`，包含全阴性门诊病历范文模板、结构化推荐医嘱集与三级 CDSS 拦截预警；
+     - 在 `tools/cdss/calculators.py` 扩建 `calc_bmi_obesity` 计算器与 `CALCULATOR_SCHEMA_SPECS` 规范，实现 EMR 自动水化与门诊上下文触发展示；
+     - 扩充单元测试 `tests/test_calculators.py` 与 `tests/test_diagnosis_matching.py`，测试覆盖率 100% 保持绿灯。
+  5. **主索引与导航打通**:
+     - 在 `wiki/index.md` 来源、疾病、药物、概念与协议各章节挂载新词条与双向引用。
+
 ## [2026-10-15] diagnostic-knowledge-stage-2 | 第二轮核心临床检验与医技检查知识库落库 (12项新实体，累计达31项)
 
 - **动作类型**: 检验检查知识库第二阶段规划落地与全科/专科闭环扩充

@@ -3223,6 +3223,54 @@
         "content_sha256": "",
         "evidence_refs": []
       }
+    },
+    {
+      "id": "CONDITION_ORLISTAT_MALABSORPTION",
+      "domain": "monograph",
+      "target_drugs": [
+        "奥利司他",
+        "奥利司他胶囊"
+      ],
+      "level": "BLOCK",
+      "title": "慢性吸收不良或胆汁淤积绝对禁用奥利司他",
+      "reason": "国家药监局法定核准说明书明确列为【禁忌】！奥利司他抑制胃肠脂肪酶水解，慢性吸收不良综合征及胆汁淤积（胆道梗阻）患者使用可导致严重的脂肪泻及重度脂溶性维生素缺乏！",
+      "evidence": "《奥利司他胶囊国家药品监督管理局核准说明书》【禁忌】及国家卫健委《肥胖症诊疗指南（2024年版）》",
+      "conditions": {
+        "conditions_any": [
+          "吸收不良",
+          "吸收不良综合征",
+          "慢性吸收不良",
+          "胆汁淤积",
+          "胆汁淤积症",
+          "胆道梗阻"
+        ]
+      },
+      "alert_tier": "HARD_STOP",
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，国家药监局法定核准说明书【禁忌】与权威临床指南标准",
+      "alternatives": [
+        {
+          "name": "司美格鲁肽注射液",
+          "specification": "1.5ml:2mg(笔芯)",
+          "orderDraft": {
+            "routeCode": "IH",
+            "frequencyCode": "QW",
+            "doseValue": 0.25,
+            "doseUnit": "mg",
+            "durationValue": 28
+          },
+          "rationale": "《肥胖症诊疗指南（2024年版）》推荐GLP-1受体激动剂通过中枢调节食欲与胃排空减重，无胃肠道脂肪酶直接抑制副作用",
+          "sourceGuideline": "SRC-NHC-OBES-2024-01"
+        }
+      ],
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     }
   ]
 }

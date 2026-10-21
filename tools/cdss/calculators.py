@@ -38,6 +38,8 @@ class ClinicalCalculatorRegistry:
             "mmrc": cls.calc_mmrc,
             "mmrc_score": cls.calc_mmrc,
             "crb_65": cls.calc_crb_65,
+            "bmi": cls.calc_bmi_obesity,
+            "bmi_obesity": cls.calc_bmi_obesity,
         }
         fn = dispatch.get(name)
         if not fn:
@@ -846,6 +848,135 @@ class ClinicalCalculatorRegistry:
         }
 
     # -------------------------------------------------------------------------
+    # 14. BMI & Obesity: 中国成人超重与肥胖症诊断与BMI分级计算器 (2024年版)
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def calc_bmi_obesity(p: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        中国成人超重与肥胖症诊断与BMI分级计算器
+        依据国家卫生健康委办公厅《肥胖症诊疗指南（2024年版）》（国卫办医政函〔2024〕382号）
+        """
+        try:
+            weight = float(p.get("weight") or p.get("weight_kg") or 0.0)
+        except (ValueError, TypeError):
+            weight = 0.0
+
+        try:
+            height = float(p.get("height") or p.get("height_cm") or 0.0)
+        except (ValueError, TypeError):
+            height = 0.0
+
+        if height > 3.0:
+            height_m = height / 100.0
+        else:
+            height_m = height
+
+        try:
+            waist = float(p.get("waist") or p.get("waist_cm") or p.get("waist_circumference") or 0.0)
+        except (ValueError, TypeError):
+            waist = 0.0
+
+        gender = str(p.get("gender") or "男").strip()
+        is_female = gender in ("女", "female", "F") or bool(p.get("is_female"))
+
+        has_comorbidity = bool(
+            p.get("htn") or p.get("hypertension") or p.get("高血压") or
+            p.get("dm") or p.get("diabetes") or p.get("糖尿病") or
+            p.get("dyslipidemia") or p.get("高脂血症") or p.get("血脂异常") or
+            p.get("masld") or p.get("nafld") or p.get("脂肪肝") or
+            p.get("hyperuricemia") or p.get("gout") or p.get("高尿酸血症") or p.get("痛风") or
+            p.get("osas") or p.get("睡眠呼吸暂停") or p.get("cvd")
+        )
+
+        if height_m <= 0 or weight <= 0:
+            bmi = 0.0
+        else:
+            bmi = round(weight / (height_m * height_m), 1)
+
+        if bmi < 18.5:
+            category = "UNDERWEIGHT"
+            category_cn = "体重过低"
+            severity = "NONE"
+            severity_cn = "营养不良/肌少症风险"
+        elif bmi < 24.0:
+            category = "NORMAL"
+            category_cn = "正常体重"
+            severity = "NONE"
+            severity_cn = "正常基线范围"
+        elif bmi < 28.0:
+            category = "OVERWEIGHT"
+            category_cn = "超重"
+            severity = "PRE_OBESE"
+            severity_cn = "超重（肥胖前期）"
+        elif bmi < 32.5:
+            category = "OBESE"
+            category_cn = "轻度肥胖（I度）"
+            severity = "CLASS_1"
+            severity_cn = "I度肥胖"
+        elif bmi < 37.5:
+            category = "OBESE"
+            category_cn = "中度肥胖（II度）"
+            severity = "CLASS_2"
+            severity_cn = "II度肥胖"
+        elif bmi < 42.5:
+            category = "OBESE"
+            category_cn = "重度肥胖（III度）"
+            severity = "CLASS_3"
+            severity_cn = "III度肥胖"
+        else:
+            category = "OBESE"
+            category_cn = "极重度肥胖（IV度）"
+            severity = "CLASS_4"
+            severity_cn = "IV度极重度肥胖"
+
+        central_obesity = False
+        if waist > 0:
+            if is_female:
+                central_obesity = waist >= 85.0
+            else:
+                central_obesity = waist >= 90.0
+
+        pharmacotherapy_indicated = (bmi >= 28.0) or (bmi >= 24.0 and (has_comorbidity or central_obesity))
+        surgery_indicated = (bmi >= 37.5) or (bmi >= 32.5 and has_comorbidity)
+
+        recommendations = []
+        if category == "UNDERWEIGHT":
+            recommendations.append("患者体重偏低，建议筛查甲亢、消化道慢性消耗等病因，加强平衡优质营养，禁用减重药物。")
+        elif category == "NORMAL":
+            if central_obesity:
+                recommendations.append("患者BMI处于正常范围，但腰围超标提示中心型（腹型）肥胖，建议增加腰腹核心有氧训练，严禁滥用处方减重药物。")
+            else:
+                recommendations.append("患者体质指数处于正常基线范围，建议维持健康生活方式，严禁以非医学减重目的开具处方减重药。")
+        elif category == "OVERWEIGHT":
+            rec = "诊断为超重。基石干预：建议每日减少 500~1000 kcal 能量摄入，每周至少 150 分钟中等强度有氧运动。"
+            if pharmacotherapy_indicated:
+                rec += " 合并代谢异常或腹型肥胖，若强化生活方式干预 3 个月未达标，可在医师指导下谨慎评估联合口服奥利司他或GLP-1RA药物。"
+            recommendations.append(rec)
+        else:
+            rec = f"诊断为{category_cn}（BMI: {bmi} kg/m²）。启动全程医学营养管理，以 3~6 个月减轻基线体重 5%~10% 为目标。"
+            if surgery_indicated:
+                rec += " 满足国家卫健委减重与代谢外科手术（LSG/LRYGB）评估指征，建议转诊普外与代谢MDT联合评估。"
+            elif pharmacotherapy_indicated:
+                rec += " 符合国家卫健委规范化处方药物减重指征（奥利司他胶囊或周制剂司美格鲁肽），用药前必须排除MTC/MEN2及胆汁淤积禁忌。"
+            recommendations.append(rec)
+
+        return {
+            "calculator": "bmi_obesity",
+            "name": "中国成人超重与肥胖症诊断与BMI分级计算器",
+            "guideline": "《肥胖症诊疗指南（2024年版）》（国卫办医政函〔2024〕382号）",
+            "bmi": bmi,
+            "category": category,
+            "category_cn": category_cn,
+            "severity": severity,
+            "severity_cn": severity_cn,
+            "waist_cm": waist,
+            "central_obesity": central_obesity,
+            "pharmacotherapy_indicated": pharmacotherapy_indicated,
+            "surgery_indicated": surgery_indicated,
+            "recommendation": " ".join(recommendations),
+        }
+
+    # -------------------------------------------------------------------------
     # 14. Zero-Manual-Input EMR Hydration & Minimal Follow-up Engine (P3.1)
     # -------------------------------------------------------------------------
     CALCULATOR_SCHEMA_SPECS = {
@@ -931,6 +1062,19 @@ class ClinicalCalculatorRegistry:
                 {"key": "speech_impairment", "label": "言语障碍但无肢体无力", "type": "boolean", "points": 1, "keywords": ["言语不清", "失语", "构音障碍", "吐字不清"]},
                 {"key": "duration_minutes", "label": "症状持续时间 (分钟)", "type": "number", "auto_from": ["duration_minutes"]},
                 {"key": "diabetes", "label": "糖尿病病史", "type": "boolean", "points": 1, "keywords": ["糖尿病", "2型糖尿病"]},
+            ],
+        },
+        "bmi_obesity": {
+            "title": "中国成人超重与肥胖症诊断与BMI分级计算器",
+            "fields": [
+                {"key": "weight", "label": "体重 (kg)", "type": "number", "auto_from": ["weight", "weight_kg"]},
+                {"key": "height", "label": "身高 (cm 或 m)", "type": "number", "auto_from": ["height", "height_cm"]},
+                {"key": "waist", "label": "腰围 (cm)", "type": "number", "auto_from": ["waist", "waist_cm"]},
+                {"key": "gender", "label": "性别", "type": "string", "auto_from": ["gender"]},
+                {"key": "htn", "label": "高血压病史", "type": "boolean", "keywords": ["高血压", "htn"]},
+                {"key": "dm", "label": "糖尿病史/糖代谢异常", "type": "boolean", "keywords": ["糖尿病", "高血糖", "dm", "t2dm"]},
+                {"key": "dyslipidemia", "label": "血脂异常/高甘油三酯", "type": "boolean", "keywords": ["高脂血症", "血脂异常", "高甘油三酯"]},
+                {"key": "masld", "label": "脂肪肝 (MASLD/NAFLD)", "type": "boolean", "keywords": ["脂肪肝", "masld", "nafld"]},
             ],
         },
     }
@@ -1081,6 +1225,8 @@ class ClinicalCalculatorRegistry:
             triggered_calcs.append("mmrc")
         if any(k in corpus for k in ["扁桃体炎", "急性咽峡炎", "咽痛"]):
             triggered_calcs.append("centor")
+        if any(k in corpus for k in ["肥胖", "超重", "体质指数", "bmi", "减重"]):
+            triggered_calcs.append("bmi_obesity")
         if norm_p.get("scr") is not None and norm_p.get("age") is not None:
             triggered_calcs.append("renal_clearance")
 

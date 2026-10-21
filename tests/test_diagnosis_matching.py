@@ -210,6 +210,20 @@ class TestDiagnosisMatchingAndPrecisionGuard(unittest.TestCase):
         self.assertEqual(h.sent_status, 200)
         self.assertEqual(h.sent_json.get("id"), "PROT-URI-005")
 
+    def test_obesity_protocol_search_and_icd_resolution(self):
+        """Verify that obesity search query and ICD-10 E66.9/E66.0 map to PROT-OBES-051."""
+        prots = self.cdss.search_protocols("成人肥胖症，其他和未特指 E66.9")
+        self.assertTrue(len(prots) > 0)
+        self.assertEqual(prots[0]["protocolId"], "PROT-OBES-051")
+
+        prot_icd = self.cdss.repo.get_by_icd("E66.900")
+        self.assertIsNotNone(prot_icd)
+        self.assertEqual(prot_icd.protocol_id, "PROT-OBES-051")
+
+        prot_stem = self.cdss.search_protocols("单纯性肥胖门诊生活方式干预")
+        self.assertTrue(len(prot_stem) > 0)
+        self.assertEqual(prot_stem[0]["protocolId"], "PROT-OBES-051")
+
 
 if __name__ == "__main__":
     unittest.main()

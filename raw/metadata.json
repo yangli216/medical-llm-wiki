@@ -1,6 +1,6 @@
 {
   "version": "2.3.0",
-  "last_updated": "2026-10-09",
+  "last_updated": "2026-10-21",
   "sources": [
     {
       "id": "SRC-CMA-CARD-2024-01",
@@ -2351,6 +2351,38 @@
       "download_page_url": "https://www.sinocardiomed.com/2025/08/0934214228.html",
       "registration_stage": "bibliography_only",
       "supersedes_source_id": "SRC-CMA-CARD-2021-02"
+    },
+    {
+      "id": "SRC-NHC-OBES-2024-01",
+      "title": "肥胖症诊疗指南（2024年版）",
+      "authority": "中华人民共和国国家卫生健康委员会办公厅",
+      "publication": "国家卫生健康委办公厅关于印发肥胖症诊疗指南（2024年版）的通知（国卫办医政函〔2024〕382号）",
+      "year": 2024,
+      "category": "内分泌代谢与综合减重",
+      "level": "国家卫生健康委法定临床诊疗指南",
+      "file_path": "raw/docs/SRC-NHC-OBES-2024-01.md",
+      "key_scope": "中国成人及儿童超重与肥胖症诊断标准、BMI分级、腰围腹型肥胖切点、生活方式干预、五大类减重药物适应证与禁忌、代谢与减重外科手术指征、中医药辨证及多学科协作（MDT）",
+      "status": "active",
+      "content_kind": "curated_summary",
+      "official_url": "http://www.nhc.gov.cn/yzygj/s7659/202410/6c71c4c92fa34ee58671424aa4693bf6.shtml",
+      "retrieved_at": "2026-10-21T07:38:00.000000+00:00",
+      "content_sha256": "f0eaecf34516409138355c2e9476a8651dda9c75fb476220946d5d020964a90c",
+      "provenance_review": {
+        "decision": "pending"
+      },
+      "version_review": {
+        "checked_on": "2026-10-21",
+        "status": "no_newer_verified",
+        "scope": "同一制定机构/指南系列与适用人群；国家卫健委首部肥胖症专门诊疗指南",
+        "search_queries": [
+          "\"肥胖症诊疗指南\" \"2024\" site:nhc.gov.cn",
+          "\"国卫办医政函〔2024〕382号\""
+        ],
+        "evidence_urls": [
+          "http://www.nhc.gov.cn/yzygj/s7659/202410/6c71c4c92fa34ee58671424aa4693bf6.shtml"
+        ],
+        "note": "2024年10月国家卫健委办公厅正式印发首部国家级指南；未核验到更新版本。"
+      }
     }
   ]
 }
