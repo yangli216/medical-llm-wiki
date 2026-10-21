@@ -3317,6 +3317,55 @@
         "content_sha256": "",
         "evidence_refs": []
       }
+    },
+    {
+      "id": "FERROUS_IRON_OVERLOAD_CONTRAINDICATION",
+      "domain": "monograph",
+      "target_drugs": [
+        "琥珀酸亚铁",
+        "多糖铁复合物",
+        "硫酸亚铁",
+        "富马酸亚铁",
+        "蔗糖铁",
+        "羧基麦芽糖铁"
+      ],
+      "level": "BLOCK",
+      "title": "血色病与铁过载状态绝对禁用铁剂",
+      "reason": "官方药品说明书黑体【禁忌】明确规定：血色病、含铁血黄素沉着症及非缺铁性贫血患者绝对禁用铁补充剂！外源铁摄入将加剧严重多脏器铁负荷过重与功能损害！",
+      "evidence": "国家药监局法定核准《多糖铁复合物胶囊说明书》与《琥珀酸亚铁片说明书》【禁忌】及《铁缺乏症和缺铁性贫血诊治和预防成人指南（2023年版）》",
+      "conditions": {
+        "conditions_any": [
+          "血色病",
+          "含铁血黄素沉着症",
+          "铁负荷过重"
+        ]
+      },
+      "alert_tier": "HARD_STOP",
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，国家药监局法定核准说明书【禁忌】与权威临床指南标准",
+      "alternatives": [
+        {
+          "name": "去铁胺注射液",
+          "specification": "0.5g",
+          "orderDraft": {
+            "routeCode": "IV_DRIP",
+            "frequencyCode": "QD",
+            "doseValue": 0.5,
+            "doseUnit": "g",
+            "durationValue": 1
+          },
+          "rationale": "铁过载状态应在血液专科指导下采用铁螯合剂排铁治疗，严禁使用任何铁补充剂",
+          "sourceGuideline": "SRC-CMA-HEMA-2023-01"
+        }
+      ],
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     }
   ]
 }

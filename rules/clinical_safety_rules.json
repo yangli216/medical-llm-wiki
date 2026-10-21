@@ -2616,6 +2616,128 @@
         "content_sha256": "",
         "evidence_refs": []
       }
+    },
+    {
+      "id": "RULE-SAFETY-IDA-CHELATION-INTERACTION",
+      "domain": "clinical",
+      "title": "口服铁剂与抗酸剂/四环素/喹诺酮螯合相互作用减效拦截",
+      "severity": "YELLOW",
+      "message": "口服铁剂（琥珀酸亚铁、多糖铁复合物）与含多价阳离子的抗酸剂（铝碳酸镁、碳酸钙、硫糖铝）或四环素类、氟喹诺酮类抗菌药物合用时，在胃肠腔内发生难溶性金属螯合反应，使双方生物利用度骤降50%～90%！若必须联用，服药时间须严格间隔2小时以上。",
+      "guideline": "《铁缺乏症和缺铁性贫血诊治和预防成人指南（2023年版）》",
+      "conditions": {
+        "ddi_pairs": [
+          {
+            "group_a": [
+              "琥珀酸亚铁",
+              "多糖铁复合物",
+              "硫酸亚铁",
+              "富马酸亚铁"
+            ],
+            "group_b": [
+              "铝碳酸镁",
+              "碳酸钙",
+              "硫糖铝",
+              "氢氧化铝",
+              "左氧氟沙星",
+              "莫西沙星",
+              "环丙沙星",
+              "诺氟沙星",
+              "多西环素",
+              "米诺环素"
+            ]
+          }
+        ]
+      },
+      "alternatives": [
+        {
+          "name": "多糖铁复合物胶囊",
+          "specification": "0.15g",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "QD",
+            "doseValue": 0.15,
+            "doseUnit": "g",
+            "durationValue": 30
+          },
+          "rationale": "有机高分子螯合铁，螯合作用相对较弱，但仍建议与抗酸剂/抗生素服药时间间隔2小时以上",
+          "sourceGuideline": "SRC-CMA-HEMA-2023-01"
+        },
+        {
+          "name": "维生素C片",
+          "specification": "100mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 100,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "与口服铁剂同服促进小肠对二价铁的吸收转化",
+          "sourceGuideline": "SRC-CMA-HEMA-2023-01"
+        }
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "INTERACTION_WARNING",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
+    },
+    {
+      "id": "RULE-SAFETY-IDA-NON-IDA-CONTRAINDICATION",
+      "domain": "clinical",
+      "title": "非缺铁性贫血及铁过载患者绝对禁用铁剂补充",
+      "severity": "RED",
+      "message": "原发性/继发性血色病、含铁血黄素沉着症及未经确诊缺铁的溶血性贫血、骨髓增生异常综合征（MDS）患者绝对禁止使用铁剂！外源性补铁将导致严重多器官铁过载及不可逆脏器纤维化损害！",
+      "guideline": "《铁缺乏症和缺铁性贫血诊治和预防成人指南（2023年版）》",
+      "conditions": {
+        "drugs_any": [
+          "琥珀酸亚铁",
+          "多糖铁复合物",
+          "硫酸亚铁",
+          "富马酸亚铁",
+          "蔗糖铁",
+          "羧基麦芽糖铁"
+        ],
+        "diagnoses_any": [
+          "血色病",
+          "含铁血黄素沉着症",
+          "溶血性贫血",
+          "自身免疫性溶血性贫血",
+          "铁负荷过重"
+        ]
+      },
+      "alternatives": [
+        {
+          "name": "叶酸片",
+          "specification": "5mg",
+          "orderDraft": {
+            "routeCode": "PO",
+            "frequencyCode": "TID",
+            "doseValue": 5,
+            "doseUnit": "mg",
+            "durationValue": 30
+          },
+          "rationale": "溶血性贫血伴叶酸相对消耗增多时的造血原料支持，严禁给予任何铁剂",
+          "sourceGuideline": "SRC-CMA-HEMA-2023-01"
+        }
+      ],
+      "grade": "1A",
+      "evidence_level": "强推荐 (Strong recommendation)，高质量循证证据 (High quality evidence)",
+      "alert_tier": "HARD_STOP",
+      "clinical_review": {
+        "status": "pending",
+        "reviewer": "",
+        "reviewer_role": "",
+        "reviewed_at": "",
+        "content_sha256": "",
+        "evidence_refs": []
+      }
     }
   ]
 }

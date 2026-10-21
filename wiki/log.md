@@ -11,6 +11,31 @@ status: draft
 
 本文档是本项目知识库的时间线操作流水记录，严格遵循 Karpathy LLM Wiki 规范，记录所有文献 Ingest、知识编译、实体更新、质检 Lint 与综合专题沉淀事件。
 
+## [2026-10-21] clinical-knowledge-round-3 | 成人缺铁性贫血阶梯补铁与病因筛查知识库落库 (中华医学会2023年版指南)
+
+- **动作类型**: 权威临床知识点深度考证与系统落库（第三轮）
+- **循证来源依据**:
+  - 中华医学会血液学分会红细胞疾病学组《铁缺乏症和缺铁性贫血诊治和预防成人指南（2023年版）》（《中华血液学杂志》2023年第44卷第1期，第1–7页，DOI: `10.3760/cma.j.cn121090-20221102-00517`）。
+- **核心完成项**:
+  1. **权威来源登记与提取文本归档**:
+     - 在 `raw/metadata.json` 注册新来源 `SRC-CMA-HEMA-2023-01`，绑定官方期刊刊期、DOI、SHA-256 与版本时效；
+     - 整理归档核心章节条款至 `raw/docs/SRC-CMA-HEMA-2023-01.md`，深度编译研读导读页 `wiki/sources/SRC-CMA-HEMA-2023-01.md`（包含 5 条 I 类 A 级推荐条款）。
+  2. **核心实体与阶梯诊疗标准精编**:
+     - 新建核心疾病实体 `wiki/entities/diseases/缺铁性贫血.md`（ICD-10: `D50.9`），全面阐述机体缺铁病理机制、微细胞低色素参数（MCV $<80$ fL, MCH $<27$ pg）、血清铁蛋白（无炎症 $<30\ \mu\text{g/L}$，伴炎症 $<100\ \mu\text{g/L}$）与转铁蛋白饱和度（TSAT $<20\%$）诊断标准、病因同查第一原则（成年男性与绝经后女性强制启动胃肠恶性肿瘤排查）及地中海贫血/慢性病性贫血鉴别；
+     - 新建概念规范 `wiki/concepts/缺铁性贫血实验室诊断与补铁疗效监测.md`，规范缺铁三阶段（ID/IDE/IDA）病理演变矩阵、网织红细胞（Ret 5～10天达峰）、血红蛋白（2周起效，4～8周达标）动态监测时间轴与巩固期补铁治疗红线（Hb正常后必须继续口服 3～6 个月或直至 SF $>50\ \mu\text{g/L}$ 补足储备铁）；
+     - 新建用药实体 `wiki/entities/drugs/口服与静脉铁剂补充药物.md`，详解多糖铁复合物胶囊（150mg/粒高耐受）、琥珀酸亚铁片（35mg元素铁餐后服）、羧基麦芽糖铁/蔗糖铁静脉制剂、维生素 C 还原协同促吸收机制及与抗酸剂、四环素、氟喹诺酮类金属螯合减效的服药间隔规范。
+  3. **门诊决策协议与 CDSS 安全拦截规则升级**:
+     - 编译落地第 53 套标准化门诊诊疗决策协议 `wiki/protocols/PROT-IDA-053 门诊缺铁性贫血阶梯补铁与病因筛查方案.md`，包含规范门诊病历范文、推荐医嘱集（血常规+Ret、铁代谢五项、CRP、FOBT、胃镜、结肠镜、多糖铁复合物、维生素C片）与三级拦截预警；
+     - 在 `rules/clinical_safety_rules.json` 扩增 `RULE-SAFETY-IDA-CHELATION-INTERACTION`（口服铁剂与抗酸剂/四环素/喹诺酮螯合相互作用减效拦截）与 `RULE-SAFETY-IDA-NON-IDA-CONTRAINDICATION`（非缺铁性贫血及铁过载患者绝对禁用铁剂补充）；
+     - 在 `rules/monograph_rules.json` 扩增 `FERROUS_IRON_OVERLOAD_CONTRAINDICATION`（血色病与铁过载状态绝对禁用铁剂）；
+     - 在 `rules/icd_crosswalk.json` 补齐 `D50`、`D50.0`、`D50.8`、`D50.900` 等向 `D50.9` 的标准映射归约；
+     - 在 `tools/cdss/calculators.py` 扩建 `calc_ganzoni_iron`（Ganzoni 静脉补铁累积总缺铁量计算引擎）与 `CALCULATOR_SCHEMA_SPECS`，并在 `parameter_normalizer.py` 中注入 Hb 自动解析；
+     - 更新既有检验实体 `wiki/entities/tests/全血细胞分析(血常规).md`、`wiki/entities/tests/粪便常规检验加隐血试验(FOBT).md`、`wiki/entities/tests/C反应蛋白测定.md` 的双向链接互联。
+  4. **主索引与全栈测试保障**:
+     - 在 `wiki/index.md` 来源、疾病、药物、概念、协议各章节挂载新词条；
+     - 运行 `tools.cli sync-readme` 保持资产统计精准一致；
+     - 全库体检 Lint 0 断链、0 孤岛，自动化测试套件保持 100% 通过。
+
 ## [2026-10-21] clinical-knowledge-round-2 | 成人支气管哮喘阶梯控制与SMART策略知识库落库 (中华医学会2020年版指南)
 
 - **动作类型**: 权威临床知识点深度考证与系统落库（第二轮）

@@ -213,6 +213,26 @@ class TestClinicalCalculators(unittest.TestCase):
         self.assertIn("未控制", res["controlStatus_cn"])
         self.assertIn("向上提升 1 级", res["recommendation"])
 
+    def test_ganzoni_iron_deficit_moderate_anemia(self):
+        """
+        Test Ganzoni formula: Weight 60kg, Hb 70 g/L (7.0 g/dL), Target 15.0 g/dL.
+        Deficit = 60 * (15.0 - 7.0) * 2.4 + 500 = 1152 + 500 = 1652.0 mg.
+        Sucrose 100mg ampoules: ceil(1652 / 100) = 17.
+        FCM 500mg vials: ceil(1652 / 500) = 4.
+        """
+        res = ClinicalCalculatorRegistry.calculate("ganzoni_iron", {
+            "weight": 60,
+            "hb": 70,
+            "target_hb": 150,
+        })
+        self.assertEqual(res["totalDeficitMg"], 1652.0)
+        self.assertEqual(res["anemiaSeverity"], "MODERATE")
+        self.assertEqual(res["anemiaSeverity_cn"], "中度贫血")
+        self.assertEqual(res["dosingEquivalents"]["iron_sucrose_100mg_ampoules"], 17)
+        self.assertEqual(res["dosingEquivalents"]["ferric_carboxymaltose_500mg_vials"], 4)
+        self.assertIn("Ganzoni 公式", res["recommendation"])
+        self.assertIn("蔗糖铁注射液", res["recommendation"])
+
 
 if __name__ == "__main__":
     unittest.main()

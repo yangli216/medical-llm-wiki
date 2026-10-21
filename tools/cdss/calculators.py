@@ -42,6 +42,9 @@ class ClinicalCalculatorRegistry:
             "bmi_obesity": cls.calc_bmi_obesity,
             "act": cls.calc_act_score,
             "act_score": cls.calc_act_score,
+            "ganzoni": cls.calc_ganzoni_iron,
+            "ganzoni_iron": cls.calc_ganzoni_iron,
+            "iron_deficit": cls.calc_ganzoni_iron,
         }
         fn = dispatch.get(name)
         if not fn:
@@ -1035,7 +1038,110 @@ class ClinicalCalculatorRegistry:
         }
 
     # -------------------------------------------------------------------------
-    # 14. Zero-Manual-Input EMR Hydration & Minimal Follow-up Engine (P3.1)
+    # 14. Ganzoni 公式: 静脉补铁累积总缺铁量计算引擎
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def calc_ganzoni_iron(p: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Ganzoni 静脉补铁累积总缺铁量测算引擎
+        依据《铁缺乏症和缺铁性贫血诊治和预防成人指南（2023年版）》（SRC-CMA-HEMA-2023-01）
+        公式: 总缺铁量(mg) = 体重(kg) * (目标Hb - 实际Hb, g/dL) * 2.4 + 储存铁(mg)
+        """
+        try:
+            weight = float(p.get("weight") or p.get("weight_kg") or 60.0)
+        except (ValueError, TypeError):
+            weight = 60.0
+
+        raw_hb = p.get("hb") or p.get("current_hb") or p.get("hemoglobin") or 70.0
+        try:
+            raw_hb_val = float(raw_hb)
+        except (ValueError, TypeError):
+            raw_hb_val = 70.0
+
+        # 支持 g/L 或 g/dL，如果 > 30 视为 g/L 转换为 g/dL
+        if raw_hb_val > 30.0:
+            actual_hb_g_dl = raw_hb_val / 10.0
+            actual_hb_g_l = raw_hb_val
+        else:
+            actual_hb_g_dl = raw_hb_val
+            actual_hb_g_l = raw_hb_val * 10.0
+
+        raw_target = p.get("target_hb") or 15.0
+        try:
+            target_val = float(raw_target)
+        except (ValueError, TypeError):
+            target_val = 15.0
+
+        if target_val > 30.0:
+            target_hb_g_dl = target_val / 10.0
+            target_hb_g_l = target_val
+        else:
+            target_hb_g_dl = target_val
+            target_hb_g_l = target_val * 10.0
+
+        # 储存铁计算 (成人通常设为 500 mg，体重 < 35kg 设为 15 mg/kg)
+        if weight >= 35.0:
+            default_depot = 500.0
+        else:
+            default_depot = round(15.0 * weight, 1)
+
+        custom_depot = p.get("iron_depot") or p.get("iron_depot_mg")
+        if custom_depot is not None:
+            try:
+                iron_depot_mg = float(custom_depot)
+            except (ValueError, TypeError):
+                iron_depot_mg = default_depot
+        else:
+            iron_depot_mg = default_depot
+
+        hb_delta = max(0.0, target_hb_g_dl - actual_hb_g_dl)
+        total_iron_deficit_mg = round(weight * hb_delta * 2.4 + iron_depot_mg, 1)
+
+        # 换算常用静脉制剂支数
+        # 1. 蔗糖铁注射液: 100 mg / 5 mL / 支
+        ampoules_sucrose_100mg = math.ceil(total_iron_deficit_mg / 100.0) if total_iron_deficit_mg > 0 else 0
+        # 2. 羧基麦芽糖铁注射液: 500 mg / 10 mL / 瓶
+        vials_fcm_500mg = math.ceil(total_iron_deficit_mg / 500.0) if total_iron_deficit_mg > 0 else 0
+
+        if actual_hb_g_l < 60.0:
+            severity = "SEVERE"
+            severity_cn = "重度贫血"
+        elif actual_hb_g_l < 90.0:
+            severity = "MODERATE"
+            severity_cn = "中度贫血"
+        else:
+            severity = "MILD"
+            severity_cn = "轻度贫血"
+
+        recommendation = (
+            f"患者体重 {weight} kg，实测 Hb {actual_hb_g_l:.1f} g/L（{severity_cn}），目标 Hb {target_hb_g_l:.1f} g/L。"
+            f"依据 Ganzoni 公式，计算全疗程累积总需补元素铁 {total_iron_deficit_mg:.1f} mg（含机体储存铁 {iron_depot_mg:.0f} mg）。\n"
+            f"静脉制剂换算推荐：\n"
+            f"1. 蔗糖铁注射液（100mg/支）：全疗程需 {ampoules_sucrose_100mg} 支。每次 100～200 mg 加入生理盐水静脉缓慢滴注（不少于 15～30 分钟），每周 2～3 次，直至补足总量；\n"
+            f"2. 羧基麦芽糖铁注射液（500mg/瓶）：全疗程需 {vials_fcm_500mg} 瓶。单次最大剂量可达 1000 mg，滴注 15 分钟，极大减少就诊输液频次；\n"
+            f"3. 警戒底线：输液前备妥抢救设施，输注前 15 分钟密切监测过敏与生命体征；切勿超总量盲目补铁以防铁过载。"
+        )
+
+        return {
+            "calculator": "ganzoni_iron",
+            "name": "Ganzoni 公式静脉总缺铁量评估",
+            "totalDeficitMg": total_iron_deficit_mg,
+            "weightKg": weight,
+            "actualHb_g_L": actual_hb_g_l,
+            "targetHb_g_L": target_hb_g_l,
+            "ironDepotMg": iron_depot_mg,
+            "anemiaSeverity": severity,
+            "anemiaSeverity_cn": severity_cn,
+            "dosingEquivalents": {
+                "iron_sucrose_100mg_ampoules": ampoules_sucrose_100mg,
+                "ferric_carboxymaltose_500mg_vials": vials_fcm_500mg,
+            },
+            "recommendation": recommendation,
+            "guideline": "《铁缺乏症和缺铁性贫血诊治和预防成人指南（2023年版）》（SRC-CMA-HEMA-2023-01）",
+        }
+
+    # -------------------------------------------------------------------------
+    # 15. Zero-Manual-Input EMR Hydration & Minimal Follow-up Engine (P3.1)
     # -------------------------------------------------------------------------
     CALCULATOR_SCHEMA_SPECS = {
         "cha2ds2_vasc": {
@@ -1143,6 +1249,15 @@ class ClinicalCalculatorRegistry:
                 {"key": "q3", "label": "夜间憋醒/早醒频率 (1~5)", "type": "number", "auto_from": ["q3", "night_waking"]},
                 {"key": "q4", "label": "急救药物使用频率 (1~5)", "type": "number", "auto_from": ["q4", "reliever_usage"]},
                 {"key": "q5", "label": "哮喘控制自评 (1~5)", "type": "number", "auto_from": ["q5", "self_assessment"]},
+            ],
+        },
+        "ganzoni_iron": {
+            "title": "Ganzoni 公式静脉总缺铁量评估计算器",
+            "fields": [
+                {"key": "weight", "label": "体重 (kg)", "type": "number", "auto_from": ["weight", "weight_kg"]},
+                {"key": "hb", "label": "实际血红蛋白 (g/L 或 g/dL)", "type": "number", "auto_from": ["hb", "hemoglobin", "hgb", "current_hb"]},
+                {"key": "target_hb", "label": "目标血红蛋白 (g/dL, 默认15.0)", "type": "number", "auto_from": ["target_hb"]},
+                {"key": "iron_depot", "label": "机体储存铁量 (mg, 默认500)", "type": "number", "auto_from": ["iron_depot", "iron_depot_mg"]},
             ],
         },
     }
@@ -1297,6 +1412,8 @@ class ClinicalCalculatorRegistry:
             triggered_calcs.append("bmi_obesity")
         if any(k in corpus for k in ["哮喘", "支气管哮喘", "喘息", "哮鸣音", "asthma"]):
             triggered_calcs.append("act_score")
+        if any(k in corpus for k in ["缺铁", "贫血", "ida", "血红蛋白低", "小细胞低色素", "铁蛋白", "乏力伴苍白"]):
+            triggered_calcs.append("ganzoni_iron")
         if norm_p.get("scr") is not None and norm_p.get("age") is not None:
             triggered_calcs.append("renal_clearance")
 

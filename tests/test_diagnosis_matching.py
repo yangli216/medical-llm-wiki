@@ -234,6 +234,20 @@ class TestDiagnosisMatchingAndPrecisionGuard(unittest.TestCase):
         self.assertTrue(len(prot_stem) > 0)
         self.assertEqual(prots[0]["protocolId"], "PROT-ASTHMA-052")
 
+    def test_iron_deficiency_anemia_protocol_search_and_icd_resolution(self):
+        """Verify that IDA query and ICD-10 D50.9 map to PROT-IDA-053."""
+        prots = self.cdss.search_protocols("缺铁性贫血，未特指 D50.9")
+        self.assertTrue(len(prots) > 0)
+        self.assertEqual(prots[0]["protocolId"], "PROT-IDA-053")
+
+        prot_icd = self.cdss.repo.get_by_icd("D50.900")
+        self.assertIsNotNone(prot_icd)
+        self.assertEqual(prot_icd.protocol_id, "PROT-IDA-053")
+
+        prot_stem = self.cdss.search_protocols("缺铁贫阶梯补铁方案")
+        self.assertTrue(len(prot_stem) > 0)
+        self.assertEqual(prot_stem[0]["protocolId"], "PROT-IDA-053")
+
 
 if __name__ == "__main__":
     unittest.main()

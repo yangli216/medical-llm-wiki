@@ -221,6 +221,25 @@ class ClinicalParameterNormalizer:
                 profile["has_hypokalemia"] = True
                 inferred["derived_hypokalemia"] = True
 
+        # Hemoglobin (Hb) & Anemia
+        hb_val = cls._parse_float(
+            profile.get("hb")
+            or profile.get("hemoglobin")
+            or profile.get("hgb")
+            or profile.get("blood_hb")
+        )
+        if hb_val is not None and hb_val > 0:
+            profile["hb"] = hb_val
+            profile["hemoglobin"] = hb_val
+            hb_g_l = hb_val * 10.0 if hb_val <= 30.0 else hb_val
+            profile["hb_g_l"] = hb_g_l
+            if hb_g_l < 60.0:
+                profile["severe_anemia"] = True
+            elif hb_g_l < 90.0:
+                profile["moderate_anemia"] = True
+            elif (is_female and hb_g_l < 110.0) or (not is_female and hb_g_l < 120.0):
+                profile["mild_anemia"] = True
+
         # 6. Vitals & Blood Pressure
         vitals = profile.get("vitals") if isinstance(profile.get("vitals"), dict) else {}
         sbp_val = cls._parse_float(profile.get("sbp") or vitals.get("sbp") or profile.get("systolic_bp"))
